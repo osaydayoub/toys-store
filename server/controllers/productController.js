@@ -30,4 +30,54 @@ export const getAllProducts = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};  
+};
+
+export const getProductBySlug = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const product = await Product.findOne({ slug });
+        if (!product) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Product not found" });
+        } res.status(STATUS_CODE.OK).json({ success: true, data: product });
+    } catch (error) {
+        next(error);
+    }
+
+};
+
+export const updateProduct = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const { name, description, price, category, ageRange, stock, images } = req.body;
+        const product = await Product.findOneAndUpdate(
+            { slug },
+            { name, description, price, category, ageRange, stock, images },
+            { returnDocument: "after", runValidators: true }
+        );
+        if (!product) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({
+                success: false,
+                message: "Product not found"
+            });
+        } res.status(STATUS_CODE.OK).json({
+            success: true,
+            message: "Product updated successfully",
+            data: product
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteProduct = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const product = await Product.findOneAndDelete({ slug });
+        if (!product) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Product not found" });
+        }
+        res.status(STATUS_CODE.OK).json({ success: true, message: "Product deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
