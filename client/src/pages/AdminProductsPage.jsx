@@ -31,7 +31,6 @@ const ageRanges = [
 
 const initialFormData = {
   name: "",
-  slug: "",
   description: "",
   price: "",
   category: "",
@@ -80,7 +79,6 @@ function AdminProductsPage() {
 
     setFormData({
       name: product.name,
-      slug: product.slug,
       description: product.description,
       price: product.price,
       category: product.category,
@@ -191,16 +189,6 @@ function AdminProductsPage() {
             <TextField
               required
               fullWidth
-              label="Slug"
-              name="slug"
-              value={formData.slug}
-              onChange={handleChange}
-              helperText="Example: baby-sensory-ball"
-            />
-
-            <TextField
-              required
-              fullWidth
               multiline
               minRows={3}
               label="Description"
@@ -276,8 +264,8 @@ function AdminProductsPage() {
                     ? "Updating..."
                     : "Creating..."
                   : editingSlug
-                  ? "Update Product"
-                  : "Create Product"}
+                    ? "Update Product"
+                    : "Create Product"}
               </Button>
 
               <Button type="button" variant="outlined" onClick={resetForm}>

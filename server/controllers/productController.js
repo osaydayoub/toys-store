@@ -3,12 +3,19 @@ import STATUS_CODE from "../constants/statusCodes.js";
 
 export const createProduct = async (req, res, next) => {
     try {
-        const { name, slug, description, price, category, ageRange, stock, images } = req.body;
-        const existingProduct = await Product.findOne({ slug });
-        if (existingProduct) {
-            return res.status(STATUS_CODE.CONFLICT).json({ success: false, message: "Product with this slug already exists" });
-        }
-        const newProduct = await Product.create({ name, slug, description, price, category, ageRange, stock, images });
+        const { name, description, price, category, ageRange, stock, images } =
+            req.body;
+
+        const newProduct = await Product.create({
+            name,
+            description,
+            price,
+            category,
+            ageRange,
+            stock,
+            images,
+        });
+
         res.status(STATUS_CODE.CREATED).json({
             success: true,
             message: "Product created successfully",

@@ -5,6 +5,7 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
 import CartProvider from "./context/CartContext";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/products/:slug" element={<ProductDetailsPage />} />
           <Route path="/cart" element={<CartPage />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </CartProvider>
   );

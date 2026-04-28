@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 const productSchema = new mongoose.Schema(
     {
         name: {
@@ -54,5 +55,15 @@ const productSchema = new mongoose.Schema(
     { timestamps: true }
 );
 // productSchema.index({ slug: 1 });
+
+productSchema.pre("validate", function () {
+    if (this.name) {
+        this.slug = slugify(this.name, {
+            lower: true,
+            strict: true,
+        });
+    }
+});
+
 const Product = mongoose.model("Product", productSchema);
 export default Product;

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
+import {
+  Box,
+  Container,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
-import {
-  Container,
-  Grid,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Box,
-} from "@mui/material";
 
 const categories = [
   "All",
@@ -35,6 +35,7 @@ function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedAgeRange, setSelectedAgeRange] = useState("All");
   const [sortBy, setSortBy] = useState("default");
@@ -54,8 +55,6 @@ function ProductsPage() {
     getProducts();
   }, []);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
   const filteredAndSortedProducts = products
     .filter((product) => {
       const matchesCategory =
@@ -67,23 +66,43 @@ function ProductsPage() {
       return matchesCategory && matchesAgeRange;
     })
     .sort((a, b) => {
-      if (sortBy === "price-low-high") {
-        return a.price - b.price;
-      }
-
-      if (sortBy === "price-high-low") {
-        return b.price - a.price;
-      }
-
+      if (sortBy === "price-low-high") return a.price - b.price;
+      if (sortBy === "price-high-low") return b.price - a.price;
       return 0;
     });
 
+  if (isLoading) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography>Loading products...</Typography>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography color="error">{error}</Typography>
+      </Container>
+    );
+  }
+
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container sx={{ mt: 4, mb: 6 }} maxWidth="lg">
+      <Typography variant="h4" gutterBottom textAlign="center">
         Toy Store Products
       </Typography>
-      <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
+
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mb: 4,
+          mt: 3,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel>Category</InputLabel>
           <Select
@@ -128,20 +147,19 @@ function ProductsPage() {
         </FormControl>
       </Box>
 
-      <Grid container spacing={3}>
-        {filteredAndSortedProducts.length === 0 ? (
-          <Typography color="text.secondary">
-            No products match your filters.
-          </Typography>
-        ) : (
-          filteredAndSortedProducts.map((product) => (
-            <Grid item xs={12} sm={6} md={4} key={product._id}>
+      {filteredAndSortedProducts.length === 0 ? (
+        <Typography textAlign="center" color="text.secondary">
+          No products match your filters.
+        </Typography>
+      ) : (
+        <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
+          {filteredAndSortedProducts.map((product) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
               <ProductCard product={product} />
             </Grid>
-          ))
-        )}
-      </Grid>
-
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 }
