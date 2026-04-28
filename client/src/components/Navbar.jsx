@@ -22,12 +22,16 @@ function Navbar() {
                 </Typography>
 
                 <Box>
+                    <Button component={Link} to="/admin/products" color="inherit">
+                        Admin
+                    </Button>
                     <Button component={Link} to="/products" color="inherit">
                         Products
                     </Button>
                     <Button component={Link} to="/cart" color="inherit">
                         Cart ({totalItems})
                     </Button>
+
                 </Box>
             </Toolbar>
         </AppBar>
