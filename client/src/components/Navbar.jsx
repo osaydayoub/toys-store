@@ -1,4 +1,16 @@
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import * as React from "react";
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
@@ -6,49 +18,110 @@ import logo from "../assets/logo.png";
 function Navbar() {
   const { totalItems } = useCart();
 
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+
+  const pages = [
+    { label: "Products", path: "/products" },
+    { label: `Cart (${totalItems})`, path: "/cart" },
+    { label: "Admin", path: "/admin/products" },
+  ];
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
   return (
-    <AppBar position="static" color="primary" elevation={0}>
-      <Toolbar>
-        <Box
-          component={Link}
-          to="/products"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            textDecoration: "none",
-            color: "inherit",
-            flexGrow: 1,
-          }}
-        >
+    <AppBar position="static" elevation={0}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+
+          {/* Logo */}
           <Box
-            component="img"
-            src={logo}
-            alt="Baby Kids Toys"
+            component={Link}
+            to="/products"
             sx={{
-              width: 48,
-              height: 48,
-              borderRadius: "50%",
-              objectFit: "cover",
-              backgroundColor: "white",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              textDecoration: "none",
+              color: "inherit",
+              flexGrow: { xs: 1, md: 0 },
+              mr: 2,
             }}
-          />
+          >
+            <Box
+              component="img"
+              src={logo}
+              alt="Baby Kids Toys"
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+                objectFit: "cover",
+              }}
+            />
 
-          <Typography variant="h6">Baby Kids Toys</Typography>
-        </Box>
+            <Typography variant="h6">
+              Baby Kids Toys
+            </Typography>
+          </Box>
 
-        <Button component={Link} to="/products" color="inherit">
-          Products
-        </Button>
+          {/* Mobile Menu */}
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
+              <MenuIcon />
+            </IconButton>
 
-        <Button component={Link} to="/cart" color="inherit">
-          Cart ({totalItems})
-        </Button>
+            <Menu
+              anchorEl={anchorElNav}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem
+                  key={page.label}
+                  component={Link}
+                  to={page.path}
+                  onClick={handleCloseNavMenu}
+                >
+                  {page.label}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
 
-        <Button component={Link} to="/admin/products" color="inherit">
-          Admin
-        </Button>
-      </Toolbar>
+          {/* Desktop Menu */}
+          <Box
+            sx={{
+              ml: "auto",
+              display: { xs: "none", md: "flex" },
+            }}
+          >
+            {pages.map((page) => (
+              <Button
+                key={page.label}
+                component={Link}
+                to={page.path}
+                color="inherit"
+              >
+                {page.label}
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 }
