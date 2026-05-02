@@ -14,16 +14,18 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const { totalItems } = useCart();
+  const { user, logout, isAdmin } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const pages = [
     { label: "Products", path: "/products" },
     { label: `Cart (${totalItems})`, path: "/cart" },
-    { label: "Admin", path: "/admin/products" },
+    ...(isAdmin ? [{ label: "Admin", path: "/admin/products" }] : []),
   ];
 
   const handleOpenNavMenu = (event) => {
@@ -99,6 +101,24 @@ function Navbar() {
                   {page.label}
                 </MenuItem>
               ))}
+              {user ? (
+                <MenuItem
+                  onClick={() => {
+                    logout();
+                    handleCloseNavMenu();
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  component={Link}
+                  to="/login"
+                  onClick={handleCloseNavMenu}
+                >
+                  Login
+                </MenuItem>
+              )}
             </Menu>
           </Box>
 
@@ -119,6 +139,15 @@ function Navbar() {
                 {page.label}
               </Button>
             ))}
+            {user ? (
+              <Button color="inherit" onClick={logout}>
+                Logout
+              </Button>
+            ) : (
+              <Button component={Link} to="/login" color="inherit">
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>

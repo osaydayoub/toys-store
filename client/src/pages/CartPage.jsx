@@ -6,6 +6,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
 
 function CartPage() {
     const {
@@ -77,6 +78,14 @@ function CartPage() {
                 onClick={clearCart}
             >
                 Clear Cart
+            </Button>
+            <Button
+                component={Link}
+                to="/checkout"
+                variant="contained"
+                sx={{ mt: 2, mr: 2 }}
+            >
+                Checkout
             </Button>
         </Container>
     );
