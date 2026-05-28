@@ -64,7 +64,7 @@ function AdminOrdersPage() {
         const matchesStatus =
             selectedStatus === "all" || order.status === selectedStatus;
 
-        const matchesOrderId = order._id
+        const matchesOrderId = order.orderNumber
             .toLowerCase()
             .includes(searchOrderId.toLowerCase());
 
@@ -139,7 +139,7 @@ function AdminOrdersPage() {
                             >
                                 <Box>
                                     <Typography variant="h6">
-                                        Order #{order._id.slice(-6)}
+                                        Order #{order.orderNumber}
                                     </Typography>
 
                                     <Typography color="text.secondary">

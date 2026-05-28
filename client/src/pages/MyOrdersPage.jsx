@@ -89,7 +89,7 @@ function MyOrdersPage() {
                         >
                             <Box>
                                 <Typography variant="h6">
-                                    Order #{order._id.slice(-6)}
+                                    Order #{order.orderNumber}
                                 </Typography>
 
                                 <Typography color="text.secondary">
@@ -125,7 +125,7 @@ function MyOrdersPage() {
                         {order.items.map((item) => (
                             <Box key={item.product} sx={{ mb: 1 }}>
                                 <Typography>
-                                    {item.name} × {item.quantity}
+                                    {item.name} x {item.quantity}
                                 </Typography>
                                 <Typography color="text.secondary">
                                     ₪{item.price} each
