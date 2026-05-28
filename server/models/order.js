@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Counter from "./counter.js";
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -25,6 +26,7 @@ const orderItemSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
   },
   { _id: false }
 );
@@ -35,6 +37,10 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    orderNumber: {
+      type: String,
+      unique: true,
     },
     items: {
       type: [orderItemSchema],
@@ -74,7 +80,20 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+orderSchema.pre("validate", async function () {
+  if (!this.orderNumber) {
+    const counter = await Counter.findOneAndUpdate(
+      { name: "orderNumber" },
+      { $inc: { value: 1 } },
+      {
+        returnDocument: "after",
+        upsert: true,
+      }
+    );
 
+    this.orderNumber = `${counter.value.toString().padStart(6, "0")}`;
+  }
+});
 const Order = mongoose.model("Order", orderSchema);
 
 export default Order;
