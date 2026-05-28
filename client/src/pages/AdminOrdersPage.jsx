@@ -31,7 +31,7 @@ function AdminOrdersPage() {
     const [feedback, setFeedback] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [selectedStatus, setSelectedStatus] = useState("all");
-    const [searchOrderId, setSearchOrderId] = useState("");
+    const [searchOrderNumber, setSearchOrderNumber] = useState("");
 
     const fetchOrders = async () => {
         try {
@@ -64,11 +64,11 @@ function AdminOrdersPage() {
         const matchesStatus =
             selectedStatus === "all" || order.status === selectedStatus;
 
-        const matchesOrderId = order.orderNumber
+        const matchesOrderNumber = order.orderNumber
             .toLowerCase()
-            .includes(searchOrderId.toLowerCase());
+            .includes(searchOrderNumber.toLowerCase());
 
-        return matchesStatus && matchesOrderId;
+        return matchesStatus && matchesOrderNumber;
     });
 
     if (isLoading) {
@@ -114,10 +114,10 @@ function AdminOrdersPage() {
                 </FormControl>
 
                 <TextField
-                    label="Search by Order ID"
+                    label="Search by Order Number"
                     size="small"
-                    value={searchOrderId}
-                    onChange={(e) => setSearchOrderId(e.target.value)}
+                    value={searchOrderNumber}
+                    onChange={(e) => setSearchOrderNumber(e.target.value)}
                     sx={{ minWidth: 260 }}
                 />
             </Box>
