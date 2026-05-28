@@ -11,6 +11,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminRoute from "./components/AdminRoute";
 import CheckoutPage from "./pages/CheckoutPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 import PrivateRoute from "./components/PrivateRoute";
 function App() {
   return (
@@ -40,6 +42,22 @@ function App() {
                 <PrivateRoute>
                   <CheckoutPage />
                 </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <PrivateRoute>
+                  <MyOrdersPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              element={
+                <AdminRoute>
+                  <AdminOrdersPage />
+                </AdminRoute>
               }
             />
           </Routes>

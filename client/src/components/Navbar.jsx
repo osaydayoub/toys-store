@@ -25,7 +25,13 @@ function Navbar() {
   const pages = [
     { label: "Products", path: "/products" },
     { label: `Cart (${totalItems})`, path: "/cart" },
-    ...(isAdmin ? [{ label: "Admin", path: "/admin/products" }] : []),
+    ...(user ? [{ label: "My Orders", path: "/my-orders" }] : []),
+    ...(isAdmin
+      ? [
+        { label: "Admin Products", path: "/admin/products" },
+        { label: "Admin Orders", path: "/admin/orders" },
+      ]
+      : []),
   ];
 
   const handleOpenNavMenu = (event) => {

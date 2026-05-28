@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 import {
   Alert,
   Box,
@@ -12,6 +14,9 @@ import { useCart } from "../context/CartContext";
 
 function CheckoutPage() {
   const { cartItems, totalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     city: "",
@@ -28,18 +33,32 @@ function CheckoutPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
 
-    // Later this will call backend order API
-    console.log({
-      items: cartItems,
-      shippingAddress: formData,
-      totalPrice,
-    });
+    try {
+      const orderData = {
+        items: cartItems,
+        shippingAddress: formData,
+        totalPrice,
+      };
 
-    clearCart();
-    setSuccess("Order placed successfully!");
+      await api.post("/orders", orderData);
+
+      clearCart();
+      setSuccess("Order placed successfully!");
+
+      setTimeout(() => {
+        navigate("/products");
+      }, 1500);
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to place order");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (cartItems.length === 0 && !success) {
@@ -61,6 +80,11 @@ function CheckoutPage() {
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
             {success}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
           </Alert>
         )}
 
@@ -100,9 +124,14 @@ function CheckoutPage() {
                 value={formData.phone}
                 onChange={handleChange}
               />
-
-              <Button fullWidth type="submit" variant="contained" sx={{ mt: 3 }}>
-                Place Order
+              <Button
+                fullWidth
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3 }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Placing order..." : "Place Order"}
               </Button>
             </Box>
           </>
