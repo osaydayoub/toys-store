@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
+import orderRoutes from "./routes/orderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/toysStore/products', productRoutes);
 app.use('/api/toysStore/auth', authRoutes);
+app.use("/api/toysStore/orders", orderRoutes);
 app.use(errorHandler);
 
 
