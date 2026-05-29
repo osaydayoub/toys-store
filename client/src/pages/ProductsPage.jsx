@@ -7,6 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import api from "../services/api";
@@ -39,6 +40,7 @@ function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedAgeRange, setSelectedAgeRange] = useState("All");
   const [sortBy, setSortBy] = useState("default");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const getProducts = async () => {
@@ -63,7 +65,10 @@ function ProductsPage() {
       const matchesAgeRange =
         selectedAgeRange === "All" || product.ageRange === selectedAgeRange;
 
-      return matchesCategory && matchesAgeRange;
+      const matchesSearchTerm =
+        searchTerm === "" || product.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return matchesCategory && matchesAgeRange && matchesSearchTerm;
     })
     .sort((a, b) => {
       if (sortBy === "price-low-high") return a.price - b.price;
@@ -103,6 +108,13 @@ function ProductsPage() {
           justifyContent: "center",
         }}
       >
+        <TextField
+          label="Search products"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ minWidth: 260 }}
+        />
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel>Category</InputLabel>
           <Select

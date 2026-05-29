@@ -45,6 +45,7 @@ function AdminProductsPage() {
   const [editingSlug, setEditingSlug] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: "", message: "" });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchProducts = async () => {
     try {
@@ -157,6 +158,10 @@ function AdminProductsPage() {
       });
     }
   };
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -279,12 +284,19 @@ function AdminProductsPage() {
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Existing Products
       </Typography>
+      <TextField
+        label="Search products"
+        size="small"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{ mb: 3, minWidth: 260 }}
+      />
 
-      {products.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <Typography color="text.secondary">No products yet.</Typography>
       ) : (
         <Stack spacing={2}>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Paper
               key={product._id}
               sx={{
