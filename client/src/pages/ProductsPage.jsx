@@ -6,6 +6,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Pagination,
   Select,
   TextField,
   Typography,
@@ -41,6 +42,8 @@ function ProductsPage() {
   const [selectedAgeRange, setSelectedAgeRange] = useState("All");
   const [sortBy, setSortBy] = useState("default");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(6);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -57,6 +60,12 @@ function ProductsPage() {
     getProducts();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedAgeRange, sortBy, productsPerPage]);
+
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
   const filteredAndSortedProducts = products
     .filter((product) => {
       const matchesCategory =
@@ -65,16 +74,26 @@ function ProductsPage() {
       const matchesAgeRange =
         selectedAgeRange === "All" || product.ageRange === selectedAgeRange;
 
-      const matchesSearchTerm =
-        searchTerm === "" || product.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        normalizedSearch === "" ||
+        product.name.toLowerCase().includes(normalizedSearch);
 
-      return matchesCategory && matchesAgeRange && matchesSearchTerm;
+      return matchesCategory && matchesAgeRange && matchesSearch;
     })
+    .slice()
     .sort((a, b) => {
       if (sortBy === "price-low-high") return a.price - b.price;
       if (sortBy === "price-high-low") return b.price - a.price;
       return 0;
     });
+
+  const totalProducts = filteredAndSortedProducts.length;
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = Math.min(startIndex + productsPerPage, totalProducts);
+
+  const paginatedProducts = filteredAndSortedProducts.slice(startIndex, endIndex);
 
   if (isLoading) {
     return (
@@ -100,22 +119,24 @@ function ProductsPage() {
 
       <Box
         sx={{
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, minmax(180px, 1fr))",
+            md: "repeat(5, minmax(150px, 1fr))",
+          },
           gap: 2,
           mb: 4,
           mt: 3,
-          flexWrap: "wrap",
-          justifyContent: "center",
         }}
       >
         <TextField
           label="Search products"
-          size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ minWidth: 260 }}
         />
-        <FormControl sx={{ minWidth: 200 }}>
+
+        <FormControl>
           <InputLabel>Category</InputLabel>
           <Select
             label="Category"
@@ -130,7 +151,7 @@ function ProductsPage() {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl>
           <InputLabel>Age Range</InputLabel>
           <Select
             label="Age Range"
@@ -145,7 +166,7 @@ function ProductsPage() {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl>
           <InputLabel>Sort</InputLabel>
           <Select
             label="Sort"
@@ -157,20 +178,57 @@ function ProductsPage() {
             <MenuItem value="price-high-low">Price: High to Low</MenuItem>
           </Select>
         </FormControl>
+
+        <FormControl>
+          <InputLabel>Per Page</InputLabel>
+          <Select
+            label="Per Page"
+            value={productsPerPage}
+            onChange={(e) => setProductsPerPage(Number(e.target.value))}
+          >
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={8}>8</MenuItem>
+            <MenuItem value={12}>12</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
-      {filteredAndSortedProducts.length === 0 ? (
+      {paginatedProducts.length === 0 ? (
         <Typography textAlign="center" color="text.secondary">
           No products match your filters.
         </Typography>
       ) : (
-        <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
-          {filteredAndSortedProducts.map((product) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-              <ProductCard product={product} />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            textAlign="center"
+            sx={{ mb: 2 }}
+          >
+            Showing {startIndex + 1}-{endIndex} of {totalProducts} products
+          </Typography>
+
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
+            {paginatedProducts.map((product) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                <ProductCard product={product} />
+              </Grid>
+            ))}
+          </Grid>
+
+          {totalPages > 1 && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(event, value) => setCurrentPage(value)}
+                color="primary"
+                shape="rounded"
+              />
+            </Box>
+          )}
+        </>
       )}
     </Container>
   );
