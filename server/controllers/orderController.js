@@ -13,6 +13,24 @@ export const createOrder = async (req, res, next) => {
       });
     }
 
+    for (const item of items) {
+      const product = await Product.findById(item._id);
+
+      if (!product) {
+        return res.status(STATUS_CODE.NOT_FOUND).json({
+          success: false,
+          message: `Product not found: ${item.name}`,
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({
+          success: false,
+          message: `${product.name} is not available in the requested quantity`,
+        });
+      }
+    }
+
     const orderItems = items.map((item) => ({
       product: item._id,
       name: item.name,
@@ -27,6 +45,12 @@ export const createOrder = async (req, res, next) => {
       shippingAddress,
       totalPrice,
     });
+
+    for (const item of items) {
+      await Product.findByIdAndUpdate(item._id, {
+        $inc: { stock: -item.quantity },
+      });
+    }
 
     res.status(STATUS_CODE.CREATED).json({
       success: true,
@@ -90,11 +114,7 @@ export const updateOrderStatus = async (req, res, next) => {
       });
     }
 
-    const order = await Order.findByIdAndUpdate(
-      id,
-      { status },
-      { returnDocument: "after", runValidators: true }
-    );
+    const order = await Order.findById(id);
 
     if (!order) {
       return res.status(STATUS_CODE.NOT_FOUND).json({
@@ -103,6 +123,36 @@ export const updateOrderStatus = async (req, res, next) => {
       });
     }
 
+    const previousStatus = order.status;
+
+    if (previousStatus === status) {
+      return res.status(STATUS_CODE.OK).json({
+        success: true,
+        message: "Order status is already up to date",
+        data: order,
+      });
+    }
+
+    if (
+      status === "cancelled" &&
+      ["shipped", "delivered"].includes(previousStatus)
+    ) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Cannot cancel an order after it has been shipped or delivered",
+      });
+    }
+
+    if (status === "cancelled" && previousStatus !== "cancelled") {
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+    
+    order.status = status;
+    await order.save();
     res.status(STATUS_CODE.OK).json({
       success: true,
       message: "Order status updated successfully",
