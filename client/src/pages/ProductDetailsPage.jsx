@@ -18,13 +18,16 @@ function ProductDetailsPage() {
     const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isOutOfStock, setIsOutOfStock] = useState(false);
     const [error, setError] = useState("");
+
 
     useEffect(() => {
         const getProduct = async () => {
             try {
                 const response = await api.get(`/products/${slug}`);
                 setProduct(response.data.data);
+                setIsOutOfStock(response.data.data.stock === 0);
             } catch (error) {
                 setError("Product not found");
             } finally {
@@ -94,17 +97,13 @@ function ProductDetailsPage() {
                             <Chip label={product.ageRange} variant="outlined" />
                         </Box>
 
-                        <Typography sx={{ mb: 3 }}>
-                            Stock: {product.stock}
-                        </Typography>
-
                         <Button
                             variant="contained"
                             size="large"
-                            disabled={product.stock === 0}
+                            disabled={isOutOfStock}
                             onClick={() => addToCart(product)}
                         >
-                            Add to Cart
+                            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
                         </Button>
                     </Grid>
                 </Grid>
