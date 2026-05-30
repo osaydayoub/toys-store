@@ -157,7 +157,13 @@ function AdminOrdersPage() {
                                     </Typography>
 
                                     <Typography color="text.secondary">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                        {new Date(order.createdAt).toLocaleString("en-GB", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
                                     </Typography>
 
                                     <Typography color="text.secondary">
