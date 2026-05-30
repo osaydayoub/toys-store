@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import {
   Alert,
@@ -25,6 +25,7 @@ function CheckoutPage() {
   });
 
   const [success, setSuccess] = useState("");
+  const [createdOrderNumber, setCreatedOrderNumber] = useState("");
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -46,14 +47,15 @@ function CheckoutPage() {
         totalPrice,
       };
 
-      await api.post("/orders", orderData);
+      const response = await api.post("/orders", orderData);
+      setCreatedOrderNumber(response.data.data.orderNumber);
 
       clearCart();
       setSuccess("Order placed successfully!");
 
-      setTimeout(() => {
-        navigate("/products");
-      }, 1500);
+      // setTimeout(() => {
+      //   navigate("/products");
+      // }, 1500);
     } catch (error) {
       setError(error.response?.data?.message || "Failed to place order");
     } finally {
@@ -78,8 +80,24 @@ function CheckoutPage() {
         </Typography>
 
         {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {success}
+          <Alert severity="success" sx={{ mb: 3 }}>
+            <Typography fontWeight={700}>{success}</Typography>
+
+            {createdOrderNumber && (
+              <Typography sx={{ mt: 1 }}>
+                Order Number: {createdOrderNumber}
+              </Typography>
+            )}
+
+            <Button
+              component={Link}
+              to="/my-orders"
+              variant="contained"
+              size="small"
+              sx={{ mt: 2 }}
+            >
+              Go to My Orders
+            </Button>
           </Alert>
         )}
         {error && (
@@ -124,15 +142,25 @@ function CheckoutPage() {
                 value={formData.phone}
                 onChange={handleChange}
               />
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{ mt: 3 }}
-                disabled={isLoading}
-              >
-                {isLoading ? "Placing order..." : "Place Order"}
-              </Button>
+              <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+                <Button
+                  component={Link}
+                  to="/cart"
+                  variant="outlined"
+                  fullWidth
+                >
+                  Back to Cart
+                </Button>
+
+                <Button
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Placing order..." : "Place Order"}
+                </Button>
+              </Box>
             </Box>
           </>
         )}
