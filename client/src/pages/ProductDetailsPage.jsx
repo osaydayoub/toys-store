@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 import {
     Box,
@@ -10,17 +11,23 @@ import {
     Container,
     Grid,
     Paper,
+    Snackbar,
+    Alert,
     Typography,
+    Stack,
+    Badge,
+    IconButton,
 } from "@mui/material";
 
 function ProductDetailsPage() {
     const { slug } = useParams();
-    const { addToCart } = useCart();
+    const { addToCart, totalItems } = useCart();
+    const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
     const [error, setError] = useState("");
-
+    const [cartMessageOpen, setCartMessageOpen] = useState(false);
 
     useEffect(() => {
         const getProduct = async () => {
@@ -37,6 +44,11 @@ function ProductDetailsPage() {
 
         getProduct();
     }, [slug]);
+
+    const handleAddToCart = () => {
+        addToCart(product);
+        setCartMessageOpen(true);
+    };
 
     if (isLoading) return <Typography sx={{ p: 4 }}>Loading product...</Typography>;
     if (error) return <Typography sx={{ p: 4 }}>{error}</Typography>;
@@ -97,17 +109,44 @@ function ProductDetailsPage() {
                             <Chip label={product.ageRange} variant="outlined" />
                         </Box>
 
-                        <Button
-                            variant="contained"
-                            size="large"
-                            disabled={isOutOfStock}
-                            onClick={() => addToCart(product)}
-                        >
-                            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-                        </Button>
+                        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                            <Button
+                                variant="contained"
+                                size="large"
+                                disabled={isOutOfStock}
+                                onClick={handleAddToCart}
+                            >
+                                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                            </Button>
+
+
+                            <IconButton
+                                color="primary"
+                                disabled={totalItems === 0}
+                                onClick={() => navigate("/cart")}
+                            >
+                                <Badge badgeContent={totalItems} color="secondary">
+                                    <ShoppingCartIcon />
+                                </Badge>
+                            </IconButton>
+
+                        </Stack>
                     </Grid>
                 </Grid>
             </Paper>
+            <Snackbar
+                open={cartMessageOpen}
+                autoHideDuration={3000}
+                onClose={() => setCartMessageOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert
+                    severity="success"
+                    onClose={() => setCartMessageOpen(false)}
+                >
+                    Product added to cart
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }
