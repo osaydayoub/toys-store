@@ -12,6 +12,12 @@ import {
     Select,
     Stack,
     TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Typography,
 } from "@mui/material";
 import api from "../services/api";
@@ -32,6 +38,7 @@ function AdminOrdersPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [searchOrderNumber, setSearchOrderNumber] = useState("");
+    const [orderToCancel, setOrderToCancel] = useState(null);
 
     const fetchOrders = async () => {
         try {
@@ -59,6 +66,13 @@ function AdminOrdersPage() {
         } catch (error) {
             setError(error.response?.data?.message || "Failed to update status");
         }
+    };
+    const confirmCancelOrder = async () => {
+        if (!orderToCancel) return;
+
+        await handleStatusChange(orderToCancel._id, "cancelled");
+
+        setOrderToCancel(null);
     };
     const filteredOrders = orders.filter((order) => {
         const matchesStatus =
@@ -166,9 +180,15 @@ function AdminOrdersPage() {
                                         <Select
                                             label="Status"
                                             value={order.status}
-                                            onChange={(e) =>
-                                                handleStatusChange(order._id, e.target.value)
-                                            }
+                                            onChange={(e) => {
+                                                const newStatus = e.target.value;
+
+                                                if (newStatus === "cancelled") {
+                                                    setOrderToCancel(order);
+                                                } else {
+                                                    handleStatusChange(order._id, newStatus);
+                                                }
+                                            }}
                                         >
                                             {statuses.map((status) => (
                                                 <MenuItem key={status} value={status}>
@@ -211,6 +231,38 @@ function AdminOrdersPage() {
                     ))}
                 </Stack>
             )}
+            <Dialog
+                open={Boolean(orderToCancel)}
+                onClose={() => setOrderToCancel(null)}
+            >
+                <DialogTitle>Cancel Order</DialogTitle>
+
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to cancel order{" "}
+                        <strong>{orderToCancel?.orderNumber}</strong>?
+
+                        <br />
+                        <br />
+
+                        Cancelling the order will restore the product stock.
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setOrderToCancel(null)}>
+                        Keep Order
+                    </Button>
+
+                    <Button
+                        color="error"
+                        variant="contained"
+                        onClick={confirmCancelOrder}
+                    >
+                        Cancel Order
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 }

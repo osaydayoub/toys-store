@@ -8,6 +8,11 @@ import {
   Paper,
   Stack,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Typography,
 } from "@mui/material";
 import api from "../services/api";
@@ -46,6 +51,7 @@ function AdminProductsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -157,6 +163,13 @@ function AdminProductsPage() {
         message: error.response?.data?.message || "Failed to delete product",
       });
     }
+  };
+
+  const confirmDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    await handleDelete(productToDelete.slug);
+    setProductToDelete(null);
   };
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -323,7 +336,7 @@ function AdminProductsPage() {
                 <Button
                   color="error"
                   variant="outlined"
-                  onClick={() => handleDelete(product.slug)}
+                  onClick={() => setProductToDelete(product)}
                 >
                   Delete
                 </Button>
@@ -332,6 +345,29 @@ function AdminProductsPage() {
           ))}
         </Stack>
       )}
+      <Dialog
+        open={Boolean(productToDelete)}
+        onClose={() => setProductToDelete(null)}
+      >
+        <DialogTitle>Delete Product</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete "{productToDelete?.name}"? This action
+            cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setProductToDelete(null)}>
+            Cancel
+          </Button>
+
+          <Button color="error" variant="contained" onClick={confirmDeleteProduct}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
