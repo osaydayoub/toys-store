@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import Loading from "../components/Loading";
 
 const categories = [
   "All",
@@ -98,7 +99,7 @@ function ProductsPage() {
   if (isLoading) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography>Loading products...</Typography>
+        <Loading text="Loading products..." />
       </Container>
     );
   }
