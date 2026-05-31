@@ -11,6 +11,12 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
@@ -22,17 +28,17 @@ function Navbar() {
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
-  const pages = [
-    { label: "Products", path: "/products" },
-    { label: `Cart (${totalItems})`, path: "/cart" },
-    ...(user ? [{ label: "My Orders", path: "/my-orders" }] : []),
-    ...(isAdmin
-      ? [
-        { label: "Admin Products", path: "/admin/products" },
-        { label: "Admin Orders", path: "/admin/orders" },
+const pages = [
+  { label: "Products", path: "/products", icon: <StorefrontIcon fontSize="small" /> },
+  { label: `Cart (${totalItems})`, path: "/cart", icon: <ShoppingCartIcon fontSize="small" /> },
+  ...(user ? [{ label: "My Orders", path: "/my-orders", icon: <ReceiptLongIcon fontSize="small" /> }] : []),
+  ...(isAdmin
+    ? [
+        { label: "Admin Products", path: "/admin/products", icon: <AdminPanelSettingsIcon fontSize="small" /> },
+        { label: "Admin Orders", path: "/admin/orders", icon: <ReceiptLongIcon fontSize="small" /> },
       ]
-      : []),
-  ];
+    : []),
+];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -104,7 +110,8 @@ function Navbar() {
                   to={page.path}
                   onClick={handleCloseNavMenu}
                 >
-                  {page.label}
+                  {page.icon} <span style={{ marginLeft: 4 }}>{page.label}</span>
+                
                 </MenuItem>
               ))}
               {user ? (
@@ -114,6 +121,7 @@ function Navbar() {
                     handleCloseNavMenu();
                   }}
                 >
+                  <LogoutIcon fontSize="small" />
                   Logout
                 </MenuItem>
               ) : (
@@ -122,6 +130,7 @@ function Navbar() {
                   to="/login"
                   onClick={handleCloseNavMenu}
                 >
+                  <LoginIcon fontSize="small" />
                   Login
                 </MenuItem>
               )}
@@ -142,15 +151,17 @@ function Navbar() {
                 to={page.path}
                 color="inherit"
               >
-                {page.label}
+       {page.icon} <span style={{ marginLeft: 4 }}>{page.label}</span>
               </Button>
             ))}
             {user ? (
               <Button color="inherit" onClick={logout}>
+                <LogoutIcon fontSize="small" />
                 Logout
               </Button>
             ) : (
               <Button component={Link} to="/login" color="inherit">
+                <LoginIcon fontSize="small" />
                 Login
               </Button>
             )}
