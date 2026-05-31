@@ -52,6 +52,8 @@ function AdminProductsPage() {
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [productToDelete, setProductToDelete] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -68,10 +70,11 @@ function AdminProductsPage() {
   useEffect(() => {
     fetchProducts();
   }, []);
-
+  
   const resetForm = () => {
     setFormData(initialFormData);
     setEditingSlug(null);
+    setImageFile(null);
   };
 
   const handleChange = (e) => {
@@ -107,21 +110,49 @@ function AdminProductsPage() {
       .filter(Boolean),
   });
 
+  const uploadImage = async () => {
+    if (!imageFile) return null;
+
+    const uploadFormData = new FormData();
+    uploadFormData.append("image", imageFile);
+
+    const response = await api.post("/upload", uploadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data.data.url;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setFeedback({ type: "", message: "" });
 
     try {
+      setIsUploading(true);
+
+      const uploadedImageUrl = await uploadImage();
+
+      const productPayload = {
+        ...buildProductPayload(),
+        images: uploadedImageUrl
+          ? [uploadedImageUrl]
+          : buildProductPayload().images,
+      };
+
+      setIsUploading(false);
+
       if (editingSlug) {
-        await api.put(`/products/${editingSlug}`, buildProductPayload());
+        await api.put(`/products/${editingSlug}`, productPayload);
 
         setFeedback({
           type: "success",
           message: "Product updated successfully",
         });
       } else {
-        await api.post("/products", buildProductPayload());
+        await api.post("/products", productPayload);
 
         setFeedback({
           type: "success",
@@ -130,6 +161,7 @@ function AdminProductsPage() {
       }
 
       resetForm();
+      setImageFile(null);
       fetchProducts();
     } catch (error) {
       setFeedback({
@@ -139,6 +171,7 @@ function AdminProductsPage() {
           (editingSlug ? "Failed to update product" : "Failed to create product"),
       });
     } finally {
+      setIsUploading(false);
       setIsLoading(false);
     }
   };
@@ -274,16 +307,28 @@ function AdminProductsPage() {
               value={formData.images}
               onChange={handleChange}
             />
+            <Button variant="outlined" component="label">
+              {imageFile ? imageFile.name : "Upload Product Image"}
+
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImageFile(e.target.files[0])}
+              />
+            </Button>
 
             <Box sx={{ display: "flex", gap: 2 }}>
               <Button type="submit" variant="contained" disabled={isLoading}>
-                {isLoading
-                  ? editingSlug
-                    ? "Updating..."
-                    : "Creating..."
-                  : editingSlug
-                    ? "Update Product"
-                    : "Create Product"}
+                {isUploading
+                  ? "Uploading image..."
+                  : isLoading
+                    ? editingSlug
+                      ? "Updating..."
+                      : "Creating..."
+                    : editingSlug
+                      ? "Update Product"
+                      : "Create Product"}
               </Button>
 
               <Button type="button" variant="outlined" onClick={resetForm}>
