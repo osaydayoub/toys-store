@@ -4,16 +4,25 @@ import {
   Container,
   FormControl,
   Grid,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Pagination,
+  Paper,
   Select,
+  Button,
+  Collapse,
   TextField,
   Typography,
 } from "@mui/material";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
+import banner1 from "../assets/banner.png";
+import banner2 from "../assets/desktop-banner.png";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+
 
 const categories = [
   "All",
@@ -43,6 +52,7 @@ function ProductsPage() {
   const [selectedAgeRange, setSelectedAgeRange] = useState("All");
   const [sortBy, setSortBy] = useState("default");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(6);
 
@@ -113,125 +123,215 @@ function ProductsPage() {
   }
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }} maxWidth="lg">
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Toy Store Products
-      </Typography>
-
+    <>
       <Box
+        component="img"
+        src={banner1}
+        alt="Baby Kids Toys Banner"
         sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, minmax(180px, 1fr))",
-            md: "repeat(5, minmax(150px, 1fr))",
+          display: {
+            xs: "block",
+            md: "none",
           },
-          gap: 2,
-          mb: 4,
-          mt: 3,
+          width: "100%",
+          height: "auto",
+        }}
+      />
+      <Container
+        maxWidth="lg"
+        sx={{
+          mt: {
+            xs: 0,
+            md: 4,
+          },
+          mb: 6,
         }}
       >
-        <TextField
-          label="Search products"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <Paper
+          sx={{
+            mb: 4,
+            borderRadius: 4,
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            component="img"
+            src={banner2}
+            alt="Banner"
+            sx={{
+              width: "100%",
+              height: "auto",
+              display: {
+                xs: "none",
+                md: "block",
+              },
+            }}
+          />
+        </Paper>
 
-        <FormControl>
-          <InputLabel>Category</InputLabel>
-          <Select
-            label="Category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            {categories.map((category) => (
-              <MenuItem key={category} value={category}>
-                {category}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <InputLabel>Age Range</InputLabel>
-          <Select
-            label="Age Range"
-            value={selectedAgeRange}
-            onChange={(e) => setSelectedAgeRange(e.target.value)}
-          >
-            {ageRanges.map((age) => (
-              <MenuItem key={age} value={age}>
-                {age}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <InputLabel>Sort</InputLabel>
-          <Select
-            label="Sort"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <MenuItem value="default">Default</MenuItem>
-            <MenuItem value="price-low-high">Price: Low to High</MenuItem>
-            <MenuItem value="price-high-low">Price: High to Low</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <InputLabel>Per Page</InputLabel>
-          <Select
-            label="Per Page"
-            value={productsPerPage}
-            onChange={(e) => setProductsPerPage(Number(e.target.value))}
-          >
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={12}>12</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      {paginatedProducts.length === 0 ? (
-        <Typography textAlign="center" color="text.secondary">
-          No products match your filters.
+        <Typography variant="h4" gutterBottom textAlign="center">
+          Toy Store Products
         </Typography>
-      ) : (
-        <>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            textAlign="center"
-            sx={{ mb: 2 }}
+
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            mb: 2,
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            fullWidth
+            label="Search products"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "primary.main" }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button
+            variant="outlined"
+            onClick={() => setShowFilters((prev) => !prev)}
+            sx={{
+              minWidth: { xs: 56, sm: 130 },
+              width: { xs: 56, sm: "auto" },
+              height: 56,
+              flexShrink: 0,
+            }}
           >
-            Showing {startIndex + 1}-{endIndex} of {totalProducts} products
-          </Typography>
+            <FilterListIcon />
 
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
-            {paginatedProducts.map((product) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-          </Grid>
-
-          {totalPages > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(event, value) => setCurrentPage(value)}
-                color="primary"
-                shape="rounded"
-              />
+            <Box
+              sx={{
+                ml: 1,
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              Filters
             </Box>
-          )}
-        </>
-      )}
-    </Container>
+          </Button>
+        </Box>
+
+        <Collapse in={showFilters}>
+          <Paper sx={{ p: 2, mb: 4, borderRadius: 3 }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(4, 1fr)",
+                },
+                gap: 2,
+              }}
+            >
+              <FormControl>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  label="Category"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <InputLabel>Age Range</InputLabel>
+                <Select
+                  label="Age Range"
+                  value={selectedAgeRange}
+                  onChange={(e) => setSelectedAgeRange(e.target.value)}
+                >
+                  {ageRanges.map((age) => (
+                    <MenuItem key={age} value={age}>
+                      {age}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <InputLabel>Sort</InputLabel>
+                <Select
+                  label="Sort"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <MenuItem value="default">Default</MenuItem>
+                  <MenuItem value="price-low-high">Price: Low to High</MenuItem>
+                  <MenuItem value="price-high-low">Price: High to Low</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <InputLabel>Per Page</InputLabel>
+                <Select
+                  label="Per Page"
+                  value={productsPerPage}
+                  onChange={(e) => setProductsPerPage(Number(e.target.value))}
+                >
+                  <MenuItem value={4}>4</MenuItem>
+                  <MenuItem value={6}>6</MenuItem>
+                  <MenuItem value={8}>8</MenuItem>
+                  <MenuItem value={12}>12</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Paper>
+        </Collapse>
+
+
+        {paginatedProducts.length === 0 ? (
+          <Typography textAlign="center" color="text.secondary">
+            No products match your filters.
+          </Typography>
+        ) : (
+          <>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              textAlign="center"
+              sx={{ mb: 2 }}
+            >
+              Showing {startIndex + 1}-{endIndex} of {totalProducts} products
+            </Typography>
+
+            <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
+              {paginatedProducts.map((product) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                  <ProductCard product={product} />
+                </Grid>
+              ))}
+            </Grid>
+
+            {totalPages > 1 && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={(event, value) => setCurrentPage(value)}
+                  color="primary"
+                  shape="rounded"
+                />
+              </Box>
+            )}
+          </>
+        )}
+      </Container>
+    </>
+
   );
 }
 
