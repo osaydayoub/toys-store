@@ -19,6 +19,7 @@ import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import AgeFilterCarousel from "../components/AgeFilterCarousel";
+import CategoryFilterCarousel from "../components/CategoryFilterCarousel";
 import banner1 from "../assets/banner.png";
 import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -35,6 +36,7 @@ const categories = [
   "Outdoor Toys",
   "Role-Play Toys", 
   "Books & Stories",
+  "Toy Sets",
   "Other",
 ];
 
@@ -180,6 +182,10 @@ function ProductsPage() {
         <AgeFilterCarousel
           selectedAgeRange={selectedAgeRange}
           onSelectAge={setSelectedAgeRange}
+        />
+        <CategoryFilterCarousel
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
         />
 
         <Box
