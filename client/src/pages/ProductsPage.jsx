@@ -18,10 +18,12 @@ import {
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
+import AgeFilterCarousel from "../components/AgeFilterCarousel";
 import banner1 from "../assets/banner.png";
 import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
+
 
 
 const categories = [
@@ -172,6 +174,10 @@ function ProductsPage() {
         <Typography variant="h4" gutterBottom textAlign="center">
           Toy Store Products
         </Typography>
+        <AgeFilterCarousel
+          selectedAgeRange={selectedAgeRange}
+          onSelectAge={setSelectedAgeRange}
+        />
 
         <Box
           sx={{
@@ -181,6 +187,7 @@ function ProductsPage() {
             alignItems: "center",
           }}
         >
+
           <TextField
             fullWidth
             label="Search products"
