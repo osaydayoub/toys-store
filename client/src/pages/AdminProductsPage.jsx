@@ -23,6 +23,8 @@ const categories = [
   "Puzzle & Brain Games",
   "Motor Skills Toys",
   "Outdoor Toys",
+  "Role-Play Toys",
+  "Books & Stories",
   "Other",
 ];
 
@@ -30,6 +32,7 @@ const ageRanges = [
   "0-6 Months",
   "6-12 Months",
   "1-2 Years",
+  "2+ Years",
   "3-5 Years",
   "6+ Years",
 ];
