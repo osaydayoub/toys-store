@@ -79,6 +79,12 @@ function Footer() {
                 flexWrap="wrap"
                 justifyContent={{ xs: "center", md: "flex-start" }}
                 useFlexGap
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "flex",
+                  },
+                }}
               >
                 <Typography
                   component={Link}
