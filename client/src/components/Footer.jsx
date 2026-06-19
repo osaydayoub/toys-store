@@ -24,6 +24,7 @@ function Footer() {
         py: 5,
         backgroundColor: "#F7F3EF",
         borderTop: "1px solid #eee",
+        pb: { xs: 10, md: 5 },
       }}
     >
       <Container maxWidth="lg">

@@ -14,6 +14,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import PrivateRoute from "./components/PrivateRoute";
+import MobileBottomNav from "./components/MobileBottomNav";
 function App() {
   return (
     <CartProvider>
@@ -62,6 +63,7 @@ function App() {
             />
           </Routes>
           <Footer />
+          <MobileBottomNav />
         </BrowserRouter>
       </AuthProvider>
     </CartProvider>
