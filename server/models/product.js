@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema(
         category: {
             type: String,
             required: [true, "Product category is required"],
-            enum: ["Educational Toys", "Sensory Toys", "Puzzle & Brain Games", "Motor Skills Toys", "Outdoor Toys", "Role-Play Toys", "Books & Stories", "Other"]
+            enum: ["Educational Toys", "Sensory Toys", "Puzzle & Brain Games", "Motor Skills Toys", "Outdoor Toys", "Role-Play Toys", "Books & Stories","Toy Sets", "Other"]
         },
         ageRange: {
             type: String,
