@@ -47,7 +47,9 @@ const ageRanges = [
   "1-2 Years",
   "2+ Years",
   "3-5 Years",
+  "5+ Years",
   "6+ Years",
+  "7+ Years",
 ];
 
 function ProductsPage() {

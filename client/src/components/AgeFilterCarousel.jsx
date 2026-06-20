@@ -8,7 +8,9 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
         { label: "1-2 Years", value: "1-2 Years", image: "/age/1-2.png" },
         { label: "2+ Years", value: "2+ Years", image: "/age/2-plus.png" },
         { label: "3-5 Years", value: "3-5 Years", image: "/age/3-5.png" },
+        { label: "5+ Years", value: "5+ Years", image: "/age/5-plus.png" },
         { label: "6+ Years", value: "6+ Years", image: "/age/6-plus.png" },
+        { label: "7+ Years", value: "7+ Years", image: "/age/7-plus.png" },
     ];
 
     return (
