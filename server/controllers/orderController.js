@@ -2,9 +2,17 @@ import Order from "../models/order.js";
 import Product from "../models/product.js";
 import STATUS_CODE from "../constants/statusCodes.js";
 
+const shippingCosts = {
+  "Jerusalem District": 70,
+  "Northern & Haifa District": 50,
+  "Central & Tel Aviv District": 50,
+  "Southern District": 70,
+  "West Bank": 70,
+};
+
 export const createOrder = async (req, res, next) => {
   try {
-    const { items, shippingAddress, totalPrice } = req.body;
+    const { items, shippingAddress, deliveryNote } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({
@@ -12,6 +20,24 @@ export const createOrder = async (req, res, next) => {
         message: "Order must contain at least one item",
       });
     }
+
+    if (!shippingAddress?.region) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Shipping region is required",
+      });
+    }
+
+    const shippingCost = shippingCosts[shippingAddress.region];
+
+    if (shippingCost === undefined) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid shipping region",
+      });
+    }
+
+    let itemsPrice = 0;
 
     for (const item of items) {
       const product = await Product.findById(item._id);
@@ -29,6 +55,8 @@ export const createOrder = async (req, res, next) => {
           message: `${product.name} is not available in the requested quantity`,
         });
       }
+
+      itemsPrice += product.price * item.quantity;
     }
 
     const orderItems = items.map((item) => ({
@@ -39,10 +67,15 @@ export const createOrder = async (req, res, next) => {
       image: item.images?.[0] || "",
     }));
 
+    const totalPrice = itemsPrice + shippingCost;
+
     const order = await Order.create({
       user: req.user._id,
       items: orderItems,
       shippingAddress,
+      deliveryNote,
+      itemsPrice,
+      shippingCost,
       totalPrice,
     });
 

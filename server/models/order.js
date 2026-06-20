@@ -51,6 +51,11 @@ const orderSchema = new mongoose.Schema(
       },
     },
     shippingAddress: {
+      region: {
+        type: String,
+        required: true,
+        trim: true,
+      },
       city: {
         type: String,
         required: true,
@@ -67,11 +72,30 @@ const orderSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    deliveryNote: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    itemsPrice: {
+      type: Number,
+      required: true,
+      min: [0, "Items price cannot be negative"],
+    },
+
+    shippingCost: {
+      type: Number,
+      required: true,
+      min: [0, "Shipping cost cannot be negative"],
+    },
+
     totalPrice: {
       type: Number,
       required: true,
       min: [0, "Total price cannot be negative"],
     },
+
     status: {
       type: String,
       enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
