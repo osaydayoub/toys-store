@@ -14,6 +14,7 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
+  Snackbar,
 } from "@mui/material";
 import api from "../services/api";
 
@@ -57,6 +58,7 @@ function AdminProductsPage() {
   const [productToDelete, setProductToDelete] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -73,7 +75,7 @@ function AdminProductsPage() {
   useEffect(() => {
     fetchProducts();
   }, []);
-  
+
   const resetForm = () => {
     setFormData(initialFormData);
     setEditingSlug(null);
@@ -101,7 +103,9 @@ function AdminProductsPage() {
     });
 
     setFeedback({ type: "", message: "" });
+    setIsFormOpen(true);
   };
+
 
   const buildProductPayload = () => ({
     ...formData,
@@ -134,6 +138,7 @@ function AdminProductsPage() {
     setFeedback({ type: "", message: "" });
 
     try {
+
       setIsUploading(true);
 
       const uploadedImageUrl = await uploadImage();
@@ -165,6 +170,7 @@ function AdminProductsPage() {
 
       resetForm();
       setImageFile(null);
+      setIsFormOpen(false);
       fetchProducts();
     } catch (error) {
       setFeedback({
@@ -218,129 +224,170 @@ function AdminProductsPage() {
         Admin Products
       </Typography>
 
-      {feedback.message && (
-        <Alert severity={feedback.type} sx={{ mb: 3 }}>
+      <Snackbar
+        open={Boolean(feedback.message)}
+        autoHideDuration={6000}
+        onClose={() => setFeedback({ type: "", message: "" })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity={feedback.type || "info"}
+          onClose={() => setFeedback({ type: "", message: "" })}
+          sx={{ width: "100%" }}
+        >
           {feedback.message}
         </Alert>
-      )}
+      </Snackbar>
 
-      <Paper sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="h5" gutterBottom>
+      <Button
+        variant="contained"
+        onClick={() => {
+          resetForm();
+          setIsFormOpen(true);
+        }}
+      >
+        Add Product
+      </Button>
+
+      <Dialog
+        open={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          resetForm();
+        }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
           {editingSlug ? "Edit Product" : "Create Product"}
-        </Typography>
+        </DialogTitle>
 
-        <Box component="form" onSubmit={handleSubmit}>
-          <Stack spacing={2}>
-            <TextField
-              required
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-
-            <TextField
-              required
-              fullWidth
-              multiline
-              minRows={3}
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-
-            <TextField
-              required
-              fullWidth
-              label="Price"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={handleChange}
-            />
-
-            <TextField
-              required
-              select
-              fullWidth
-              label="Category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              {categories.map((category) => (
-                <MenuItem key={category} value={category}>
-                  {category}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              required
-              select
-              fullWidth
-              label="Age Range"
-              name="ageRange"
-              value={formData.ageRange}
-              onChange={handleChange}
-            >
-              {ageRanges.map((age) => (
-                <MenuItem key={age} value={age}>
-                  {age}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              required
-              fullWidth
-              label="Stock"
-              name="stock"
-              type="number"
-              value={formData.stock}
-              onChange={handleChange}
-            />
-
-            <TextField
-              fullWidth
-              label="Image URLs separated by comma"
-              name="images"
-              value={formData.images}
-              onChange={handleChange}
-            />
-            <Button variant="outlined" component="label">
-              {imageFile ? imageFile.name : "Upload Product Image"}
-
-              <input
-                hidden
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImageFile(e.target.files[0])}
+        <DialogContent dividers>
+          <Box component="form" onSubmit={handleSubmit}>
+            <Stack spacing={2}>
+              <TextField
+                required
+                fullWidth
+                label="Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
               />
-            </Button>
 
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button type="submit" variant="contained" disabled={isLoading}>
-                {isUploading
-                  ? "Uploading image..."
-                  : isLoading
-                    ? editingSlug
-                      ? "Updating..."
-                      : "Creating..."
-                    : editingSlug
-                      ? "Update Product"
-                      : "Create Product"}
+              <TextField
+                required
+                fullWidth
+                multiline
+                minRows={3}
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+
+              <TextField
+                required
+                fullWidth
+                label="Price"
+                name="price"
+                type="number"
+                value={formData.price}
+                onChange={handleChange}
+              />
+
+              <TextField
+                required
+                select
+                fullWidth
+                label="Category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                {categories.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                required
+                select
+                fullWidth
+                label="Age Range"
+                name="ageRange"
+                value={formData.ageRange}
+                onChange={handleChange}
+              >
+                {ageRanges.map((age) => (
+                  <MenuItem key={age} value={age}>
+                    {age}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                required
+                fullWidth
+                label="Stock"
+                name="stock"
+                type="number"
+                value={formData.stock}
+                onChange={handleChange}
+              />
+
+              <TextField
+                fullWidth
+                label="Image URLs separated by comma"
+                name="images"
+                value={formData.images}
+                onChange={handleChange}
+              />
+              <Button variant="outlined" component="label">
+                {imageFile ? imageFile.name : "Upload Product Image"}
+
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                />
               </Button>
 
-              <Button type="button" variant="outlined" onClick={resetForm}>
-                {editingSlug ? "Cancel Edit" : "Clear"}
-              </Button>
-            </Box>
-          </Stack>
-        </Box>
-      </Paper>
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <Button type="submit" variant="contained" disabled={isLoading}>
+                  {isUploading
+                    ? "Uploading image..."
+                    : isLoading
+                      ? editingSlug
+                        ? "Updating..."
+                        : "Creating..."
+                      : editingSlug
+                        ? "Update Product"
+                        : "Create Product"}
+                </Button>
+
+                <Button type="button" variant="outlined" onClick={resetForm}>
+                  {editingSlug ? "Cancel Edit" : "Clear"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={() => {
+                    resetForm();
+                    setIsFormOpen(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+
 
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Existing Products
