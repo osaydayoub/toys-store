@@ -6,11 +6,20 @@ import {
   Box,
   Button,
   Container,
+  MenuItem,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
+
+const shippingCosts = {
+  "Jerusalem District": 70,
+  "Northern & Haifa District": 50,
+  "Central & Tel Aviv District": 50,
+  "Southern District": 70,
+  "West Bank": 70,
+};
 
 function CheckoutPage() {
   const { cartItems, totalPrice, clearCart } = useCart();
@@ -19,14 +28,17 @@ function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
+    region: "",
     city: "",
     street: "",
     phone: "",
   });
+  const [deliveryNote, setDeliveryNote] = useState("");
 
   const [success, setSuccess] = useState("");
   const [createdOrderNumber, setCreatedOrderNumber] = useState("");
-
+  const shippingCost = formData.region ? shippingCosts[formData.region] : 0;
+  const finalTotal = totalPrice + shippingCost;
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -44,7 +56,7 @@ function CheckoutPage() {
       const orderData = {
         items: cartItems,
         shippingAddress: formData,
-        totalPrice,
+        deliveryNote: deliveryNote,
       };
 
       const response = await api.post("/orders", orderData);
@@ -108,11 +120,35 @@ function CheckoutPage() {
 
         {!success && (
           <>
-            <Typography sx={{ mb: 2 }}>
-              Total: ₪{totalPrice.toFixed(2)}
+            <Typography sx={{ mb: 1 }}>
+              Items: ₪{totalPrice.toFixed(2)}
+            </Typography>
+
+            <Typography sx={{ mb: 1 }}>
+              Shipping: ₪{shippingCost.toFixed(2)}
+            </Typography>
+
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Total: ₪{finalTotal.toFixed(2)}
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                required
+                select
+                margin="normal"
+                label="Region"
+                name="region"
+                value={formData.region}
+                onChange={handleChange}
+              >
+                {Object.entries(shippingCosts).map(([region, cost]) => (
+                  <MenuItem key={region} value={region}>
+                    {region} - ₪{cost}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 fullWidth
                 required
@@ -141,6 +177,16 @@ function CheckoutPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+              />
+              <TextField
+                fullWidth
+                multiline
+                minRows={2}
+                margin="normal"
+                label="Delivery note (optional)"
+                value={deliveryNote}
+                onChange={(e) => setDeliveryNote(e.target.value)}
+                placeholder="Example: Call before arriving"
               />
               <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
                 <Button

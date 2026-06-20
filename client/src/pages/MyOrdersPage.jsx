@@ -138,17 +138,30 @@ function MyOrdersPage() {
                                 </Typography>
                             </Box>
                         ))}
+                        <Typography color="text.secondary">
+                            Shipping Cost: ₪{order.shippingCost?.toFixed(2)}
+                        </Typography>
 
                         <Divider sx={{ my: 2 }} />
+
 
                         <Typography variant="h6">
                             Total: ₪{order.totalPrice.toFixed(2)}
                         </Typography>
-
                         <Typography color="text.secondary">
-                            Shipping: {order.shippingAddress.city},{" "}
+                            Shipping:{order.shippingAddress.region}, {order.shippingAddress.city},{" "}
                             {order.shippingAddress.street}
                         </Typography>
+
+                        {order.deliveryNote && (
+                            <>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography color="text.secondary">
+                                    Note: {order.deliveryNote}
+                                </Typography>
+                            </>
+
+                        )}
                     </Paper>
                 ))}
             </Stack>
