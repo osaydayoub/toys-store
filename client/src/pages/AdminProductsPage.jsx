@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -49,6 +50,7 @@ const initialFormData = {
 };
 
 function AdminProductsPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState(initialFormData);
   const [editingSlug, setEditingSlug] = useState(null);
@@ -217,6 +219,10 @@ function AdminProductsPage() {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const viewProduct = (product) => {
+    navigate(`/products/${product.slug}`);
+  };
+
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -368,9 +374,6 @@ function AdminProductsPage() {
                         : "Create Product"}
                 </Button>
 
-                <Button type="button" variant="outlined" onClick={resetForm}>
-                  {editingSlug ? "Cancel Edit" : "Clear"}
-                </Button>
                 <Button
                   type="button"
                   variant="outlined"
@@ -410,6 +413,10 @@ function AdminProductsPage() {
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                flexDirection: {
+                  xs: "column", 
+                  sm: "row",    
+                },
                 alignItems: "center",
                 p: 2,
                 borderRadius: 2,
@@ -424,6 +431,13 @@ function AdminProductsPage() {
               </Box>
 
               <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => viewProduct(product)}
+                >
+                  View Product
+                </Button>
+
                 <Button variant="outlined" onClick={() => handleEdit(product)}>
                   Edit
                 </Button>
