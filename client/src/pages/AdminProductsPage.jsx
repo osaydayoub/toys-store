@@ -66,6 +66,7 @@ function AdminProductsPage() {
   const [imageUrlInput, setImageUrlInput] = useState("");
   const [imageUrls, setImageUrls] = useState([]);
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -246,6 +247,13 @@ function AdminProductsPage() {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const confirmRemoveImage = () => {
+    if (!imageToDelete) return;
+
+    removeImageUrl(imageToDelete);
+    setImageToDelete(null);
   };
 
   return (
@@ -451,7 +459,7 @@ function AdminProductsPage() {
                       <Button
                         color="error"
                         variant="outlined"
-                        onClick={() => removeImageUrl(url)}
+                        onClick={() => setImageToDelete(url)}
                       >
                         Remove
                       </Button>
@@ -572,6 +580,57 @@ function AdminProductsPage() {
 
           <Button color="error" variant="contained" onClick={confirmDeleteProduct}>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(imageToDelete)}
+        onClose={() => setImageToDelete(null)}
+      >
+        <DialogTitle>Remove Image</DialogTitle>
+
+        <DialogContent>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              py: 1,
+            }}
+          >
+            <Box
+              component="img"
+              src={imageToDelete}
+              alt="Image to remove"
+              sx={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            />
+
+            <DialogContentText>
+              Are you sure you want to remove this image?
+            </DialogContentText>
+          </Box>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setImageToDelete(null)}>
+            Cancel
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={confirmRemoveImage}
+          >
+            Remove
           </Button>
         </DialogActions>
       </Dialog>
