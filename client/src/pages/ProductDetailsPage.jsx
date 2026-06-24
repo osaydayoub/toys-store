@@ -18,6 +18,7 @@ import {
     Badge,
     IconButton,
 } from "@mui/material";
+import ProductImageGallery from "../components/ProductImageGallery";
 
 function ProductDetailsPage() {
     const { slug } = useParams();
@@ -63,18 +64,7 @@ function ProductDetailsPage() {
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
                         {product.images?.[0] ? (
-                            <Box
-                                component="img"
-                                src={product.images[0]}
-                                alt={product.name}
-                                sx={{
-                                    width: "100%",
-                                    maxHeight: 420,
-                                    objectFit: "cover",
-                                    borderRadius: 2,
-                                    backgroundColor: "#f5f5f5",
-                                }}
-                            />
+                            <ProductImageGallery images={product.images} productName={product.name} />
                         ) : (
                             <Box
                                 sx={{

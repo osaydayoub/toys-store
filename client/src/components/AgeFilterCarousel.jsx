@@ -15,14 +15,28 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
 
     return (
         <Box
-            sx={{
+            sx={(theme) => ({
                 display: "flex",
                 gap: 2,
-                overflowX: "auto",
                 pb: 1,
                 mb: 3,
-                scrollSnapType: "x mandatory",
-            }}
+                overflowX: "auto",
+
+                "&::-webkit-scrollbar": {
+                    height: 8,
+                },
+                "&::-webkit-scrollbar-track": {
+                    backgroundColor: theme.palette.grey[200],
+                    borderRadius: 10,
+                },
+                "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: theme.palette.secondary.main,
+                    borderRadius: 10,
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
+                    backgroundColor: theme.palette.secondary.dark,
+                },
+            })}
         >
             {ageOptions.map((age) => {
                 const isSelected = selectedAgeRange === age.value;

@@ -49,7 +49,6 @@ const initialFormData = {
   category: "",
   ageRange: "",
   stock: "",
-  images: "",
 };
 
 function AdminProductsPage() {
@@ -60,10 +59,13 @@ function AdminProductsPage() {
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [productToDelete, setProductToDelete] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [viewedProductIds, setViewedProductIds] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUrlInput, setImageUrlInput] = useState("");
+  const [imageUrls, setImageUrls] = useState([]);
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -85,6 +87,9 @@ function AdminProductsPage() {
     setFormData(initialFormData);
     setEditingSlug(null);
     setImageFile(null);
+    setImageUrlInput("");
+    setImageUrls([]);
+    setShowUrlInput(false);
   };
 
   const handleChange = (e) => {
@@ -104,38 +109,22 @@ function AdminProductsPage() {
       category: product.category,
       ageRange: product.ageRange,
       stock: product.stock,
-      images: product.images?.join(", ") || "",
     });
 
     setFeedback({ type: "", message: "" });
     setIsFormOpen(true);
+    setImageUrls(product.images || []);
+    setImageUrlInput("");
+    setImageFile(null);
+    setShowUrlInput(false);
   };
-
 
   const buildProductPayload = () => ({
     ...formData,
     price: Number(formData.price),
     stock: Number(formData.stock),
-    images: formData.images
-      .split(",")
-      .map((url) => url.trim())
-      .filter(Boolean),
+    images: imageUrls,
   });
-
-  const uploadImage = async () => {
-    if (!imageFile) return null;
-
-    const uploadFormData = new FormData();
-    uploadFormData.append("image", imageFile);
-
-    const response = await api.post("/upload", uploadFormData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    return response.data.data.url;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,19 +132,7 @@ function AdminProductsPage() {
     setFeedback({ type: "", message: "" });
 
     try {
-
-      setIsUploading(true);
-
-      const uploadedImageUrl = await uploadImage();
-
-      const productPayload = {
-        ...buildProductPayload(),
-        images: uploadedImageUrl
-          ? [uploadedImageUrl]
-          : buildProductPayload().images,
-      };
-
-      setIsUploading(false);
+      const productPayload = buildProductPayload();
 
       if (editingSlug) {
         await api.put(`/products/${editingSlug}`, productPayload);
@@ -174,7 +151,6 @@ function AdminProductsPage() {
       }
 
       resetForm();
-      setImageFile(null);
       setIsFormOpen(false);
       fetchProducts();
     } catch (error) {
@@ -218,10 +194,10 @@ function AdminProductsPage() {
     await handleDelete(productToDelete.slug);
     setProductToDelete(null);
   };
+
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
 
   const viewProduct = (product) => {
     setViewedProductIds((prevIds) =>
@@ -231,6 +207,46 @@ function AdminProductsPage() {
     );
   };
 
+  const addImageUrl = () => {
+    const trimmedUrl = imageUrlInput.trim();
+
+    if (!trimmedUrl) return;
+
+    setImageUrls((prev) => [...prev, trimmedUrl]);
+    setImageUrlInput("");
+    setShowUrlInput(false);
+  };
+
+  const removeImageUrl = (urlToRemove) => {
+    setImageUrls((prev) => prev.filter((url) => url !== urlToRemove));
+  };
+
+  const uploadAndAddImage = async () => {
+    if (!imageFile) return;
+
+    setIsUploading(true);
+
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("image", imageFile);
+
+      const response = await api.post("/upload", uploadFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setImageUrls((prev) => [...prev, response.data.data.url]);
+      setImageFile(null);
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message: error.response?.data?.message || "Failed to upload image",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -351,15 +367,8 @@ function AdminProductsPage() {
                 onChange={handleChange}
               />
 
-              <TextField
-                fullWidth
-                label="Image URLs separated by comma"
-                name="images"
-                value={formData.images}
-                onChange={handleChange}
-              />
               <Button variant="outlined" component="label">
-                {imageFile ? imageFile.name : "Upload Product Image"}
+                {imageFile ? imageFile.name : "Choose Image"}
 
                 <input
                   hidden
@@ -369,17 +378,97 @@ function AdminProductsPage() {
                 />
               </Button>
 
+              <Button
+                variant="outlined"
+                disabled={!imageFile || isUploading}
+                onClick={uploadAndAddImage}
+              >
+                {isUploading ? "Uploading..." : "Upload Image"}
+              </Button>
+
+              <Button
+                variant="outlined"
+                onClick={() => setShowUrlInput((prev) => !prev)}
+              >
+                Add by URL
+              </Button>
+
+              {showUrlInput && (
+                <>
+                  <TextField
+                    fullWidth
+                    label="Image URL"
+                    value={imageUrlInput}
+                    onChange={(e) => setImageUrlInput(e.target.value)}
+                  />
+
+                  <Button variant="outlined" onClick={addImageUrl}>
+                    Add Image URL
+                  </Button>
+                </>
+              )}
+
+              {imageUrls.length > 0 && (
+                <Stack spacing={1}>
+                  {imageUrls.map((url) => (
+                    <Box
+                      key={url}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        p: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={url}
+                        alt="Product"
+                        sx={{
+                          width: 70,
+                          height: 70,
+                          objectFit: "cover",
+                          borderRadius: 1,
+                        }}
+                      />
+
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          flex: 1,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {url}
+                      </Typography>
+
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        onClick={() => removeImageUrl(url)}
+                      >
+                        Remove
+                      </Button>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button type="submit" variant="contained" disabled={isLoading}>
-                  {isUploading
-                    ? "Uploading image..."
-                    : isLoading
-                      ? editingSlug
-                        ? "Updating..."
-                        : "Creating..."
-                      : editingSlug
-                        ? "Update Product"
-                        : "Create Product"}
+                  {isLoading
+                    ? editingSlug
+                      ? "Updating..."
+                      : "Creating..."
+                    : editingSlug
+                      ? "Update Product"
+                      : "Create Product"}
                 </Button>
 
                 <Button
@@ -398,11 +487,10 @@ function AdminProductsPage() {
         </DialogContent>
       </Dialog>
 
-
-
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Existing Products
       </Typography>
+
       <TextField
         label="Search products"
         size="small"
@@ -424,7 +512,7 @@ function AdminProductsPage() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                flexDirection:"column",
+                flexDirection: "column",
                 gap: 2,
               }}
             >
@@ -438,7 +526,9 @@ function AdminProductsPage() {
 
               <Box sx={{ display: "flex", gap: 1 }}>
                 <Button variant="outlined" onClick={() => viewProduct(product)}>
-                  {viewedProductIds.includes(product._id) ? "Hide Product" : "View Product"}
+                  {viewedProductIds.includes(product._id)
+                    ? "Hide Product"
+                    : "View Product"}
                 </Button>
 
                 <Button variant="outlined" onClick={() => handleEdit(product)}>
@@ -453,6 +543,7 @@ function AdminProductsPage() {
                   Delete
                 </Button>
               </Box>
+
               <Collapse in={viewedProductIds.includes(product._id)}>
                 <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
                   <ProductCard product={product} />
@@ -462,6 +553,7 @@ function AdminProductsPage() {
           ))}
         </Stack>
       )}
+
       <Dialog
         open={Boolean(productToDelete)}
         onClose={() => setProductToDelete(null)}
@@ -470,15 +562,13 @@ function AdminProductsPage() {
 
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete "{productToDelete?.name}"? This action
-            cannot be undone.
+            Are you sure you want to delete "{productToDelete?.name}"? This
+            action cannot be undone.
           </DialogContentText>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setProductToDelete(null)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setProductToDelete(null)}>Cancel</Button>
 
           <Button color="error" variant="contained" onClick={confirmDeleteProduct}>
             Delete
