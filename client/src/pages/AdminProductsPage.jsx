@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -16,8 +15,10 @@ import {
   DialogTitle,
   Typography,
   Snackbar,
+  Collapse,
 } from "@mui/material";
 import api from "../services/api";
+import ProductCard from "../components/ProductCard";
 
 const categories = [
   "Educational Toys",
@@ -52,7 +53,6 @@ const initialFormData = {
 };
 
 function AdminProductsPage() {
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState(initialFormData);
   const [editingSlug, setEditingSlug] = useState(null);
@@ -63,6 +63,7 @@ function AdminProductsPage() {
   const [imageFile, setImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [viewedProductIds, setViewedProductIds] = useState([]);
 
   const fetchProducts = async () => {
     try {
@@ -221,8 +222,13 @@ function AdminProductsPage() {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
   const viewProduct = (product) => {
-    navigate(`/products/${product.slug}`);
+    setViewedProductIds((prevIds) =>
+      prevIds.includes(product._id)
+        ? prevIds.filter((id) => id !== product._id)
+        : [...prevIds, product._id]
+    );
   };
 
 
@@ -413,15 +419,13 @@ function AdminProductsPage() {
             <Paper
               key={product._id}
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: {
-                  xs: "column", 
-                  sm: "row",    
-                },
-                alignItems: "center",
                 p: 2,
                 borderRadius: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection:"column",
+                gap: 2,
               }}
             >
               <Box>
@@ -433,11 +437,8 @@ function AdminProductsPage() {
               </Box>
 
               <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => viewProduct(product)}
-                >
-                  View Product
+                <Button variant="outlined" onClick={() => viewProduct(product)}>
+                  {viewedProductIds.includes(product._id) ? "Hide Product" : "View Product"}
                 </Button>
 
                 <Button variant="outlined" onClick={() => handleEdit(product)}>
@@ -452,6 +453,11 @@ function AdminProductsPage() {
                   Delete
                 </Button>
               </Box>
+              <Collapse in={viewedProductIds.includes(product._id)}>
+                <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+                  <ProductCard product={product} />
+                </Box>
+              </Collapse>
             </Paper>
           ))}
         </Stack>
