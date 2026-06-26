@@ -31,8 +31,8 @@
         "priceHighLow": "מחיר: מהגבוה לנמוך",
         "noProducts": "אין מוצרים שמתאימים לסינון.",
         "showing": "מציג {{start}}-{{end}} מתוך {{total}} מוצרים",
-        "shopByAge": "لأي عمر تبحث عن اللعبة؟",
-        "shopByCategory": "ما نوع اللعبة التي تبحث عنها؟"
+        "shopByAge": "לאיזה גיל אתם מחפשים צעצוע?",
+        "shopByCategory": "איזה סוג צעצוע אתם מחפשים?"
     },
     "categories": {
         "All": "הכול",

@@ -17,7 +17,7 @@
         "copyright": "© {{year}} Baby Kids Toys. جميع الحقوق محفوظة."
     },
     "productsPage": {
-        "title": "منتجات متجر الألعاب",
+        "title": "إكتشف اللألعاب",
         "loading": "جاري تحميل المنتجات...",
         "failedToLoad": "فشل تحميل المنتجات",
         "search": "ابحث عن منتج",
@@ -31,8 +31,8 @@
         "priceHighLow": "السعر: من الأعلى إلى الأقل",
         "noProducts": "لا توجد منتجات تطابق الفلاتر.",
         "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
-        "shopByAge": "لأي عمر تبحث عن اللعبة؟",
-        "shopByCategory": "ما نوع اللعبة التي تبحث عنها؟"
+        "shopByAge": "إختر اللعبة حسب العمر",
+        "shopByCategory": "ما نوع اللعبة التي تريدها؟"
     },
     "categories": {
         "All": "الكل",

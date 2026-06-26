@@ -142,6 +142,7 @@ function ProductsPage() {
           display: {
             xs: "block",
             md: "none",
+            mt: 2,
           },
           width: "100%",
           height: "auto",
@@ -179,12 +180,12 @@ function ProductsPage() {
           />
         </Paper>
 
-        <Typography variant="h4" gutterBottom textAlign="center">
+        <Typography variant="h5" gutterBottom textAlign="center">
           {t("productsPage.title")}
         </Typography>
 
         <Typography
-          variant="h5"
+          variant="h6"
           fontWeight={800}
           sx={{
             mb: 2,
@@ -194,14 +195,14 @@ function ProductsPage() {
             gap: 1,
           }}
         >
-          🎈 {t("productsPage.shopByAge")}
+          {t("productsPage.shopByAge")}
         </Typography>
         <AgeFilterCarousel
           selectedAgeRange={selectedAgeRange}
           onSelectAge={setSelectedAgeRange}
         />
         <Typography
-          variant="h5"
+          variant="h6"
           fontWeight={800}
           sx={{
             mb: 2,
@@ -211,7 +212,7 @@ function ProductsPage() {
             gap: 1,
           }}
         >
-          🎲 {t("productsPage.shopByCategory")}
+          {t("productsPage.shopByCategory")}
         </Typography>
         <CategoryFilterCarousel
           selectedCategory={selectedCategory}
