@@ -24,7 +24,7 @@ import banner1 from "../assets/banner.png";
 import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
-
+import { useTranslation } from "react-i18next";
 
 
 const categories = [
@@ -34,7 +34,7 @@ const categories = [
   "Puzzle & Brain Games",
   "Motor Skills Toys",
   "Outdoor Toys",
-  "Role-Play Toys", 
+  "Role-Play Toys",
   "Books & Stories",
   "Toy Sets",
   "Other",
@@ -64,6 +64,7 @@ function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(6);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getProducts = async () => {
@@ -71,7 +72,7 @@ function ProductsPage() {
         const response = await api.get("/products");
         setProducts(response.data.data);
       } catch (error) {
-        setError("Failed to load products");
+        setError(t("productsPage.failedToLoad"));
       } finally {
         setIsLoading(false);
       }
@@ -118,7 +119,7 @@ function ProductsPage() {
   if (isLoading) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Loading text="Loading products..." />
+        <Loading text={t("productsPage.loading")} />
       </Container>
     );
   }
@@ -179,12 +180,39 @@ function ProductsPage() {
         </Paper>
 
         <Typography variant="h4" gutterBottom textAlign="center">
-          Toy Store Products
+          {t("productsPage.title")}
+        </Typography>
+
+        <Typography
+          variant="h5"
+          fontWeight={800}
+          sx={{
+            mb: 2,
+            mt: 4,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          🎈 {t("productsPage.shopByAge")}
         </Typography>
         <AgeFilterCarousel
           selectedAgeRange={selectedAgeRange}
           onSelectAge={setSelectedAgeRange}
         />
+        <Typography
+          variant="h5"
+          fontWeight={800}
+          sx={{
+            mb: 2,
+            mt: 4,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          🎲 {t("productsPage.shopByCategory")}
+        </Typography>
         <CategoryFilterCarousel
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
@@ -201,7 +229,7 @@ function ProductsPage() {
 
           <TextField
             fullWidth
-            label="Search products"
+            label={t("productsPage.search")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             slotProps={{
@@ -228,11 +256,11 @@ function ProductsPage() {
 
             <Box
               sx={{
-                ml: 1,
+                marginInlineStart: 1,
                 display: { xs: "none", sm: "block" },
               }}
             >
-              Filters
+              {t("productsPage.filters")}
             </Box>
           </Button>
         </Box>
@@ -251,45 +279,45 @@ function ProductsPage() {
               }}
             >
               <FormControl>
-                <InputLabel>Category</InputLabel>
+                <InputLabel>{t("productsPage.category")}</InputLabel>
                 <Select
-                  label="Category"
+                  label={t("productsPage.category")}
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                   {categories.map((category) => (
                     <MenuItem key={category} value={category}>
-                      {category}
+                      {t(`categories.${category}`)}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
 
               <FormControl>
-                <InputLabel>Age Range</InputLabel>
+                <InputLabel>{t("productsPage.ageRange")}</InputLabel>
                 <Select
-                  label="Age Range"
+                  label={t("productsPage.ageRange")}
                   value={selectedAgeRange}
                   onChange={(e) => setSelectedAgeRange(e.target.value)}
                 >
                   {ageRanges.map((age) => (
                     <MenuItem key={age} value={age}>
-                      {age}
+                      {t(`ageRanges.${age}`)}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
 
               <FormControl>
-                <InputLabel>Sort</InputLabel>
+                <InputLabel>{t("productsPage.sort")}</InputLabel>
                 <Select
-                  label="Sort"
+                  label={t("productsPage.sort")}
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
-                  <MenuItem value="default">Default</MenuItem>
-                  <MenuItem value="price-low-high">Price: Low to High</MenuItem>
-                  <MenuItem value="price-high-low">Price: High to Low</MenuItem>
+                  <MenuItem value="default">{t("productsPage.defaultSort")}</MenuItem>
+                  <MenuItem value="price-low-high">{t("productsPage.priceLowHigh")}</MenuItem>
+                  <MenuItem value="price-high-low">{t("productsPage.priceHighLow")}</MenuItem>
                 </Select>
               </FormControl>
 
@@ -313,7 +341,7 @@ function ProductsPage() {
 
         {paginatedProducts.length === 0 ? (
           <Typography textAlign="center" color="text.secondary">
-            No products match your filters.
+            {t("productsPage.noProducts")}
           </Typography>
         ) : (
           <>
@@ -323,7 +351,11 @@ function ProductsPage() {
               textAlign="center"
               sx={{ mb: 2 }}
             >
-              Showing {startIndex + 1}-{endIndex} of {totalProducts} products
+              {t("productsPage.showing", {
+                start: startIndex + 1,
+                end: endIndex,
+                total: totalProducts,
+              })}
             </Typography>
 
             <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>

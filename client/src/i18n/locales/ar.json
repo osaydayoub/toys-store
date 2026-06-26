@@ -1,0 +1,60 @@
+{
+    "navbar": {
+        "brand": "Baby Kids Toys",
+        "products": "المنتجات",
+        "cart": "السلة ({{count}})",
+        "cartShort": "السلة",
+        "myOrders": "طلباتي",
+        "adminProducts": "إدارة المنتجات",
+        "adminOrders": "إدارة الطلبات",
+        "login": "تسجيل الدخول",
+        "logout": "تسجيل الخروج",
+        "language": "اللغة"
+    },
+    "footer": {
+        "brand": "Baby Kids Toys",
+        "description": "ألعاب آمنة وممتعة وتعليمية لأطفالكم",
+        "copyright": "© {{year}} Baby Kids Toys. جميع الحقوق محفوظة."
+    },
+    "productsPage": {
+        "title": "منتجات متجر الألعاب",
+        "loading": "جاري تحميل المنتجات...",
+        "failedToLoad": "فشل تحميل المنتجات",
+        "search": "ابحث عن منتج",
+        "filters": "الفلاتر",
+        "category": "الفئة",
+        "ageRange": "الفئة العمرية",
+        "sort": "الترتيب",
+        "perPage": "عدد المنتجات",
+        "defaultSort": "الافتراضي",
+        "priceLowHigh": "السعر: من الأقل إلى الأعلى",
+        "priceHighLow": "السعر: من الأعلى إلى الأقل",
+        "noProducts": "لا توجد منتجات تطابق الفلاتر.",
+        "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
+        "shopByAge": "لأي عمر تبحث عن اللعبة؟",
+        "shopByCategory": "ما نوع اللعبة التي تبحث عنها؟"
+    },
+    "categories": {
+        "All": "الكل",
+        "Educational Toys": "ألعاب تعليمية",
+        "Sensory Toys": "ألعاب حسية",
+        "Puzzle & Brain Games": "ألغاز وألعاب ذكاء",
+        "Motor Skills Toys": "ألعاب المهارات الحركية",
+        "Outdoor Toys": "ألعاب خارجية",
+        "Role-Play Toys": "ألعاب تقمص الأدوار",
+        "Books & Stories": "كتب وقصص",
+        "Toy Sets": "مجموعات ألعاب",
+        "Other": "أخرى"
+    },
+    "ageRanges": {
+        "All": "كل الأعمار",
+        "0-6 Months": "0-6 أشهر",
+        "6-12 Months": "6-12 شهرًا",
+        "1-2 Years": "1-2 سنوات",
+        "2+ Years": "سنتان فما فوق",
+        "3-5 Years": "3-5 سنوات",
+        "5+ Years": "5 سنوات فما فوق",
+        "6+ Years": "6 سنوات فما فوق",
+        "7+ Years": "7 سنوات فما فوق"
+    }
+}

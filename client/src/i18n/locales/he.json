@@ -1,0 +1,60 @@
+{
+    "navbar": {
+        "brand": "Baby Kids Toys",
+        "products": "מוצרים",
+        "cart": "עגלה ({{count}})",
+        "cartShort": "עגלה",
+        "myOrders": "ההזמנות שלי",
+        "adminProducts": "ניהול מוצרים",
+        "adminOrders": "ניהול הזמנות",
+        "login": "התחברות",
+        "logout": "התנתקות",
+        "language": "שפה"
+    },
+    "footer": {
+        "brand": "Baby Kids Toys",
+        "description": "צעצועים בטוחים, מהנים וחינוכיים לילדים שלכם",
+        "copyright": "© {{year}} Baby Kids Toys. כל הזכויות שמורות."
+    },
+    "productsPage": {
+        "title": "מוצרי חנות הצעצועים",
+        "loading": "טוען מוצרים...",
+        "failedToLoad": "טעינת המוצרים נכשלה",
+        "search": "חיפוש מוצרים",
+        "filters": "סינון",
+        "category": "קטגוריה",
+        "ageRange": "טווח גילאים",
+        "sort": "מיון",
+        "perPage": "מוצרים בעמוד",
+        "defaultSort": "ברירת מחדל",
+        "priceLowHigh": "מחיר: מהנמוך לגבוה",
+        "priceHighLow": "מחיר: מהגבוה לנמוך",
+        "noProducts": "אין מוצרים שמתאימים לסינון.",
+        "showing": "מציג {{start}}-{{end}} מתוך {{total}} מוצרים",
+        "shopByAge": "لأي عمر تبحث عن اللعبة؟",
+        "shopByCategory": "ما نوع اللعبة التي تبحث عنها؟"
+    },
+    "categories": {
+        "All": "הכול",
+        "Educational Toys": "צעצועים חינוכיים",
+        "Sensory Toys": "צעצועים חושיים",
+        "Puzzle & Brain Games": "פאזלים ומשחקי חשיבה",
+        "Motor Skills Toys": "צעצועים לפיתוח מוטוריקה",
+        "Outdoor Toys": "צעצועים לחוץ",
+        "Role-Play Toys": "צעצועי משחקי תפקידים",
+        "Books & Stories": "ספרים וסיפורים",
+        "Toy Sets": "סטים של צעצועים",
+        "Other": "אחר"
+    },
+    "ageRanges": {
+        "All": "כל הגילאים",
+        "0-6 Months": "0-6 חודשים",
+        "6-12 Months": "6-12 חודשים",
+        "1-2 Years": "1-2 שנים",
+        "2+ Years": "מגיל שנתיים ומעלה",
+        "3-5 Years": "3-5 שנים",
+        "5+ Years": "מגיל 5 ומעלה",
+        "6+ Years": "מגיל 6 ומעלה",
+        "7+ Years": "מגיל 7 ומעלה"
+    }
+}

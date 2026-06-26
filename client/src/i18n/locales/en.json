@@ -1,0 +1,60 @@
+{
+    "navbar": {
+        "brand": "Baby Kids Toys",
+        "products": "Products",
+        "cart": "Cart ({{count}})",
+        "cartShort": "Cart",
+        "myOrders": "My Orders",
+        "adminProducts": "Admin Products",
+        "adminOrders": "Admin Orders",
+        "login": "Login",
+        "logout": "Logout",
+        "language": "Language"
+    },
+    "footer": {
+        "brand": "Baby Kids Toys",
+        "description": "Safe • Fun • Educational toys for your little ones",
+        "copyright": "© {{year}} Baby Kids Toys. All rights reserved."
+    },
+    "productsPage": {
+        "title": "Toy Store Products",
+        "loading": "Loading products...",
+        "failedToLoad": "Failed to load products",
+        "search": "Search products",
+        "filters": "Filters",
+        "category": "Category",
+        "ageRange": "Age Range",
+        "sort": "Sort",
+        "perPage": "Per Page",
+        "defaultSort": "Default",
+        "priceLowHigh": "Price: Low to High",
+        "priceHighLow": "Price: High to Low",
+        "noProducts": "No products match your filters.",
+        "showing": "Showing {{start}}-{{end}} of {{total}} products",
+        "shopByAge": "What age are you shopping for?",
+        "shopByCategory": "What type of toy are you looking for?"
+    },
+    "categories": {
+        "All": "All",
+        "Educational Toys": "Educational Toys",
+        "Sensory Toys": "Sensory Toys",
+        "Puzzle & Brain Games": "Puzzle & Brain Games",
+        "Motor Skills Toys": "Motor Skills Toys",
+        "Outdoor Toys": "Outdoor Toys",
+        "Role-Play Toys": "Role-Play Toys",
+        "Books & Stories": "Books & Stories",
+        "Toy Sets": "Toy Sets",
+        "Other": "Other"
+    },
+    "ageRanges": {
+        "All": "All",
+        "0-6 Months": "0-6 Months",
+        "6-12 Months": "6-12 Months",
+        "1-2 Years": "1-2 Years",
+        "2+ Years": "2+ Years",
+        "3-5 Years": "3-5 Years",
+        "5+ Years": "5+ Years",
+        "6+ Years": "6+ Years",
+        "7+ Years": "7+ Years"
+    }
+}

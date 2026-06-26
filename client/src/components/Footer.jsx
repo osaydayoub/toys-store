@@ -12,11 +12,13 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import { useTranslation } from "react-i18next";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 function Footer() {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -55,7 +57,10 @@ function Footer() {
 
             <Box
               sx={{
-                textAlign: { xs: "center", md: "left" },
+                textAlign: {
+                  xs: "center",
+                  md: "start",
+                },
                 display: "flex",
                 flexDirection: "column",
                 alignItems: { xs: "center", md: "flex-start" },
@@ -64,11 +69,11 @@ function Footer() {
             >
               <Box>
                 <Typography variant="h5" fontWeight={700}>
-                  Baby Kids Toys
+                  {t("footer.brand")}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  Safe • Fun • Educational toys for your little ones
+                  {t("footer.description")}
                 </Typography>
               </Box>
 
@@ -98,7 +103,7 @@ function Footer() {
                   }}
                 >
                   <StorefrontIcon fontSize="small" />
-                  Products
+                  {t("navbar.products")}
                 </Typography>
 
                 <Typography
@@ -113,7 +118,7 @@ function Footer() {
                   }}
                 >
                   <ShoppingCartIcon fontSize="small" />
-                  Cart
+                  {t("navbar.cartShort")}
                 </Typography>
 
                 <Typography
@@ -128,7 +133,7 @@ function Footer() {
                   }}
                 >
                   <ReceiptLongIcon fontSize="small" />
-                  My Orders
+                  {t("navbar.myOrders")}
                 </Typography>
               </Stack>
 
@@ -163,7 +168,9 @@ function Footer() {
             variant="caption"
             color="text.secondary"
           >
-            © {new Date().getFullYear()} Baby Kids Toys. All rights reserved.
+            {t("footer.copyright", {
+              year: new Date().getFullYear(),
+            })}
           </Typography>
         </Stack>
       </Container>

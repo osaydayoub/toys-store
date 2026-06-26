@@ -17,28 +17,61 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import LanguageIcon from "@mui/icons-material/Language";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 function Navbar() {
   const { totalItems } = useCart();
   const { user, logout, isAdmin } = useAuth();
-
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElLang, setAnchorElLang] = React.useState(null);
+  const { t, i18n } = useTranslation();
 
-const pages = [
-  { label: "Products", path: "/products", icon: <StorefrontIcon fontSize="small" /> },
-  { label: `Cart (${totalItems})`, path: "/cart", icon: <ShoppingCartIcon fontSize="small" /> },
-  ...(user ? [{ label: "My Orders", path: "/my-orders", icon: <ReceiptLongIcon fontSize="small" /> }] : []),
-  ...(isAdmin
-    ? [
-        { label: "Admin Products", path: "/admin/products", icon: <AdminPanelSettingsIcon fontSize="small" /> },
-        { label: "Admin Orders", path: "/admin/orders", icon: <ReceiptLongIcon fontSize="small" /> },
+  const pages = [
+    {
+      key: "products",
+      label: t("navbar.products"),
+      path: "/products",
+      icon: <StorefrontIcon fontSize="small" />,
+    },
+    {
+      key: "cart",
+      label: t("navbar.cart", { count: totalItems }),
+      path: "/cart",
+      icon: <ShoppingCartIcon fontSize="small" />,
+    },
+    ...(user
+      ? [
+        {
+          key: "myOrders",
+          label: t("navbar.myOrders"),
+          path: "/my-orders",
+          icon: <ReceiptLongIcon fontSize="small" />,
+        },
       ]
-    : []),
-];
+      : []),
+    ...(isAdmin
+      ? [
+        {
+          key: "adminProducts",
+          label: t("navbar.adminProducts"),
+          path: "/admin/products",
+          icon: <AdminPanelSettingsIcon fontSize="small" />,
+        },
+        {
+          key: "adminOrders",
+          label: t("navbar.adminOrders"),
+          path: "/admin/orders",
+          icon: <ReceiptLongIcon fontSize="small" />,
+        },
+      ]
+      : []),
+  ];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -48,9 +81,39 @@ const pages = [
     setAnchorElNav(null);
   };
 
+  const currentLanguage =
+    {
+      en: "English",
+      ar: "العربية",
+      he: "עברית",
+    }[i18n.language] || "English";
+
+  const handleOpenLangMenu = (event) => {
+    setAnchorElLang(event.currentTarget);
+  };
+
+  const handleCloseLangMenu = () => {
+    setAnchorElLang(null);
+  };
+
+  const handleChangeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    handleCloseLangMenu();
+    handleCloseNavMenu();
+  };
+
   return (
     <AppBar position="static" elevation={0}>
       <Container maxWidth="xl">
+        <Menu
+          anchorEl={anchorElLang}
+          open={Boolean(anchorElLang)}
+          onClose={handleCloseLangMenu}
+        >
+          <MenuItem onClick={() => handleChangeLanguage("en")}>English</MenuItem>
+          <MenuItem onClick={() => handleChangeLanguage("ar")}>العربية</MenuItem>
+          <MenuItem onClick={() => handleChangeLanguage("he")}>עברית</MenuItem>
+        </Menu>
         <Toolbar disableGutters>
 
           {/* Logo */}
@@ -80,7 +143,7 @@ const pages = [
             />
 
             <Typography variant="h6">
-              Baby Kids Toys
+              {t("navbar.brand")}
             </Typography>
           </Box>
 
@@ -111,9 +174,13 @@ const pages = [
                   onClick={handleCloseNavMenu}
                 >
                   {page.icon} <span style={{ marginLeft: 4 }}>{page.label}</span>
-                
+
                 </MenuItem>
               ))}
+              <MenuItem onClick={handleOpenLangMenu}>
+                <LanguageIcon fontSize="small" />
+                <span style={{ marginLeft: 4 }}>{currentLanguage}</span>
+              </MenuItem>
               {user ? (
                 <MenuItem
                   onClick={() => {
@@ -122,7 +189,7 @@ const pages = [
                   }}
                 >
                   <LogoutIcon fontSize="small" />
-                  Logout
+                  {t("navbar.logout")}
                 </MenuItem>
               ) : (
                 <MenuItem
@@ -131,7 +198,7 @@ const pages = [
                   onClick={handleCloseNavMenu}
                 >
                   <LoginIcon fontSize="small" />
-                  Login
+                  {t("navbar.login")}
                 </MenuItem>
               )}
             </Menu>
@@ -151,18 +218,26 @@ const pages = [
                 to={page.path}
                 color="inherit"
               >
-       {page.icon} <span style={{ marginLeft: 4 }}>{page.label}</span>
+                {page.icon} <span style={{ marginLeft: 4 }}>{page.label}</span>
               </Button>
             ))}
+            <Button
+              color="inherit"
+              onClick={handleOpenLangMenu}
+              startIcon={<LanguageIcon />}
+              endIcon={<ArrowDropDownIcon />}
+            >
+              {currentLanguage}
+            </Button>
             {user ? (
               <Button color="inherit" onClick={logout}>
                 <LogoutIcon fontSize="small" />
-                Logout
+                {t("navbar.logout")}
               </Button>
             ) : (
               <Button component={Link} to="/login" color="inherit">
                 <LoginIcon fontSize="small" />
-                Login
+                {t("navbar.login")}
               </Button>
             )}
           </Box>

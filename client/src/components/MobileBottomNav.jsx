@@ -5,12 +5,14 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 function MobileBottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems } = useCart();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const currentValue = location.pathname.startsWith("/cart")
     ? "/cart"
@@ -44,13 +46,13 @@ function MobileBottomNav() {
         showLabels
       >
         <BottomNavigationAction
-          label="Products"
+          label={t("navbar.products")}
           value="/products"
           icon={<StorefrontIcon />}
         />
 
         <BottomNavigationAction
-          label="Cart"
+          label={t("navbar.cartShort")}
           value="/cart"
           icon={
             <Badge badgeContent={totalItems} color="secondary">
@@ -60,7 +62,7 @@ function MobileBottomNav() {
         />
 
         <BottomNavigationAction
-          label="My Orders"
+          label={t("navbar.myOrders")}
           value="/my-orders"
           icon={<ReceiptLongIcon />}
         />
