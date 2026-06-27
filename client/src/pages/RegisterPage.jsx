@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -13,8 +13,7 @@ import api from "../services/api";
 import logo from "../assets/logo.png";
 
 function RegisterPage() {
-  const navigate = useNavigate();
-
+  const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,11 +34,18 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setIsLoading(true);
 
     try {
-      await api.post("/auth/register", formData);
-      navigate("/login");
+      const response = await api.post("/auth/register", formData);
+      setSuccess(response.data.message);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+      });
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed");
     } finally {
@@ -82,6 +88,14 @@ function RegisterPage() {
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
+          </Alert>
+        )}
+
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+            <br />
+            Please open your email and click the verification link before logging in.
           </Alert>
         )}
 
