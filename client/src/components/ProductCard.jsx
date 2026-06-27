@@ -8,8 +8,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 function ProductCard({ product }) {
+  const { t } = useTranslation();
   return (
     <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {product.images?.[0] && (
@@ -32,8 +34,8 @@ function ProductCard({ product }) {
         </Typography>
 
         <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap" }}>
-          <Chip label={product.ageRange} size="small" color="secondary" />
-          <Chip label={product.category} size="small" variant="outlined" />
+          <Chip label={t(`ageRanges.${product.ageRange}`)} size="small" color="secondary" />
+          <Chip label={t(`categories.${product.category}`)} size="small" variant="outlined" />
         </Stack>
 
         <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
@@ -46,7 +48,7 @@ function ProductCard({ product }) {
           variant="contained"
           fullWidth
         >
-          View Details
+          {t("productCard.viewDetails")}
         </Button>
       </CardContent>
     </Card>

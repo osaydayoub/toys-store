@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useTranslation } from "react-i18next";
 
 import {
     Box,
@@ -21,6 +22,7 @@ import {
 import ProductImageGallery from "../components/ProductImageGallery";
 
 function ProductDetailsPage() {
+    const { t } = useTranslation();
     const { slug } = useParams();
     const { addToCart, totalItems } = useCart();
     const navigate = useNavigate();
@@ -37,7 +39,7 @@ function ProductDetailsPage() {
                 setProduct(response.data.data);
                 setIsOutOfStock(response.data.data.stock === 0);
             } catch (error) {
-                setError("Product not found");
+                setError(t("productDetails.notFound"));
             } finally {
                 setIsLoading(false);
             }
@@ -51,13 +53,13 @@ function ProductDetailsPage() {
         setCartMessageOpen(true);
     };
 
-    if (isLoading) return <Typography sx={{ p: 4 }}>Loading product...</Typography>;
+    if (isLoading) return <Typography sx={{ p: 4 }}>{t("productDetails.loading")}</Typography>;
     if (error) return <Typography sx={{ p: 4 }}>{error}</Typography>;
 
     return (
         <Container sx={{ py: 4 }}>
             <Button component={Link} to="/products" variant="outlined" sx={{ mb: 3 }}>
-                Back to products
+                {t("productDetails.backToProducts")}
             </Button>
 
             <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -76,7 +78,7 @@ function ProductDetailsPage() {
                                     justifyContent: "center",
                                 }}
                             >
-                                <Typography>No image available</Typography>
+                                <Typography>{t("productDetails.noImage")}</Typography>
                             </Box>
                         )}
                     </Grid>
@@ -95,8 +97,8 @@ function ProductDetailsPage() {
                         </Typography>
 
                         <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
-                            <Chip label={product.category} />
-                            <Chip label={product.ageRange} variant="outlined" />
+                            <Chip label={t(`categories.${product.category}`)} />
+                            <Chip label={t(`ageRanges.${product.ageRange}`)} variant="outlined" />
                         </Box>
 
                         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
@@ -106,7 +108,7 @@ function ProductDetailsPage() {
                                 disabled={isOutOfStock}
                                 onClick={handleAddToCart}
                             >
-                                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                                {isOutOfStock ? t("productDetails.outOfStock") : t("productDetails.addToCart")}
                             </Button>
 
 
@@ -134,7 +136,7 @@ function ProductDetailsPage() {
                     severity="success"
                     onClose={() => setCartMessageOpen(false)}
                 >
-                    Product added to cart
+                    {t("productDetails.addedToCart")}
                 </Alert>
             </Snackbar>
         </Container>

@@ -17,7 +17,7 @@
         "copyright": "© {{year}} Baby Kids Toys. جميع الحقوق محفوظة."
     },
     "productsPage": {
-        "title": "إكتشف اللألعاب",
+        "title": "إكتشف الألعاب",
         "loading": "جاري تحميل المنتجات...",
         "failedToLoad": "فشل تحميل المنتجات",
         "search": "ابحث عن منتج",
@@ -38,10 +38,10 @@
         "All": "الكل",
         "Educational Toys": "ألعاب تعليمية",
         "Sensory Toys": "ألعاب حسية",
-        "Puzzle & Brain Games": "ألغاز وألعاب ذكاء",
+        "Puzzle & Brain Games": "ألغاز وألعاب ذهنية",
         "Motor Skills Toys": "ألعاب المهارات الحركية",
         "Outdoor Toys": "ألعاب خارجية",
-        "Role-Play Toys": "ألعاب تقمص الأدوار",
+        "Role-Play Toys": "ألعاب التمثيل والمحاكاة",
         "Books & Stories": "كتب وقصص",
         "Toy Sets": "مجموعات ألعاب",
         "Other": "أخرى"
@@ -51,10 +51,22 @@
         "0-6 Months": "0-6 أشهر",
         "6-12 Months": "6-12 شهرًا",
         "1-2 Years": "1-2 سنوات",
-        "2+ Years": "سنتان فما فوق",
+        "2+ Years": "2+ سنوات",
         "3-5 Years": "3-5 سنوات",
-        "5+ Years": "5 سنوات فما فوق",
-        "6+ Years": "6 سنوات فما فوق",
-        "7+ Years": "7 سنوات فما فوق"
+        "5+ Years": "5+ سنوات",
+        "6+ Years": "6+ سنوات",
+        "7+ Years": "7+ سنوات"
+    },
+    "productCard": {
+        "viewDetails": "عرض التفاصيل"
+    },
+    "productDetails": {
+        "loading": "جاري تحميل المنتج...",
+        "notFound": "المنتج غير موجود",
+        "backToProducts": "العودة إلى المنتجات",
+        "noImage": "لا توجد صورة متاحة",
+        "outOfStock": "غير متوفر",
+        "addToCart": "أضف إلى السلة",
+        "addedToCart": "تمت إضافة المنتج إلى السلة"
     }
 }

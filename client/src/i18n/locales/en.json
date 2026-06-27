@@ -56,5 +56,17 @@
         "5+ Years": "5+ Years",
         "6+ Years": "6+ Years",
         "7+ Years": "7+ Years"
+    },
+    "productCard": {
+        "viewDetails": "View Details"
+    },
+    "productDetails": {
+        "loading": "Loading product...",
+        "notFound": "Product not found",
+        "backToProducts": "Back to products",
+        "noImage": "No image available",
+        "outOfStock": "Out of Stock",
+        "addToCart": "Add to Cart",
+        "addedToCart": "Product added to cart"
     }
 }

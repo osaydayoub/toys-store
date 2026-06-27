@@ -56,5 +56,17 @@
         "5+ Years": "מגיל 5 ומעלה",
         "6+ Years": "מגיל 6 ומעלה",
         "7+ Years": "מגיל 7 ומעלה"
+    },
+    "productCard": {
+        "viewDetails": "צפייה בפרטים"
+    },
+    "productDetails": {
+        "loading": "טוען מוצר...",
+        "notFound": "המוצר לא נמצא",
+        "backToProducts": "חזרה למוצרים",
+        "noImage": "אין תמונה זמינה",
+        "outOfStock": "אזל מהמלאי",
+        "addToCart": "הוסף לעגלה",
+        "addedToCart": "המוצר נוסף לעגלה"
     }
 }
