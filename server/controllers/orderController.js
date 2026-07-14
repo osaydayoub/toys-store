@@ -5,11 +5,11 @@ import STATUS_CODE from "../constants/statusCodes.js";
 const shippingCosts = {
   "Jerusalem District": 70,
   "Northern & Haifa District": 50,
-  "Central & Tel Aviv District": 50,
+  "Central District": 50,
+  "Tel Aviv District": 70,
   "Southern District": 70,
   "West Bank": 70,
 };
-
 export const createOrder = async (req, res, next) => {
   try {
     const { items, shippingAddress, deliveryNote } = req.body;
