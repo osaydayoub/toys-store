@@ -103,5 +103,54 @@
         "registrationFailed": "فشل إنشاء الحساب",
         "haveAccount": "لديك حساب بالفعل؟",
         "login": "تسجيل الدخول"
+    },
+    "checkout": {
+        "title": "إتمام الطلب",
+        "emptyCart": "سلة التسوق فارغة.",
+        "orderPlaced": "تم إرسال الطلب بنجاح!",
+        "failedToPlaceOrder": "فشل إرسال الطلب",
+        "orderNumber": "رقم الطلب: {{number}}",
+        "goToMyOrders": "الانتقال إلى طلباتي",
+        "itemsTotal": "المنتجات: ₪{{total}}",
+        "shipping": "التوصيل: ₪{{cost}}",
+        "total": "المجموع: ₪{{total}}",
+        "region": "المنطقة",
+        "city": "المدينة",
+        "street": "الشارع",
+        "phone": "رقم الهاتف",
+        "deliveryNote": "ملاحظة للتوصيل (اختياري)",
+        "deliveryNotePlaceholder": "مثال: اتصل قبل الوصول",
+        "backToCart": "العودة إلى السلة",
+        "placingOrder": "جارٍ إرسال الطلب...",
+        "placeOrder": "إرسال الطلب"
+    },
+    "regions": {
+        "Jerusalem District": "منطقة القدس",
+        "Northern & Haifa District": "منطقة الشمال وحيفا",
+        "Central District": "منطقة الوسط",
+        "Tel Aviv District": "منطقة تل أبيب",
+        "Southern District": "المنطقة الجنوبية",
+        "West Bank": "الضفة الغربية"
+    },
+    "myOrders": {
+        "title": "طلباتي",
+        "loading": "جاري تحميل الطلبات...",
+        "failedToLoad": "فشل تحميل الطلبات",
+        "noOrders": "لا توجد لديك طلبات حتى الآن.",
+        "orderNumber": "الطلب رقم {{number}}",
+        "cancelled": "تم إلغاء هذا الطلب.",
+        "itemQuantity": "{{name}} × {{quantity}}",
+        "priceEach": "₪{{price}} للقطعة",
+        "shippingCost": "تكلفة التوصيل: ₪{{cost}}",
+        "total": "المجموع: ₪{{total}}",
+        "shippingAddress": "عنوان التوصيل: {{region}}، {{city}}، {{street}}",
+        "note": "ملاحظة: {{note}}"
+    },
+    "orderStatus": {
+        "pending": "قيد الانتظار",
+        "processing": "قيد التجهيز",
+        "shipped": "تم الشحن",
+        "delivered": "تم التوصيل",
+        "cancelled": "ملغي"
     }
 }

@@ -103,5 +103,54 @@
         "registrationFailed": "יצירת החשבון נכשלה",
         "haveAccount": "כבר יש לכם חשבון?",
         "login": "התחברות"
+    },
+    "checkout": {
+        "title": "מעבר לתשלום",
+        "emptyCart": "עגלת הקניות שלך ריקה.",
+        "orderPlaced": "ההזמנה בוצעה בהצלחה!",
+        "failedToPlaceOrder": "ביצוע ההזמנה נכשל",
+        "orderNumber": "מספר הזמנה: {{number}}",
+        "goToMyOrders": "מעבר להזמנות שלי",
+        "itemsTotal": "פריטים: ₪{{total}}",
+        "shipping": "משלוח: ₪{{cost}}",
+        "total": "סה״כ: ₪{{total}}",
+        "region": "אזור",
+        "city": "עיר",
+        "street": "רחוב",
+        "phone": "טלפון",
+        "deliveryNote": "הערה למשלוח (אופציונלי)",
+        "deliveryNotePlaceholder": "לדוגמה: להתקשר לפני ההגעה",
+        "backToCart": "חזרה לעגלה",
+        "placingOrder": "מבצע הזמנה...",
+        "placeOrder": "ביצוע הזמנה"
+    },
+    "regions": {
+        "Jerusalem District": "מחוז ירושלים",
+        "Northern & Haifa District": "מחוז הצפון וחיפה",
+        "Central District": "מחוז המרכז",
+        "Tel Aviv District": "מחוז תל אביב",
+        "Southern District": "מחוז הדרום",
+        "West Bank": "הגדה המערבית"
+    },
+    "myOrders": {
+        "title": "ההזמנות שלי",
+        "loading": "טוען הזמנות...",
+        "failedToLoad": "טעינת ההזמנות נכשלה",
+        "noOrders": "עדיין אין לך הזמנות.",
+        "orderNumber": "הזמנה מספר {{number}}",
+        "cancelled": "הזמנה זו בוטלה.",
+        "itemQuantity": "{{name}} × {{quantity}}",
+        "priceEach": "₪{{price}} ליחידה",
+        "shippingCost": "עלות משלוח: ₪{{cost}}",
+        "total": "סה״כ: ₪{{total}}",
+        "shippingAddress": "משלוח: {{region}}, {{city}}, {{street}}",
+        "note": "הערה: {{note}}"
+    },
+    "orderStatus": {
+        "pending": "ממתין",
+        "processing": "בטיפול",
+        "shipped": "נשלח",
+        "delivered": "נמסר",
+        "cancelled": "בוטל"
     }
 }

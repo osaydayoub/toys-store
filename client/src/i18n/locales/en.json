@@ -103,5 +103,54 @@
         "registrationFailed": "Registration failed",
         "haveAccount": "Already have an account?",
         "login": "Login"
+    },
+    "checkout": {
+        "title": "Checkout",
+        "emptyCart": "Your cart is empty.",
+        "orderPlaced": "Order placed successfully!",
+        "failedToPlaceOrder": "Failed to place order",
+        "orderNumber": "Order Number: {{number}}",
+        "goToMyOrders": "Go to My Orders",
+        "itemsTotal": "Items: ₪{{total}}",
+        "shipping": "Shipping: ₪{{cost}}",
+        "total": "Total: ₪{{total}}",
+        "region": "Region",
+        "city": "City",
+        "street": "Street",
+        "phone": "Phone",
+        "deliveryNote": "Delivery note (optional)",
+        "deliveryNotePlaceholder": "Example: Call before arriving",
+        "backToCart": "Back to Cart",
+        "placingOrder": "Placing order...",
+        "placeOrder": "Place Order"
+    },
+    "regions": {
+        "Jerusalem District": "Jerusalem District",
+        "Northern & Haifa District": "Northern & Haifa District",
+        "Central District": "Central District",
+        "Tel Aviv District": "Tel Aviv District",
+        "Southern District": "Southern District",
+        "West Bank": "West Bank"
+    },
+    "myOrders": {
+        "title": "My Orders",
+        "loading": "Loading orders...",
+        "failedToLoad": "Failed to load orders",
+        "noOrders": "You have no orders yet.",
+        "orderNumber": "Order #{{number}}",
+        "cancelled": "This order was cancelled.",
+        "itemQuantity": "{{name}} x {{quantity}}",
+        "priceEach": "₪{{price}} each",
+        "shippingCost": "Shipping Cost: ₪{{cost}}",
+        "total": "Total: ₪{{total}}",
+        "shippingAddress": "Shipping: {{region}}, {{city}}, {{street}}",
+        "note": "Note: {{note}}"
+    },
+    "orderStatus": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
     }
 }
