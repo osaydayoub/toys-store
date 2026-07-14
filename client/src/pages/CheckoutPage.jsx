@@ -16,7 +16,8 @@ import { useCart } from "../context/CartContext";
 const shippingCosts = {
   "Jerusalem District": 70,
   "Northern & Haifa District": 50,
-  "Central & Tel Aviv District": 50,
+  "Central District": 50,
+  "Tel Aviv District": 70,
   "Southern District": 70,
   "West Bank": 70,
 };
