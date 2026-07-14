@@ -9,11 +9,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import logo from "../assets/logo.png";
 
+
 function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +44,7 @@ function RegisterPage() {
       await api.post("/auth/register", formData);
       navigate("/login");
     } catch (error) {
-      setError(error.response?.data?.message || "Registration failed");
+      setError(error.response?.data?.message || t("register.registrationFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +70,7 @@ function RegisterPage() {
         </Box>
 
         <Typography variant="h4" gutterBottom textAlign="center">
-          Create Account
+          {t("register.createAccount")}
         </Typography>
 
         <Typography
@@ -76,7 +79,7 @@ function RegisterPage() {
           textAlign="center"
           sx={{ mb: 2 }}
         >
-          Register to continue your shopping journey 🧸
+          {t("register.subtitle")}
         </Typography>
 
         {error && (
@@ -90,7 +93,7 @@ function RegisterPage() {
             fullWidth
             required
             margin="normal"
-            label="Name"
+            label={t("register.name")}
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -100,7 +103,7 @@ function RegisterPage() {
             fullWidth
             required
             margin="normal"
-            label="Email"
+            label={t("register.email")}
             name="email"
             type="email"
             value={formData.email}
@@ -111,7 +114,7 @@ function RegisterPage() {
             fullWidth
             required
             margin="normal"
-            label="Phone"
+            label={t("register.phone")}
             name="phone"
             value={formData.phone}
             onChange={handleChange}
@@ -121,7 +124,7 @@ function RegisterPage() {
             fullWidth
             required
             margin="normal"
-            label="Password"
+            label={t("register.password")}
             name="password"
             type="password"
             value={formData.password}
@@ -135,13 +138,15 @@ function RegisterPage() {
             sx={{ mt: 3 }}
             disabled={isLoading}
           >
-            {isLoading ? "Creating account..." : "Register"}
+            {isLoading
+              ? t("register.creatingAccount")
+              : t("register.register")}
           </Button>
         </Box>
 
         <Typography textAlign="center" sx={{ mt: 2 }}>
-          Already have an account?{" "}
-          <Link to="/login">Login</Link>
+          {t("register.haveAccount")}{" "}
+          <Link to="/login">{t("register.login")}</Link>
         </Typography>
       </Paper>
     </Container>

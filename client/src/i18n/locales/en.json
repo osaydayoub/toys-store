@@ -68,5 +68,40 @@
         "outOfStock": "Out of Stock",
         "addToCart": "Add to Cart",
         "addedToCart": "Product added to cart"
+    },
+    "cart": {
+        "title": "Cart",
+        "empty": "Your cart is empty.",
+        "price": "Price: ₪{{price}}",
+        "itemTotal": "Total: ₪{{total}}",
+        "remove": "Remove",
+        "itemsCount": "Items: {{count}}",
+        "totalPrice": "Total Price: ₪{{total}}",
+        "clearCart": "Clear Cart",
+        "checkout": "Checkout"
+    },
+    "login": {
+        "welcomeBack": "Welcome Back",
+        "subtitle": "Login to continue shopping 🧸",
+        "email": "Email",
+        "password": "Password",
+        "login": "Login",
+        "loggingIn": "Logging in...",
+        "loginFailed": "Login failed",
+        "noAccount": "Don't have an account?",
+        "register": "Register"
+    },
+    "register": {
+        "createAccount": "Create Account",
+        "subtitle": "Register to continue your shopping journey 🧸",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "password": "Password",
+        "register": "Register",
+        "creatingAccount": "Creating account...",
+        "registrationFailed": "Registration failed",
+        "haveAccount": "Already have an account?",
+        "login": "Login"
     }
 }

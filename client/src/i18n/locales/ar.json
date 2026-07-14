@@ -25,7 +25,7 @@
         "category": "الفئة",
         "ageRange": "الفئة العمرية",
         "sort": "الترتيب",
-        "perPage": "عدد المنتجات",
+        "perPage": "عدد المنتجات في الصفحة",
         "defaultSort": "الافتراضي",
         "priceLowHigh": "السعر: من الأقل إلى الأعلى",
         "priceHighLow": "السعر: من الأعلى إلى الأقل",
@@ -68,5 +68,40 @@
         "outOfStock": "غير متوفر",
         "addToCart": "أضف إلى السلة",
         "addedToCart": "تمت إضافة المنتج إلى السلة"
+    },
+    "cart": {
+        "title": "سلة التسوق",
+        "empty": "سلة التسوق فارغة.",
+        "price": "السعر: ₪{{price}}",
+        "itemTotal": "المجموع: ₪{{total}}",
+        "remove": "حذف",
+        "itemsCount": "عدد المنتجات الإجمالي: {{count}}",
+        "totalPrice": "السعر الإجمالي: ₪{{total}}",
+        "clearCart": "إفراغ السلة",
+        "checkout": "إتمام الطلب"
+    },
+    "login": {
+        "welcomeBack": "مرحبًا بعودتك",
+        "subtitle": "سجل الدخول لمتابعة التسوق 🧸",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "login": "تسجيل الدخول",
+        "loggingIn": "جارٍ تسجيل الدخول...",
+        "loginFailed": "فشل تسجيل الدخول",
+        "noAccount": "ليس لديك حساب؟",
+        "register": "إنشاء حساب"
+    },
+    "register": {
+        "createAccount": "إنشاء حساب",
+        "subtitle": "سجل لمتابعة رحلة التسوق 🧸",
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "password": "كلمة المرور",
+        "register": "إنشاء حساب",
+        "creatingAccount": "جارٍ إنشاء الحساب...",
+        "registrationFailed": "فشل إنشاء الحساب",
+        "haveAccount": "لديك حساب بالفعل؟",
+        "login": "تسجيل الدخول"
     }
 }

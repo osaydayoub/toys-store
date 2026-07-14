@@ -7,8 +7,10 @@ import {
 } from "@mui/material";
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function CartPage() {
+    const { t } = useTranslation();
     const {
         cartItems,
         removeFromCart,
@@ -23,9 +25,9 @@ function CartPage() {
         return (
             <Container sx={{ mt: 4 }}>
                 <Typography variant="h4" gutterBottom>
-                    Cart
+                    {t("cart.title")}
                 </Typography>
-                <Typography>Your cart is empty.</Typography>
+                <Typography>{t("cart.empty")}</Typography>
             </Container>
         );
     }
@@ -33,13 +35,14 @@ function CartPage() {
     return (
         <Container sx={{ mt: 4 }}>
             <Typography variant="h4" gutterBottom>
-                Cart
+                {t("cart.title")}
             </Typography>
 
             {cartItems.map((item) => (
                 <Box key={item._id} sx={{ mb: 2 }}>
                     <Typography variant="h6">{item.name}</Typography>
-                    <Typography>Price: ₪{item.price}</Typography>
+                    <Typography>{t("cart.price", { price: item.price })}</Typography>
+
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
                         <Button variant="outlined" onClick={() => decreaseQuantity(item._id)}>
                             -
@@ -51,7 +54,9 @@ function CartPage() {
                             +
                         </Button>
                     </Box>
-                    <Typography>Total: ₪{item.price * item.quantity}</Typography>
+                    <Typography>  {t("cart.itemTotal", {
+                        total: item.price * item.quantity,
+                    })}</Typography>
 
                     <Button
                         color="error"
@@ -59,16 +64,16 @@ function CartPage() {
                         sx={{ mt: 1 }}
                         onClick={() => removeFromCart(item._id)}
                     >
-                        Remove
+                        {t("cart.remove")}
                     </Button>
 
                     <Divider sx={{ mt: 2 }} />
                 </Box>
             ))}
 
-            <Typography variant="h6">Items: {totalItems}</Typography>
+            <Typography variant="h6"> {t("cart.itemsCount", { count: totalItems })}</Typography>
             <Typography variant="h6">
-                Total Price: ₪{totalPrice.toFixed(2)}
+                {t("cart.totalPrice", { total: totalPrice.toFixed(2) })}
             </Typography>
 
             <Button
@@ -77,7 +82,7 @@ function CartPage() {
                 sx={{ mt: 2 }}
                 onClick={clearCart}
             >
-                Clear Cart
+                {t("cart.clearCart")}
             </Button>
             <Button
                 component={Link}
@@ -85,7 +90,7 @@ function CartPage() {
                 variant="contained"
                 sx={{ mt: 2, mr: 2 }}
             >
-                Checkout
+                {t("cart.checkout")}
             </Button>
         </Container>
     );

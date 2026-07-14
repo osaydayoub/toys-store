@@ -363,9 +363,9 @@ function ProductsPage() {
               </FormControl>
 
               <FormControl>
-                <InputLabel>Per Page</InputLabel>
+                <InputLabel>{t("productsPage.perPage")}</InputLabel>
                 <Select
-                  label="Per Page"
+                  label={t("productsPage.perPage")}
                   value={productsPerPage}
                   onChange={(e) => setProductsPerPage(Number(e.target.value))}
                 >

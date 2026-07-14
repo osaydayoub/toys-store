@@ -68,5 +68,40 @@
         "outOfStock": "אזל מהמלאי",
         "addToCart": "הוסף לעגלה",
         "addedToCart": "המוצר נוסף לעגלה"
+    },
+    "cart": {
+        "title": "עגלת קניות",
+        "empty": "עגלת הקניות שלך ריקה.",
+        "price": "מחיר: ₪{{price}}",
+        "itemTotal": "סה״כ: ₪{{total}}",
+        "remove": "הסר",
+        "itemsCount": "מספר פריטים: {{count}}",
+        "totalPrice": "מחיר כולל: ₪{{total}}",
+        "clearCart": "נקה עגלה",
+        "checkout": "מעבר לתשלום"
+    },
+    "login": {
+        "welcomeBack": "ברוכים השבים",
+        "subtitle": "התחברו כדי להמשיך בקניות 🧸",
+        "email": "אימייל",
+        "password": "סיסמה",
+        "login": "התחברות",
+        "loggingIn": "מתחבר...",
+        "loginFailed": "ההתחברות נכשלה",
+        "noAccount": "אין לכם חשבון?",
+        "register": "הרשמה"
+    },
+    "register": {
+        "createAccount": "יצירת חשבון",
+        "subtitle": "הירשמו כדי להמשיך במסע הקניות 🧸",
+        "name": "שם",
+        "email": "אימייל",
+        "phone": "טלפון",
+        "password": "סיסמה",
+        "register": "הרשמה",
+        "creatingAccount": "יוצר חשבון...",
+        "registrationFailed": "יצירת החשבון נכשלה",
+        "haveAccount": "כבר יש לכם חשבון?",
+        "login": "התחברות"
     }
 }

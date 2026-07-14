@@ -11,12 +11,14 @@ import {
     Typography,
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const redirectPath = location.state?.from || "/products";
     const { login } = useAuth();
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -42,7 +44,7 @@ function LoginPage() {
             const user = await login(formData.email, formData.password);
             navigate(redirectPath);
         } catch (error) {
-            setError(error.response?.data?.message || "Login failed");
+            setError(error.response?.data?.message || t("login.loginFailed"));
         } finally {
             setIsLoading(false);
         }
@@ -68,7 +70,7 @@ function LoginPage() {
                     />
                 </Box>
                 <Typography variant="h4" gutterBottom textAlign="center">
-                    Welcome Back
+                    {t("login.welcomeBack")}
                 </Typography>
 
                 <Typography
@@ -77,7 +79,7 @@ function LoginPage() {
                     textAlign="center"
                     sx={{ mb: 2 }}
                 >
-                    Login to continue shopping 🧸
+                    {t("login.subtitle")}
                 </Typography>
 
                 {error && (
@@ -91,7 +93,7 @@ function LoginPage() {
                         fullWidth
                         required
                         margin="normal"
-                        label="Email"
+                        label={t("login.email")}
                         name="email"
                         type="email"
                         value={formData.email}
@@ -102,7 +104,7 @@ function LoginPage() {
                         fullWidth
                         required
                         margin="normal"
-                        label="Password"
+                        label={t("login.password")}
                         name="password"
                         type="password"
                         value={formData.password}
@@ -116,11 +118,13 @@ function LoginPage() {
                         sx={{ mt: 3 }}
                         disabled={isLoading}
                     >
-                        {isLoading ? "Logging in..." : "Login"}
+                        {isLoading
+                            ? t("login.loggingIn")
+                            : t("login.login")}
                     </Button>
                 </Box>
                 <Typography textAlign="center" sx={{ mt: 2 }}>
-                    Don't have an account? <Link to="/register">Register</Link>
+                    {t("login.noAccount")} <Link to="/register">{t("login.register")}</Link>
                 </Typography>
             </Paper>
         </Container>
