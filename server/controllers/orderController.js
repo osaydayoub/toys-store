@@ -195,3 +195,45 @@ export const updateOrderStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateOrderAdminNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { adminNote } = req.body;
+
+    if (typeof adminNote !== "string" || !adminNote.trim()) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Admin note is required",
+      });
+    }
+
+    if (adminNote.trim().length > 1000) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Admin note cannot exceed 1000 characters",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { adminNote: adminNote.trim() },
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(STATUS_CODE.NOT_FOUND).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Admin note saved successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
