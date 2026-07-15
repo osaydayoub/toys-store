@@ -82,7 +82,10 @@
         "removeProductTitle": "إزالة المنتج؟",
         "removeProductMessage": "هل أنت متأكد من إزالة {{name}} من سلة التسوق؟",
         "cancel": "إلغاء",
-        "confirmRemove": "إزالة"
+        "confirmRemove": "إزالة",
+        "clearCartTitle": "إفراغ سلة التسوق؟",
+        "clearCartMessage": "هل أنت متأكد من إزالة جميع المنتجات من سلة التسوق؟",
+        "confirmClearCart": "إفراغ السلة"
     },
     "login": {
         "welcomeBack": "مرحبًا بعودتك",

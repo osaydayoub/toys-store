@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 function CartPage() {
     const { t } = useTranslation();
     const [productToRemove, setProductToRemove] = useState(null);
+    const [clearCartDialogOpen, setClearCartDialogOpen] = useState(false);
 
     const {
         cartItems,
@@ -48,6 +49,11 @@ function CartPage() {
         const productId = productToRemove._id;
         setProductToRemove(null);
         removeFromCart(productId);
+    };
+
+    const confirmClearCart = () => {
+        setClearCartDialogOpen(false);
+        clearCart();
     };
 
     if (cartItems.length === 0) {
@@ -194,7 +200,7 @@ function CartPage() {
                 color="error"
                 variant="contained"
                 sx={{ mt: 2 }}
-                onClick={clearCart}
+                onClick={() => setClearCartDialogOpen(true)}
             >
                 {t("cart.clearCart")}
             </Button>
@@ -256,6 +262,33 @@ function CartPage() {
                         onClick={confirmRemoveProduct}
                     >
                         {t("cart.confirmRemove")}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={clearCartDialogOpen}
+                onClose={() => setClearCartDialogOpen(false)}
+            >
+                <DialogTitle>{t("cart.clearCartTitle")}</DialogTitle>
+
+                <DialogContent>
+                    <DialogContentText>
+                        {t("cart.clearCartMessage")}
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setClearCartDialogOpen(false)}>
+                        {t("cart.cancel")}
+                    </Button>
+
+                    <Button
+                        color="error"
+                        variant="contained"
+                        onClick={confirmClearCart}
+                    >
+                        {t("cart.confirmClearCart")}
                     </Button>
                 </DialogActions>
             </Dialog>

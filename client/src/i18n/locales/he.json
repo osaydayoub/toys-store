@@ -82,7 +82,10 @@
         "removeProductTitle": "להסיר את המוצר?",
         "removeProductMessage": "האם להסיר את {{name}} מעגלת הקניות?",
         "cancel": "ביטול",
-        "confirmRemove": "הסר"
+        "confirmRemove": "הסר",
+        "clearCartTitle": "לנקות את העגלה?",
+        "clearCartMessage": "האם להסיר את כל המוצרים מעגלת הקניות?",
+        "confirmClearCart": "נקה עגלה"
     },
     "login": {
         "welcomeBack": "ברוכים השבים",

@@ -82,7 +82,10 @@
         "removeProductTitle": "Remove product?",
         "removeProductMessage": "Are you sure you want to remove {{name}} from your cart?",
         "cancel": "Cancel",
-        "confirmRemove": "Remove"
+        "confirmRemove": "Remove",
+        "clearCartTitle": "Clear cart?",
+        "clearCartMessage": "Are you sure you want to remove all products from your cart?",
+        "confirmClearCart": "Clear cart"
     },
     "login": {
         "welcomeBack": "Welcome Back",
