@@ -152,8 +152,8 @@ function MyOrdersPage() {
                                             name: item.name,
                                         })}
                                         sx={{
-                                            width: { xs: 100, sm: 80 },
-                                            height: { xs: 100, sm: 80 },
+                                            width: { xs: 130, sm: 110 },
+                                            height: { xs: 130, sm: 110 },
                                             flexShrink: 0,
                                             objectFit: "cover",
                                             borderRadius: 2,
@@ -168,8 +168,8 @@ function MyOrdersPage() {
                                             name: item.name,
                                         })}
                                         sx={{
-                                            width: { xs: 100, sm: 80 },
-                                            height: { xs: 100, sm: 80 },
+                                            width: { xs: 130, sm: 110 },
+                                            height: { xs: 130, sm: 110 },
                                             flexShrink: 0,
                                             display: "grid",
                                             placeItems: "center",
