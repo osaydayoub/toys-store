@@ -2,7 +2,12 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import STATUS_CODE from "../constants/statusCodes.js";
 import crypto from "crypto";
+import { fileURLToPath } from "url";
 import sendEmail from "../utils/sendEmail.js";
+
+const emailLogoPath = fileURLToPath(
+  new URL("../../client/src/assets/logo.png", import.meta.url)
+);
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -31,8 +36,16 @@ const sendVerificationCode = async (user) => {
   await sendEmail({
     to: user.email,
     subject: "Your verification code - Baby Kids Toys",
+    text: `Welcome to Baby Kids Toys. Your verification code is ${code}. This code expires in 10 minutes. If you did not create this account, ignore this email.`,
     html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; text-align: center; max-width: 520px; margin: 0 auto; padding: 24px;">
+        <img
+          src="cid:baby-kids-toys-logo"
+          alt="Baby Kids Toys"
+          width="110"
+          height="110"
+          style="display: block; width: 110px; height: 110px; object-fit: cover; border-radius: 50%; margin: 0 auto 20px;"
+        />
         <h2>Welcome to Baby Kids Toys 🧸</h2>
         <p>Enter this verification code to finish creating your account:</p>
         <div style="font-size: 32px; font-weight: 700; letter-spacing: 10px; margin: 24px 0;">
@@ -42,6 +55,13 @@ const sendVerificationCode = async (user) => {
         <p>If you did not create this account, you can ignore this email.</p>
       </div>
     `,
+    attachments: [
+      {
+        filename: "baby-kids-toys-logo.png",
+        path: emailLogoPath,
+        cid: "baby-kids-toys-logo",
+      },
+    ],
   });
 };
 

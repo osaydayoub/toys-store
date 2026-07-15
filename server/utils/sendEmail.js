@@ -17,13 +17,21 @@ transporter.verify((error) => {
   }
 });
 
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+  attachments = [],
+}) => {
   try {
     await transporter.sendMail({
       from: `"Baby Kids Toys" <${process.env.EMAIL_USER}>`,
       to,
       subject,
+      text,
       html,
+      attachments,
     });
   } catch (error) {
     console.error("Failed to send email:", error);
