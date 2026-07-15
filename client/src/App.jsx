@@ -15,7 +15,6 @@ import MyOrdersPage from "./pages/MyOrdersPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import PrivateRoute from "./components/PrivateRoute";
 import MobileBottomNav from "./components/MobileBottomNav";
-import VerifyEmailPage from "./pages/VerifyEmailPage";
 import AboutPage from "./pages/AboutPage";
 function App() {
   return (
@@ -40,7 +39,6 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route
               path="/checkout"
               element={
