@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -16,7 +16,7 @@ import logo from "../assets/logo.png";
 
 function RegisterPage() {
   const { t } = useTranslation();
-  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,17 +37,18 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
     setIsLoading(true);
 
     try {
-      const response = await api.post("/auth/register", formData);
-      setSuccess(response.data.message);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
+      await api.post("/auth/register", formData);
+      const verificationEmail = formData.email.trim().toLowerCase();
+
+      sessionStorage.setItem("verificationEmail", verificationEmail);
+      navigate("/verify-email", {
+        state: {
+          email: verificationEmail,
+          justRegistered: true,
+        },
       });
     } catch (error) {
       setError(error.response?.data?.message || t("register.registrationFailed"));
@@ -91,14 +92,6 @@ function RegisterPage() {
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {success}
-            <br />
-            Please open your email and click the verification link before logging in.
           </Alert>
         )}
 
