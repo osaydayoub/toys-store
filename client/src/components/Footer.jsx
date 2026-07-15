@@ -12,6 +12,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "react-i18next";
 
 import { Link } from "react-router-dom";
@@ -134,6 +135,21 @@ function Footer() {
                 >
                   <ReceiptLongIcon fontSize="small" />
                   {t("navbar.myOrders")}
+                </Typography>
+
+                <Typography
+                  component={Link}
+                  to="/about"
+                  sx={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                  }}
+                >
+                  <InfoOutlinedIcon fontSize="small" />
+                  {t("navbar.about")}
                 </Typography>
               </Stack>
 

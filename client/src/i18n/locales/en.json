@@ -4,6 +4,7 @@
         "products": "Products",
         "cart": "Cart ({{count}})",
         "cartShort": "Cart",
+        "about": "About Us",
         "myOrders": "My Orders",
         "adminProducts": "Admin Products",
         "adminOrders": "Admin Orders",
@@ -86,6 +87,18 @@
         "clearCartTitle": "Clear cart?",
         "clearCartMessage": "Are you sure you want to remove all products from your cart?",
         "confirmClearCart": "Clear cart"
+    },
+    "about": {
+        "title": "About Us",
+        "greeting": "Hello, I'm Rofaida Ayoub Damouni",
+        "paragraph1": "I believe that every child has unique abilities and potential that deserve to be discovered and nurtured in the right way. Through my experience in occupational therapy, I strive to support children in developing their motor, sensory, cognitive, and social skills through enjoyable approaches based on play, exploration, and interaction.",
+        "paragraph2": "Because play is a child's world and first language, I carefully select purposeful toys and educational resources that help children learn, explore, and build self-confidence. I also offer parents guidance and support so they can be active partners in their children's development.",
+        "paragraph3": "That is why we provide carefully selected educational and developmental toys that combine enjoyment with meaningful benefits and help children acquire the skills they need at every stage of growth.",
+        "paragraph4": "My mission is to help build a confident and independent generation capable of reaching its full potential, and to turn every moment of play into an opportunity for learning and growth.",
+        "quote": "Play is not merely entertainment; it is the path through which a child discovers the world around them.",
+        "name": "🌷 Rofaida Ayoub Damouni",
+        "profession": "Occupational Therapist",
+        "tagline": "Because your child deserves the best start"
     },
     "login": {
         "welcomeBack": "Welcome Back",

@@ -19,6 +19,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LanguageIcon from "@mui/icons-material/Language";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
@@ -33,6 +34,12 @@ function Navbar() {
   const { t, i18n } = useTranslation();
 
   const pages = [
+    {
+      key: "about",
+      label: t("navbar.about"),
+      path: "/about",
+      icon: <InfoOutlinedIcon fontSize="small" />,
+    },
     {
       key: "products",
       label: t("navbar.products"),
