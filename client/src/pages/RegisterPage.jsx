@@ -15,9 +15,8 @@ import logo from "../assets/logo.png";
 
 
 function RegisterPage() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -42,7 +41,15 @@ function RegisterPage() {
 
     try {
       await api.post("/auth/register", formData);
-      navigate("/login");
+      const verificationEmail = formData.email.trim().toLowerCase();
+
+      sessionStorage.setItem("verificationEmail", verificationEmail);
+      navigate("/verify-email", {
+        state: {
+          email: verificationEmail,
+          justRegistered: true,
+        },
+      });
     } catch (error) {
       setError(error.response?.data?.message || t("register.registrationFailed"));
     } finally {

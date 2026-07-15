@@ -124,6 +124,24 @@
         "haveAccount": "Already have an account?",
         "login": "Login"
     },
+    "verifyEmail": {
+        "title": "Verify your email",
+        "instructions": "Enter the 6-digit code sent to {{email}}",
+        "digitLabel": "Verification code digit {{number}}",
+        "verify": "Verify email",
+        "verifying": "Verifying...",
+        "success": "Email verified! Redirecting you to the store...",
+        "failed": "Email verification failed",
+        "resend": "Resend code",
+        "resending": "Sending...",
+        "resendIn": "Resend code in {{seconds}}s",
+        "codeResent": "A new verification code was sent.",
+        "resendFailed": "Failed to resend verification code",
+        "spamReminder": "Didn't receive it? Check your spam folder.",
+        "changeEmail": "Change email or register again",
+        "missingEmail": "We could not determine which email to verify. Please register again.",
+        "backToRegister": "Back to registration"
+    },
     "checkout": {
         "title": "Checkout",
         "emptyCart": "Your cart is empty.",
