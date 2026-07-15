@@ -164,7 +164,8 @@
         "shippingCost": "تكلفة التوصيل: ₪{{cost}}",
         "total": "المجموع: ₪{{total}}",
         "shippingAddress": "عنوان التوصيل: {{region}}، {{city}}، {{street}}",
-        "note": "ملاحظة: {{note}}"
+        "note": "ملاحظة: {{note}}",
+        "adminNote": "رسالة المتجر: {{note}}"
     },
     "adminOrdersPage": {
         "title": "إدارة الطلبات",
@@ -191,7 +192,20 @@
         "cancelMessage": "هل أنت متأكد من إلغاء الطلب",
         "restoreStock": "سيؤدي إلغاء الطلب إلى إعادة المنتجات إلى المخزون.",
         "keepOrder": "الاحتفاظ بالطلب",
-        "cancelOrder": "إلغاء الطلب"
+        "cancelOrder": "إلغاء الطلب",
+        "adminNote": "ملاحظة الإدارة: {{note}}",
+        "addAdminNote": "إضافة ملاحظة",
+        "updateAdminNote": "تحديث الملاحظة",
+        "addAdminNoteTitle": "إضافة ملاحظة للزبون",
+        "updateAdminNoteTitle": "تحديث ملاحظة الزبون",
+        "adminNoteMessage": "ستظهر هذه الملاحظة للزبون في الطلب رقم {{number}}.",
+        "adminNoteLabel": "ملاحظة الإدارة",
+        "adminNotePlaceholder": "اكتب رسالة للزبون...",
+        "cancelNote": "إلغاء",
+        "saveAdminNote": "حفظ الملاحظة",
+        "savingAdminNote": "جارٍ الحفظ...",
+        "adminNoteSaved": "تم حفظ ملاحظة الإدارة بنجاح",
+        "failedToSaveAdminNote": "فشل حفظ ملاحظة الإدارة"
     },
     "orderStatus": {
         "pending": "قيد الانتظار",

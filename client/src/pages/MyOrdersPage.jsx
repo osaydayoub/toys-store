@@ -178,6 +178,14 @@ function MyOrdersPage() {
                             </>
 
                         )}
+
+                        {order.adminNote && (
+                            <Alert severity="info" sx={{ mt: 2 }}>
+                                {t("myOrders.adminNote", {
+                                    note: order.adminNote,
+                                })}
+                            </Alert>
+                        )}
                     </Paper>
                 ))}
             </Stack>

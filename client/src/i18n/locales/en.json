@@ -164,7 +164,8 @@
         "shippingCost": "Shipping Cost: ₪{{cost}}",
         "total": "Total: ₪{{total}}",
         "shippingAddress": "Shipping: {{region}}, {{city}}, {{street}}",
-        "note": "Note: {{note}}"
+        "note": "Note: {{note}}",
+        "adminNote": "Store message: {{note}}"
     },
     "adminOrdersPage": {
         "title": "Admin Orders",
@@ -191,7 +192,20 @@
         "cancelMessage": "Are you sure you want to cancel order",
         "restoreStock": "Cancelling the order will restore the product stock.",
         "keepOrder": "Keep Order",
-        "cancelOrder": "Cancel Order"
+        "cancelOrder": "Cancel Order",
+        "adminNote": "Admin note: {{note}}",
+        "addAdminNote": "Add note",
+        "updateAdminNote": "Update note",
+        "addAdminNoteTitle": "Add a note for the customer",
+        "updateAdminNoteTitle": "Update customer note",
+        "adminNoteMessage": "This note will be visible to the customer on order #{{number}}.",
+        "adminNoteLabel": "Admin note",
+        "adminNotePlaceholder": "Write a message for the customer...",
+        "cancelNote": "Cancel",
+        "saveAdminNote": "Save note",
+        "savingAdminNote": "Saving...",
+        "adminNoteSaved": "Admin note saved successfully",
+        "failedToSaveAdminNote": "Failed to save admin note"
     },
     "orderStatus": {
         "pending": "Pending",

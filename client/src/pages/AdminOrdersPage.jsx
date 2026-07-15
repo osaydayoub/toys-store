@@ -40,6 +40,9 @@ function AdminOrdersPage() {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [searchOrderNumber, setSearchOrderNumber] = useState("");
     const [orderToCancel, setOrderToCancel] = useState(null);
+    const [orderForAdminNote, setOrderForAdminNote] = useState(null);
+    const [adminNote, setAdminNote] = useState("");
+    const [isSavingNote, setIsSavingNote] = useState(false);
     const { t, i18n } = useTranslation();
 
     const fetchOrders = async () => {
@@ -59,23 +62,66 @@ function AdminOrdersPage() {
 
     const handleStatusChange = async (orderId, newStatus) => {
         try {
-            await api.put(`/orders/${orderId}/status`, {
+            const response = await api.put(`/orders/${orderId}/status`, {
                 status: newStatus,
             });
 
             setError("");
             setFeedback(t("adminOrdersPage.statusUpdated"));
             fetchOrders();
+            return response.data.data;
         } catch {
             setError(t("adminOrdersPage.failedToUpdate"));
+            return null;
         }
     };
+
+    const openAdminNoteDialog = (order) => {
+        setOrderForAdminNote(order);
+        setAdminNote(order.adminNote || "");
+    };
+
+    const closeAdminNoteDialog = () => {
+        if (isSavingNote) return;
+
+        setOrderForAdminNote(null);
+        setAdminNote("");
+    };
+
+    const saveAdminNote = async () => {
+        if (!orderForAdminNote || !adminNote.trim()) return;
+
+        try {
+            setIsSavingNote(true);
+            await api.put(`/orders/${orderForAdminNote._id}/admin-note`, {
+                adminNote: adminNote.trim(),
+            });
+
+            setError("");
+            setFeedback(t("adminOrdersPage.adminNoteSaved"));
+            setOrderForAdminNote(null);
+            setAdminNote("");
+            await fetchOrders();
+        } catch {
+            setError(t("adminOrdersPage.failedToSaveAdminNote"));
+        } finally {
+            setIsSavingNote(false);
+        }
+    };
+
     const confirmCancelOrder = async () => {
         if (!orderToCancel) return;
 
-        await handleStatusChange(orderToCancel._id, "cancelled");
+        const cancelledOrder = await handleStatusChange(
+            orderToCancel._id,
+            "cancelled"
+        );
 
         setOrderToCancel(null);
+
+        if (cancelledOrder) {
+            openAdminNoteDialog(cancelledOrder);
+        }
     };
     const filteredOrders = orders.filter((order) => {
         const matchesStatus =
@@ -278,6 +324,24 @@ function AdminOrdersPage() {
                                 </>
 
                             )}
+
+                            {order.adminNote && (
+                                <Alert severity="info" sx={{ mt: 2 }}>
+                                    {t("adminOrdersPage.adminNote", {
+                                        note: order.adminNote,
+                                    })}
+                                </Alert>
+                            )}
+
+                            <Button
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                                onClick={() => openAdminNoteDialog(order)}
+                            >
+                                {order.adminNote
+                                    ? t("adminOrdersPage.updateAdminNote")
+                                    : t("adminOrdersPage.addAdminNote")}
+                            </Button>
                         </Paper>
                     ))}
                 </Stack>
@@ -311,6 +375,56 @@ function AdminOrdersPage() {
                         onClick={confirmCancelOrder}
                     >
                         {t("adminOrdersPage.cancelOrder")}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={Boolean(orderForAdminNote)}
+                onClose={closeAdminNoteDialog}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>
+                    {orderForAdminNote?.adminNote
+                        ? t("adminOrdersPage.updateAdminNoteTitle")
+                        : t("adminOrdersPage.addAdminNoteTitle")}
+                </DialogTitle>
+
+                <DialogContent>
+                    <DialogContentText sx={{ mb: 2 }}>
+                        {t("adminOrdersPage.adminNoteMessage", {
+                            number: orderForAdminNote?.orderNumber,
+                        })}
+                    </DialogContentText>
+
+                    <TextField
+                        autoFocus
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        label={t("adminOrdersPage.adminNoteLabel")}
+                        placeholder={t("adminOrdersPage.adminNotePlaceholder")}
+                        value={adminNote}
+                        onChange={(event) => setAdminNote(event.target.value)}
+                        inputProps={{ maxLength: 1000 }}
+                        helperText={`${adminNote.length}/1000`}
+                    />
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={closeAdminNoteDialog} disabled={isSavingNote}>
+                        {t("adminOrdersPage.cancelNote")}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={saveAdminNote}
+                        disabled={!adminNote.trim() || isSavingNote}
+                    >
+                        {isSavingNote
+                            ? t("adminOrdersPage.savingAdminNote")
+                            : t("adminOrdersPage.saveAdminNote")}
                     </Button>
                 </DialogActions>
             </Dialog>

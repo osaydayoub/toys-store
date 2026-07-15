@@ -164,7 +164,8 @@
         "shippingCost": "עלות משלוח: ₪{{cost}}",
         "total": "סה״כ: ₪{{total}}",
         "shippingAddress": "משלוח: {{region}}, {{city}}, {{street}}",
-        "note": "הערה: {{note}}"
+        "note": "הערה: {{note}}",
+        "adminNote": "הודעה מהחנות: {{note}}"
     },
     "adminOrdersPage": {
         "title": "ניהול הזמנות",
@@ -191,7 +192,20 @@
         "cancelMessage": "האם לבטל את ההזמנה",
         "restoreStock": "ביטול ההזמנה יחזיר את המוצרים למלאי.",
         "keepOrder": "השארת ההזמנה",
-        "cancelOrder": "ביטול הזמנה"
+        "cancelOrder": "ביטול הזמנה",
+        "adminNote": "הערת מנהל: {{note}}",
+        "addAdminNote": "הוספת הערה",
+        "updateAdminNote": "עדכון הערה",
+        "addAdminNoteTitle": "הוספת הערה ללקוח",
+        "updateAdminNoteTitle": "עדכון הערה ללקוח",
+        "adminNoteMessage": "הערה זו תהיה גלויה ללקוח בהזמנה מספר {{number}}.",
+        "adminNoteLabel": "הערת מנהל",
+        "adminNotePlaceholder": "כתבו הודעה ללקוח...",
+        "cancelNote": "ביטול",
+        "saveAdminNote": "שמירת הערה",
+        "savingAdminNote": "שומר...",
+        "adminNoteSaved": "הערת המנהל נשמרה בהצלחה",
+        "failedToSaveAdminNote": "שמירת הערת המנהל נכשלה"
     },
     "orderStatus": {
         "pending": "ממתין",
