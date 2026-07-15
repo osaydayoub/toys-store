@@ -165,7 +165,8 @@
         "total": "المجموع: ₪{{total}}",
         "shippingAddress": "عنوان التوصيل: {{region}}، {{city}}، {{street}}",
         "note": "ملاحظة: {{note}}",
-        "adminNote": "رسالة المتجر: {{note}}"
+        "adminNote": "رسالة المتجر: {{note}}",
+        "productImageAlt": "صورة المنتج {{name}}"
     },
     "adminOrdersPage": {
         "title": "إدارة الطلبات",

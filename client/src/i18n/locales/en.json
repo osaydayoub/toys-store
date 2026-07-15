@@ -165,7 +165,8 @@
         "total": "Total: ₪{{total}}",
         "shippingAddress": "Shipping: {{region}}, {{city}}, {{street}}",
         "note": "Note: {{note}}",
-        "adminNote": "Store message: {{note}}"
+        "adminNote": "Store message: {{note}}",
+        "productImageAlt": "{{name}} product"
     },
     "adminOrdersPage": {
         "title": "Admin Orders",

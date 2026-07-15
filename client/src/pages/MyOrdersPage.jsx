@@ -133,18 +133,69 @@ function MyOrdersPage() {
                         )}
 
                         {order.items.map((item) => (
-                            <Box key={item.product} sx={{ mb: 1 }}>
-                                <Typography>
-                                    {t("myOrders.itemQuantity", {
-                                        name: item.name,
-                                        quantity: item.quantity,
-                                    })}
-                                </Typography>
-                                <Typography color="text.secondary">
+                            <Box
+                                key={item.product}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: { xs: "column", sm: "row" },
+                                    alignItems: { xs: "center", sm: "flex-start" },
+                                    gap: 2,
+                                    mb: 2,
+                                    textAlign: { xs: "center", sm: "start" },
+                                }}
+                            >
+                                {item.image ? (
+                                    <Box
+                                        component="img"
+                                        src={item.image}
+                                        alt={t("myOrders.productImageAlt", {
+                                            name: item.name,
+                                        })}
+                                        sx={{
+                                            width: { xs: 100, sm: 80 },
+                                            height: { xs: 100, sm: 80 },
+                                            flexShrink: 0,
+                                            objectFit: "cover",
+                                            borderRadius: 2,
+                                            border: "1px solid",
+                                            borderColor: "divider",
+                                        }}
+                                    />
+                                ) : (
+                                    <Box
+                                        role="img"
+                                        aria-label={t("myOrders.productImageAlt", {
+                                            name: item.name,
+                                        })}
+                                        sx={{
+                                            width: { xs: 100, sm: 80 },
+                                            height: { xs: 100, sm: 80 },
+                                            flexShrink: 0,
+                                            display: "grid",
+                                            placeItems: "center",
+                                            borderRadius: 2,
+                                            border: "1px solid",
+                                            borderColor: "divider",
+                                            backgroundColor: "action.hover",
+                                            fontSize: "2rem",
+                                        }}
+                                    >
+                                        🧸
+                                    </Box>
+                                )}
+
+                                <Box>
+                                    <Typography fontWeight={600}>
+                                        {t("myOrders.itemQuantity", {
+                                            name: item.name,
+                                            quantity: item.quantity,
+                                        })}
+                                    </Typography>
+
                                     <Typography color="text.secondary">
                                         {t("myOrders.priceEach", { price: item.price })}
                                     </Typography>
-                                </Typography>
+                                </Box>
                             </Box>
                         ))}
                         <Typography color="text.secondary">

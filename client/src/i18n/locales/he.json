@@ -165,7 +165,8 @@
         "total": "סה״כ: ₪{{total}}",
         "shippingAddress": "משלוח: {{region}}, {{city}}, {{street}}",
         "note": "הערה: {{note}}",
-        "adminNote": "הודעה מהחנות: {{note}}"
+        "adminNote": "הודעה מהחנות: {{note}}",
+        "productImageAlt": "תמונת המוצר {{name}}"
     },
     "adminOrdersPage": {
         "title": "ניהול הזמנות",
