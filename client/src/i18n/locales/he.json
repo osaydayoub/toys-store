@@ -78,7 +78,11 @@
         "itemsCount": "מספר פריטים: {{count}}",
         "totalPrice": "מחיר כולל: ₪{{total}}",
         "clearCart": "נקה עגלה",
-        "checkout": "מעבר לתשלום"
+        "checkout": "מעבר לתשלום",
+        "removeProductTitle": "להסיר את המוצר?",
+        "removeProductMessage": "האם להסיר את {{name}} מעגלת הקניות?",
+        "cancel": "ביטול",
+        "confirmRemove": "הסר"
     },
     "login": {
         "welcomeBack": "ברוכים השבים",

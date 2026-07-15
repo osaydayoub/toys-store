@@ -78,7 +78,11 @@
         "itemsCount": "Items: {{count}}",
         "totalPrice": "Total Price: ₪{{total}}",
         "clearCart": "Clear Cart",
-        "checkout": "Checkout"
+        "checkout": "Checkout",
+        "removeProductTitle": "Remove product?",
+        "removeProductMessage": "Are you sure you want to remove {{name}} from your cart?",
+        "cancel": "Cancel",
+        "confirmRemove": "Remove"
     },
     "login": {
         "welcomeBack": "Welcome Back",

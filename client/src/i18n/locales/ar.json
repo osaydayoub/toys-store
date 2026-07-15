@@ -78,7 +78,11 @@
         "itemsCount": "عدد المنتجات الإجمالي: {{count}}",
         "totalPrice": "السعر الإجمالي: ₪{{total}}",
         "clearCart": "إفراغ السلة",
-        "checkout": "إتمام الطلب"
+        "checkout": "إتمام الطلب",
+        "removeProductTitle": "إزالة المنتج؟",
+        "removeProductMessage": "هل أنت متأكد من إزالة {{name}} من سلة التسوق؟",
+        "cancel": "إلغاء",
+        "confirmRemove": "إزالة"
     },
     "login": {
         "welcomeBack": "مرحبًا بعودتك",

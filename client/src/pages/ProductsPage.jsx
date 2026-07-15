@@ -200,7 +200,7 @@ function ProductsPage() {
               backgroundColor: theme.palette.primary.main,
               backgroundImage: "var(--gradient)",
               color: theme.palette.primary.contrastText,
-              fontSize: "1.6rem",
+              fontSize: "1.15rem",
               fontWeight: 800,
               boxShadow: theme.shadows[4],
             })}
@@ -223,7 +223,7 @@ function ProductsPage() {
             backgroundImage: "var(--gradient)",
             color: theme.palette.primary.contrastText,
             fontWeight: 800,
-            fontSize: "1.15rem",
+            fontSize: "1rem",
             boxShadow: theme.shadows[3],
           })}
         >
@@ -248,7 +248,7 @@ function ProductsPage() {
             backgroundImage: "var(--gradient)",
             color: theme.palette.primary.contrastText,
             fontWeight: 800,
-            fontSize: "1.15rem",
+            fontSize: "1rem",
             boxShadow: theme.shadows[3],
           })}
         >
