@@ -180,40 +180,80 @@ function ProductsPage() {
           />
         </Paper>
 
-        <Typography variant="h5" gutterBottom textAlign="center">
-          {t("productsPage.title")}
-        </Typography>
-
-        <Typography
-          variant="h6"
-          fontWeight={800}
-          sx={{
-            mb: 2,
-            mt: 4,
+        <Box
+          sx={(theme) => ({
             display: "flex",
+            justifyContent: "center",
+            mb: 4,
+            mt: 2,
+          })}
+        >
+          <Box
+            sx={(theme) => ({
+              "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              px: 4,
+              py: 1.2,
+              borderRadius: "999px",
+              backgroundColor: theme.palette.primary.main,
+              backgroundImage: "var(--gradient)",
+              color: theme.palette.primary.contrastText,
+              fontSize: "1.15rem",
+              fontWeight: 800,
+              boxShadow: theme.shadows[4],
+            })}
+          >
+            {t("productsPage.title")}
+          </Box>
+        </Box>
+        <Box
+          sx={(theme) => ({
+            "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            display: "inline-flex",
             alignItems: "center",
-            gap: 1,
-          }}
+            justifyContent: "center",
+            px: 3,
+            py: 1,
+            mt: 4,
+            mb: 2,
+            borderRadius: "999px",
+            backgroundColor: theme.palette.primary.main,
+            backgroundImage: "var(--gradient)",
+            color: theme.palette.primary.contrastText,
+            fontWeight: 800,
+            fontSize: "1rem",
+            boxShadow: theme.shadows[3],
+          })}
         >
           {t("productsPage.shopByAge")}
-        </Typography>
+        </Box>
         <AgeFilterCarousel
           selectedAgeRange={selectedAgeRange}
           onSelectAge={setSelectedAgeRange}
         />
-        <Typography
-          variant="h6"
-          fontWeight={800}
-          sx={{
-            mb: 2,
-            mt: 4,
-            display: "flex",
+        <Box
+          sx={(theme) => ({
+            "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            display: "inline-flex",
             alignItems: "center",
-            gap: 1,
-          }}
+            justifyContent: "center",
+            px: 3,
+            py: 1,
+            mt: 4,
+            mb: 2,
+            borderRadius: "999px",
+            backgroundColor: theme.palette.primary.main,
+            backgroundImage: "var(--gradient)",
+            color: theme.palette.primary.contrastText,
+            fontWeight: 800,
+            fontSize: "1rem",
+            boxShadow: theme.shadows[3],
+          })}
         >
           {t("productsPage.shopByCategory")}
-        </Typography>
+        </Box>
         <CategoryFilterCarousel
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
@@ -323,9 +363,9 @@ function ProductsPage() {
               </FormControl>
 
               <FormControl>
-                <InputLabel>Per Page</InputLabel>
+                <InputLabel>{t("productsPage.perPage")}</InputLabel>
                 <Select
-                  label="Per Page"
+                  label={t("productsPage.perPage")}
                   value={productsPerPage}
                   onChange={(e) => setProductsPerPage(Number(e.target.value))}
                 >

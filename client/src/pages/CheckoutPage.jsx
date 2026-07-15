@@ -11,12 +11,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useCart } from "../context/CartContext";
 
 const shippingCosts = {
   "Jerusalem District": 70,
   "Northern & Haifa District": 50,
-  "Central & Tel Aviv District": 50,
+  "Central District": 50,
+  "Tel Aviv District": 70,
   "Southern District": 70,
   "West Bank": 70,
 };
@@ -26,6 +28,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     region: "",
@@ -63,13 +66,13 @@ function CheckoutPage() {
       setCreatedOrderNumber(response.data.data.orderNumber);
 
       clearCart();
-      setSuccess("Order placed successfully!");
+      setSuccess(t("checkout.orderPlaced"));
 
       // setTimeout(() => {
       //   navigate("/products");
       // }, 1500);
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to place order");
+      setError(error.response?.data?.message || t("checkout.failedToPlaceOrder"));
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +81,8 @@ function CheckoutPage() {
   if (cartItems.length === 0 && !success) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography variant="h4">Checkout</Typography>
-        <Typography>Your cart is empty.</Typography>
+        <Typography variant="h4">{t("checkout.title")}</Typography>
+        <Typography>{t("checkout.emptyCart")}</Typography>
       </Container>
     );
   }
@@ -88,7 +91,7 @@ function CheckoutPage() {
     <Container maxWidth="sm" sx={{ mt: 4, mb: 6 }}>
       <Paper sx={{ p: 4, borderRadius: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Checkout
+          {t("checkout.title")}
         </Typography>
 
         {success && (
@@ -97,7 +100,9 @@ function CheckoutPage() {
 
             {createdOrderNumber && (
               <Typography sx={{ mt: 1 }}>
-                Order Number: {createdOrderNumber}
+                <Typography sx={{ mt: 1 }}>
+                  {t("checkout.orderNumber", { number: createdOrderNumber })}
+                </Typography>
               </Typography>
             )}
 
@@ -108,7 +113,7 @@ function CheckoutPage() {
               size="small"
               sx={{ mt: 2 }}
             >
-              Go to My Orders
+              {t("checkout.goToMyOrders")}
             </Button>
           </Alert>
         )}
@@ -121,15 +126,15 @@ function CheckoutPage() {
         {!success && (
           <>
             <Typography sx={{ mb: 1 }}>
-              Items: ₪{totalPrice.toFixed(2)}
+              {t("checkout.itemsTotal", { total: totalPrice.toFixed(2) })}
             </Typography>
 
             <Typography sx={{ mb: 1 }}>
-              Shipping: ₪{shippingCost.toFixed(2)}
+              {t("checkout.shipping", { cost: shippingCost.toFixed(2) })}
             </Typography>
 
             <Typography variant="h6" sx={{ mb: 2 }}>
-              Total: ₪{finalTotal.toFixed(2)}
+              {t("checkout.total", { total: finalTotal.toFixed(2) })}
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit}>
@@ -138,14 +143,14 @@ function CheckoutPage() {
                 required
                 select
                 margin="normal"
-                label="Region"
+                label={t("checkout.region")}
                 name="region"
                 value={formData.region}
                 onChange={handleChange}
               >
                 {Object.entries(shippingCosts).map(([region, cost]) => (
                   <MenuItem key={region} value={region}>
-                    {region} - ₪{cost}
+                    {t(`regions.${region}`)} - ₪{cost}
                   </MenuItem>
                 ))}
               </TextField>
@@ -153,7 +158,7 @@ function CheckoutPage() {
                 fullWidth
                 required
                 margin="normal"
-                label="City"
+                label={t("checkout.city")}
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
@@ -163,7 +168,7 @@ function CheckoutPage() {
                 fullWidth
                 required
                 margin="normal"
-                label="Street"
+                label={t("checkout.street")}
                 name="street"
                 value={formData.street}
                 onChange={handleChange}
@@ -173,7 +178,7 @@ function CheckoutPage() {
                 fullWidth
                 required
                 margin="normal"
-                label="Phone"
+                label={t("checkout.phone")}
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -183,10 +188,10 @@ function CheckoutPage() {
                 multiline
                 minRows={2}
                 margin="normal"
-                label="Delivery note (optional)"
+                label={t("checkout.deliveryNote")}
                 value={deliveryNote}
                 onChange={(e) => setDeliveryNote(e.target.value)}
-                placeholder="Example: Call before arriving"
+                placeholder={t("checkout.deliveryNotePlaceholder")}
               />
               <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
                 <Button
@@ -195,7 +200,7 @@ function CheckoutPage() {
                   variant="outlined"
                   fullWidth
                 >
-                  Back to Cart
+                  {t("checkout.backToCart")}
                 </Button>
 
                 <Button
@@ -204,7 +209,9 @@ function CheckoutPage() {
                   variant="contained"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Placing order..." : "Place Order"}
+                  {isLoading
+                    ? t("checkout.placingOrder")
+                    : t("checkout.placeOrder")}
                 </Button>
               </Box>
             </Box>

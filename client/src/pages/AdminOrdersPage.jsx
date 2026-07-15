@@ -20,6 +20,7 @@ import {
     DialogTitle,
     Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 
 const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
@@ -39,13 +40,17 @@ function AdminOrdersPage() {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [searchOrderNumber, setSearchOrderNumber] = useState("");
     const [orderToCancel, setOrderToCancel] = useState(null);
+    const [orderForAdminNote, setOrderForAdminNote] = useState(null);
+    const [adminNote, setAdminNote] = useState("");
+    const [isSavingNote, setIsSavingNote] = useState(false);
+    const { t, i18n } = useTranslation();
 
     const fetchOrders = async () => {
         try {
             const response = await api.get("/orders");
             setOrders(response.data.data);
-        } catch (error) {
-            setError(error.response?.data?.message || "Failed to load orders");
+        } catch {
+            setError(t("adminOrdersPage.failedToLoad"));
         } finally {
             setIsLoading(false);
         }
@@ -57,22 +62,66 @@ function AdminOrdersPage() {
 
     const handleStatusChange = async (orderId, newStatus) => {
         try {
-            await api.put(`/orders/${orderId}/status`, {
+            const response = await api.put(`/orders/${orderId}/status`, {
                 status: newStatus,
             });
 
-            setFeedback("Order status updated successfully");
+            setError("");
+            setFeedback(t("adminOrdersPage.statusUpdated"));
             fetchOrders();
-        } catch (error) {
-            setError(error.response?.data?.message || "Failed to update status");
+            return response.data.data;
+        } catch {
+            setError(t("adminOrdersPage.failedToUpdate"));
+            return null;
         }
     };
+
+    const openAdminNoteDialog = (order) => {
+        setOrderForAdminNote(order);
+        setAdminNote(order.adminNote || "");
+    };
+
+    const closeAdminNoteDialog = () => {
+        if (isSavingNote) return;
+
+        setOrderForAdminNote(null);
+        setAdminNote("");
+    };
+
+    const saveAdminNote = async () => {
+        if (!orderForAdminNote || !adminNote.trim()) return;
+
+        try {
+            setIsSavingNote(true);
+            await api.put(`/orders/${orderForAdminNote._id}/admin-note`, {
+                adminNote: adminNote.trim(),
+            });
+
+            setError("");
+            setFeedback(t("adminOrdersPage.adminNoteSaved"));
+            setOrderForAdminNote(null);
+            setAdminNote("");
+            await fetchOrders();
+        } catch {
+            setError(t("adminOrdersPage.failedToSaveAdminNote"));
+        } finally {
+            setIsSavingNote(false);
+        }
+    };
+
     const confirmCancelOrder = async () => {
         if (!orderToCancel) return;
 
-        await handleStatusChange(orderToCancel._id, "cancelled");
+        const cancelledOrder = await handleStatusChange(
+            orderToCancel._id,
+            "cancelled"
+        );
 
         setOrderToCancel(null);
+
+        if (cancelledOrder) {
+            openAdminNoteDialog(cancelledOrder);
+        }
     };
     const filteredOrders = orders.filter((order) => {
         const matchesStatus =
@@ -88,7 +137,7 @@ function AdminOrdersPage() {
     if (isLoading) {
         return (
             <Container sx={{ mt: 4 }}>
-                <Typography>Loading orders...</Typography>
+                <Typography>{t("adminOrdersPage.loading")}</Typography>
             </Container>
         );
     }
@@ -96,7 +145,7 @@ function AdminOrdersPage() {
     return (
         <Container sx={{ mt: 4, mb: 6 }}>
             <Typography variant="h4" gutterBottom>
-                Admin Orders
+                {t("adminOrdersPage.title")}
             </Typography>
 
             {error && (
@@ -112,23 +161,25 @@ function AdminOrdersPage() {
             )}
             <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
                 <FormControl size="small" sx={{ minWidth: 220 }}>
-                    <InputLabel>Filter by Status</InputLabel>
+                    <InputLabel>{t("adminOrdersPage.filterByStatus")}</InputLabel>
                     <Select
-                        label="Filter by Status"
+                        label={t("adminOrdersPage.filterByStatus")}
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
-                        <MenuItem value="all">All Orders</MenuItem>
+                        <MenuItem value="all">
+                            {t("adminOrdersPage.allOrders")}
+                        </MenuItem>
                         {statuses.map((status) => (
                             <MenuItem key={status} value={status}>
-                                {status}
+                                {t(`orderStatus.${status}`)}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
 
                 <TextField
-                    label="Search by Order Number"
+                    label={t("adminOrdersPage.searchByOrderNumber")}
                     size="small"
                     value={searchOrderNumber}
                     onChange={(e) => setSearchOrderNumber(e.target.value)}
@@ -137,7 +188,9 @@ function AdminOrdersPage() {
             </Box>
 
             {filteredOrders.length === 0 ? (
-                <Typography color="text.secondary">No orders yet.</Typography>
+                <Typography color="text.secondary">
+                    {t("adminOrdersPage.noOrders")}
+                </Typography>
             ) : (
                 <Stack spacing={3}>
                     {filteredOrders.map((order) => (
@@ -153,11 +206,13 @@ function AdminOrdersPage() {
                             >
                                 <Box>
                                     <Typography variant="h6">
-                                        Order #{order.orderNumber}
+                                        {t("adminOrdersPage.orderNumber", {
+                                            number: order.orderNumber,
+                                        })}
                                     </Typography>
 
                                     <Typography color="text.secondary">
-                                        {new Date(order.createdAt).toLocaleString("en-GB", {
+                                        {new Date(order.createdAt).toLocaleString(i18n.language, {
                                             day: "2-digit",
                                             month: "2-digit",
                                             year: "numeric",
@@ -167,24 +222,29 @@ function AdminOrdersPage() {
                                     </Typography>
 
                                     <Typography color="text.secondary">
-                                        Customer: {order.user?.name} | {order.user?.email}
+                                        {t("adminOrdersPage.customer", {
+                                            name: order.user?.name,
+                                            email: order.user?.email,
+                                        })}
                                     </Typography>
 
                                     <Typography color="text.secondary">
-                                        Phone: {order.user?.phone}
+                                        {t("adminOrdersPage.phone", {
+                                            phone: order.user?.phone,
+                                        })}
                                     </Typography>
                                 </Box>
 
                                 <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                                     <Chip
-                                        label={order.status}
+                                        label={t(`orderStatus.${order.status}`)}
                                         color={statusColors[order.status] || "default"}
                                     />
 
                                     <FormControl size="small" sx={{ minWidth: 160 }}>
-                                        <InputLabel>Status</InputLabel>
+                                        <InputLabel>{t("adminOrdersPage.status")}</InputLabel>
                                         <Select
-                                            label="Status"
+                                            label={t("adminOrdersPage.status")}
                                             value={order.status}
                                             onChange={(e) => {
                                                 const newStatus = e.target.value;
@@ -198,7 +258,7 @@ function AdminOrdersPage() {
                                         >
                                             {statuses.map((status) => (
                                                 <MenuItem key={status} value={status}>
-                                                    {status}
+                                                    {t(`orderStatus.${status}`)}
                                                 </MenuItem>
                                             ))}
                                         </Select>
@@ -211,16 +271,23 @@ function AdminOrdersPage() {
                             {order.items.map((item) => (
                                 <Box key={item.product} sx={{ mb: 1 }}>
                                     <Typography>
-                                        {item.name} × {item.quantity}
+                                        {t("adminOrdersPage.itemQuantity", {
+                                            name: item.name,
+                                            quantity: item.quantity,
+                                        })}
                                     </Typography>
                                     <Typography color="text.secondary">
-                                        ₪{item.price} each
+                                        {t("adminOrdersPage.priceEach", {
+                                            price: item.price,
+                                        })}
                                     </Typography>
                                 </Box>
                             ))}
 
                             <Typography color="text.secondary">
-                                Shipping Cost: ₪{order.shippingCost?.toFixed(2)}
+                                {t("adminOrdersPage.shippingCost", {
+                                    cost: order.shippingCost?.toFixed(2),
+                                })}
                             </Typography>
 
 
@@ -228,26 +295,53 @@ function AdminOrdersPage() {
 
 
                             <Typography variant="h6">
-                                Total: ₪{order.totalPrice.toFixed(2)}
+                                {t("adminOrdersPage.total", {
+                                    total: order.totalPrice.toFixed(2),
+                                })}
                             </Typography>
 
                             <Typography color="text.secondary">
-                                Shipping:{order.shippingAddress.region}, {order.shippingAddress.city},{" "}
-                                {order.shippingAddress.street}
+                                {t("adminOrdersPage.shippingAddress", {
+                                    region: t(`regions.${order.shippingAddress.region}`),
+                                    city: order.shippingAddress.city,
+                                    street: order.shippingAddress.street,
+                                })}
                             </Typography>
 
                             <Typography color="text.secondary">
-                                Delivery Phone: {order.shippingAddress.phone}
+                                {t("adminOrdersPage.deliveryPhone", {
+                                    phone: order.shippingAddress.phone,
+                                })}
                             </Typography>
                             {order.deliveryNote && (
                                 <>
                                     <Divider sx={{ my: 2 }} />
                                     <Typography color="text.secondary">
-                                        Note: {order.deliveryNote}
+                                        {t("adminOrdersPage.note", {
+                                            note: order.deliveryNote,
+                                        })}
                                     </Typography>
                                 </>
 
                             )}
+
+                            {order.adminNote && (
+                                <Alert severity="info" sx={{ mt: 2 }}>
+                                    {t("adminOrdersPage.adminNote", {
+                                        note: order.adminNote,
+                                    })}
+                                </Alert>
+                            )}
+
+                            <Button
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                                onClick={() => openAdminNoteDialog(order)}
+                            >
+                                {order.adminNote
+                                    ? t("adminOrdersPage.updateAdminNote")
+                                    : t("adminOrdersPage.addAdminNote")}
+                            </Button>
                         </Paper>
                     ))}
                 </Stack>
@@ -256,23 +350,23 @@ function AdminOrdersPage() {
                 open={Boolean(orderToCancel)}
                 onClose={() => setOrderToCancel(null)}
             >
-                <DialogTitle>Cancel Order</DialogTitle>
+                <DialogTitle>{t("adminOrdersPage.cancelTitle")}</DialogTitle>
 
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to cancel order{" "}
+                        {t("adminOrdersPage.cancelMessage")}{" "}
                         <strong>{orderToCancel?.orderNumber}</strong>?
 
                         <br />
                         <br />
 
-                        Cancelling the order will restore the product stock.
+                        {t("adminOrdersPage.restoreStock")}
                     </DialogContentText>
                 </DialogContent>
 
                 <DialogActions>
                     <Button onClick={() => setOrderToCancel(null)}>
-                        Keep Order
+                        {t("adminOrdersPage.keepOrder")}
                     </Button>
 
                     <Button
@@ -280,7 +374,57 @@ function AdminOrdersPage() {
                         variant="contained"
                         onClick={confirmCancelOrder}
                     >
-                        Cancel Order
+                        {t("adminOrdersPage.cancelOrder")}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={Boolean(orderForAdminNote)}
+                onClose={closeAdminNoteDialog}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>
+                    {orderForAdminNote?.adminNote
+                        ? t("adminOrdersPage.updateAdminNoteTitle")
+                        : t("adminOrdersPage.addAdminNoteTitle")}
+                </DialogTitle>
+
+                <DialogContent>
+                    <DialogContentText sx={{ mb: 2 }}>
+                        {t("adminOrdersPage.adminNoteMessage", {
+                            number: orderForAdminNote?.orderNumber,
+                        })}
+                    </DialogContentText>
+
+                    <TextField
+                        autoFocus
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        label={t("adminOrdersPage.adminNoteLabel")}
+                        placeholder={t("adminOrdersPage.adminNotePlaceholder")}
+                        value={adminNote}
+                        onChange={(event) => setAdminNote(event.target.value)}
+                        inputProps={{ maxLength: 1000 }}
+                        helperText={`${adminNote.length}/1000`}
+                    />
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={closeAdminNoteDialog} disabled={isSavingNote}>
+                        {t("adminOrdersPage.cancelNote")}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={saveAdminNote}
+                        disabled={!adminNote.trim() || isSavingNote}
+                    >
+                        {isSavingNote
+                            ? t("adminOrdersPage.savingAdminNote")
+                            : t("adminOrdersPage.saveAdminNote")}
                     </Button>
                 </DialogActions>
             </Dialog>

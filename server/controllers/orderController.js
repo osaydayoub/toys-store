@@ -5,11 +5,11 @@ import STATUS_CODE from "../constants/statusCodes.js";
 const shippingCosts = {
   "Jerusalem District": 70,
   "Northern & Haifa District": 50,
-  "Central & Tel Aviv District": 50,
+  "Central District": 50,
+  "Tel Aviv District": 70,
   "Southern District": 70,
   "West Bank": 70,
 };
-
 export const createOrder = async (req, res, next) => {
   try {
     const { items, shippingAddress, deliveryNote } = req.body;
@@ -189,6 +189,48 @@ export const updateOrderStatus = async (req, res, next) => {
     res.status(STATUS_CODE.OK).json({
       success: true,
       message: "Order status updated successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateOrderAdminNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { adminNote } = req.body;
+
+    if (typeof adminNote !== "string" || !adminNote.trim()) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Admin note is required",
+      });
+    }
+
+    if (adminNote.trim().length > 1000) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Admin note cannot exceed 1000 characters",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { adminNote: adminNote.trim() },
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(STATUS_CODE.NOT_FOUND).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Admin note saved successfully",
       data: order,
     });
   } catch (error) {

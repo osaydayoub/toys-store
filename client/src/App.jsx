@@ -16,6 +16,7 @@ import AdminOrdersPage from "./pages/AdminOrdersPage";
 import PrivateRoute from "./components/PrivateRoute";
 import MobileBottomNav from "./components/MobileBottomNav";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
+import AboutPage from "./pages/AboutPage";
 function App() {
   return (
     <CartProvider>
@@ -36,6 +37,7 @@ function App() {
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:slug" element={<ProductDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email/:token" element={<VerifyEmailPage />} />

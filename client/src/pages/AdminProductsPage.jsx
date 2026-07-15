@@ -17,6 +17,7 @@ import {
   Snackbar,
   Collapse,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 
@@ -28,6 +29,7 @@ const categories = [
   "Outdoor Toys",
   "Role-Play Toys",
   "Books & Stories",
+  "Toy Sets",
   "Other",
 ];
 
@@ -42,6 +44,7 @@ const ageRanges = [
   "7+ Years",
 ];
 
+
 const initialFormData = {
   name: "",
   description: "",
@@ -52,6 +55,7 @@ const initialFormData = {
 };
 
 function AdminProductsPage() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState(initialFormData);
   const [editingSlug, setEditingSlug] = useState(null);
@@ -75,7 +79,7 @@ function AdminProductsPage() {
     } catch (error) {
       setFeedback({
         type: "error",
-        message: "Failed to load products",
+        message: t("adminProducts.failedToLoad"),
       });
     }
   };
@@ -140,14 +144,14 @@ function AdminProductsPage() {
 
         setFeedback({
           type: "success",
-          message: "Product updated successfully",
+          message: t("adminProducts.updatedSuccessfully"),
         });
       } else {
         await api.post("/products", productPayload);
 
         setFeedback({
           type: "success",
-          message: "Product created successfully",
+          message: t("adminProducts.createdSuccessfully"),
         });
       }
 
@@ -159,7 +163,9 @@ function AdminProductsPage() {
         type: "error",
         message:
           error.response?.data?.message ||
-          (editingSlug ? "Failed to update product" : "Failed to create product"),
+          (editingSlug
+            ? t("adminProducts.failedToUpdate")
+            : t("adminProducts.failedToCreate")),
       });
     } finally {
       setIsUploading(false);
@@ -173,7 +179,7 @@ function AdminProductsPage() {
 
       setFeedback({
         type: "success",
-        message: "Product deleted successfully",
+        message: t("adminProducts.deletedSuccessfully"),
       });
 
       if (editingSlug === slug) {
@@ -184,7 +190,8 @@ function AdminProductsPage() {
     } catch (error) {
       setFeedback({
         type: "error",
-        message: error.response?.data?.message || "Failed to delete product",
+        message: error.response?.data?.message ||
+          t("adminProducts.failedToDelete"),
       });
     }
   };
@@ -242,7 +249,8 @@ function AdminProductsPage() {
     } catch (error) {
       setFeedback({
         type: "error",
-        message: error.response?.data?.message || "Failed to upload image",
+        message: error.response?.data?.message ||
+          t("adminProducts.failedToUploadImage"),
       });
     } finally {
       setIsUploading(false);
@@ -259,7 +267,7 @@ function AdminProductsPage() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
-        Admin Products
+        {t("adminProducts.title")}
       </Typography>
 
       <Snackbar
@@ -284,7 +292,7 @@ function AdminProductsPage() {
           setIsFormOpen(true);
         }}
       >
-        Add Product
+        {t("adminProducts.addProduct")}
       </Button>
 
       <Dialog
@@ -297,7 +305,9 @@ function AdminProductsPage() {
         maxWidth="md"
       >
         <DialogTitle>
-          {editingSlug ? "Edit Product" : "Create Product"}
+          {editingSlug
+            ? t("adminProducts.editProduct")
+            : t("adminProducts.createProduct")}
         </DialogTitle>
 
         <DialogContent dividers>
@@ -306,7 +316,7 @@ function AdminProductsPage() {
               <TextField
                 required
                 fullWidth
-                label="Name"
+                label={t("adminProducts.name")}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -317,7 +327,7 @@ function AdminProductsPage() {
                 fullWidth
                 multiline
                 minRows={3}
-                label="Description"
+                label={t("adminProducts.description")}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -326,7 +336,7 @@ function AdminProductsPage() {
               <TextField
                 required
                 fullWidth
-                label="Price"
+                label={t("adminProducts.price")}
                 name="price"
                 type="number"
                 value={formData.price}
@@ -337,14 +347,14 @@ function AdminProductsPage() {
                 required
                 select
                 fullWidth
-                label="Category"
+                label={t("adminProducts.category")}
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
               >
                 {categories.map((category) => (
                   <MenuItem key={category} value={category}>
-                    {category}
+                    {t(`categories.${category}`)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -353,14 +363,14 @@ function AdminProductsPage() {
                 required
                 select
                 fullWidth
-                label="Age Range"
+                label={t("adminProducts.ageRange")}
                 name="ageRange"
                 value={formData.ageRange}
                 onChange={handleChange}
               >
                 {ageRanges.map((age) => (
                   <MenuItem key={age} value={age}>
-                    {age}
+                    {t(`ageRanges.${age}`)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -368,7 +378,7 @@ function AdminProductsPage() {
               <TextField
                 required
                 fullWidth
-                label="Stock"
+                label={t("adminProducts.stock")}
                 name="stock"
                 type="number"
                 value={formData.stock}
@@ -376,8 +386,7 @@ function AdminProductsPage() {
               />
 
               <Button variant="outlined" component="label">
-                {imageFile ? imageFile.name : "Choose Image"}
-
+                {imageFile ? imageFile.name : t("adminProducts.chooseImage")}
                 <input
                   hidden
                   type="file"
@@ -391,27 +400,27 @@ function AdminProductsPage() {
                 disabled={!imageFile || isUploading}
                 onClick={uploadAndAddImage}
               >
-                {isUploading ? "Uploading..." : "Upload Image"}
+                {isUploading ? t("adminProducts.uploading") : t("adminProducts.uploadImage")}
               </Button>
 
               <Button
                 variant="outlined"
                 onClick={() => setShowUrlInput((prev) => !prev)}
               >
-                Add by URL
+                {t("adminProducts.addByUrl")}
               </Button>
 
               {showUrlInput && (
                 <>
                   <TextField
                     fullWidth
-                    label="Image URL"
+                    label={t("adminProducts.imageUrl")}
                     value={imageUrlInput}
                     onChange={(e) => setImageUrlInput(e.target.value)}
                   />
 
                   <Button variant="outlined" onClick={addImageUrl}>
-                    Add Image URL
+                    {t("adminProducts.addImageUrl")}
                   </Button>
                 </>
               )}
@@ -434,7 +443,7 @@ function AdminProductsPage() {
                       <Box
                         component="img"
                         src={url}
-                        alt="Product"
+                        alt={t("adminProducts.productImageAlt")}
                         sx={{
                           width: 70,
                           height: 70,
@@ -461,7 +470,7 @@ function AdminProductsPage() {
                         variant="outlined"
                         onClick={() => setImageToDelete(url)}
                       >
-                        Remove
+                        {t("adminProducts.remove")}
                       </Button>
                     </Box>
                   ))}
@@ -472,11 +481,11 @@ function AdminProductsPage() {
                 <Button type="submit" variant="contained" disabled={isLoading}>
                   {isLoading
                     ? editingSlug
-                      ? "Updating..."
-                      : "Creating..."
+                      ? t("adminProducts.updating")
+                      : t("adminProducts.creating")
                     : editingSlug
-                      ? "Update Product"
-                      : "Create Product"}
+                      ? t("adminProducts.updateProduct")
+                      : t("adminProducts.createProduct")}
                 </Button>
 
                 <Button
@@ -487,7 +496,7 @@ function AdminProductsPage() {
                     setIsFormOpen(false);
                   }}
                 >
-                  Cancel
+                  {t("adminProducts.cancel")}
                 </Button>
               </Box>
             </Stack>
@@ -496,11 +505,11 @@ function AdminProductsPage() {
       </Dialog>
 
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-        Existing Products
+        {t("adminProducts.existingProducts")}
       </Typography>
 
       <TextField
-        label="Search products"
+        label={t("adminProducts.searchProducts")}
         size="small"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
@@ -508,7 +517,7 @@ function AdminProductsPage() {
       />
 
       {filteredProducts.length === 0 ? (
-        <Typography color="text.secondary">No products yet.</Typography>
+        <Typography color="text.secondary"> {t("adminProducts.noProducts")}</Typography>
       ) : (
         <Stack spacing={2}>
           {filteredProducts.map((product) => (
@@ -527,7 +536,10 @@ function AdminProductsPage() {
               <Box>
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography color="text.secondary">
-                  ₪{product.price} · {product.stock} in stock
+                  {t("adminProducts.productStock", {
+                    price: product.price,
+                    stock: product.stock,
+                  })}
                 </Typography>
                 <Typography color="text.secondary">{product.slug}</Typography>
               </Box>
@@ -535,12 +547,12 @@ function AdminProductsPage() {
               <Box sx={{ display: "flex", gap: 1 }}>
                 <Button variant="outlined" onClick={() => viewProduct(product)}>
                   {viewedProductIds.includes(product._id)
-                    ? "Hide Product"
-                    : "View Product"}
+                    ? t("adminProducts.hideProduct")
+                    : t("adminProducts.viewProduct")}
                 </Button>
 
                 <Button variant="outlined" onClick={() => handleEdit(product)}>
-                  Edit
+                  {t("adminProducts.edit")}
                 </Button>
 
                 <Button
@@ -548,7 +560,7 @@ function AdminProductsPage() {
                   variant="outlined"
                   onClick={() => setProductToDelete(product)}
                 >
-                  Delete
+                  {t("adminProducts.delete")}
                 </Button>
               </Box>
 
@@ -566,20 +578,23 @@ function AdminProductsPage() {
         open={Boolean(productToDelete)}
         onClose={() => setProductToDelete(null)}
       >
-        <DialogTitle>Delete Product</DialogTitle>
+        <DialogTitle>{t("adminProducts.deleteProductTitle")}</DialogTitle>
 
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete "{productToDelete?.name}"? This
-            action cannot be undone.
+            {t("adminProducts.deleteProductMessage", {
+              name: productToDelete?.name,
+            })}
           </DialogContentText>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setProductToDelete(null)}>Cancel</Button>
+          <Button onClick={() => setProductToDelete(null)}>
+            {t("adminProducts.cancel")}
+          </Button>
 
           <Button color="error" variant="contained" onClick={confirmDeleteProduct}>
-            Delete
+            {t("adminProducts.delete")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -588,7 +603,7 @@ function AdminProductsPage() {
         open={Boolean(imageToDelete)}
         onClose={() => setImageToDelete(null)}
       >
-        <DialogTitle>Remove Image</DialogTitle>
+        <DialogTitle>{t("adminProducts.removeImageTitle")}</DialogTitle>
 
         <DialogContent>
           <Box
@@ -603,7 +618,7 @@ function AdminProductsPage() {
             <Box
               component="img"
               src={imageToDelete}
-              alt="Image to remove"
+              alt={t("adminProducts.imageToRemoveAlt")}
               sx={{
                 width: 120,
                 height: 120,
@@ -615,14 +630,14 @@ function AdminProductsPage() {
             />
 
             <DialogContentText>
-              Are you sure you want to remove this image?
+              {t("adminProducts.removeImageMessage")}
             </DialogContentText>
           </Box>
         </DialogContent>
 
         <DialogActions>
           <Button onClick={() => setImageToDelete(null)}>
-            Cancel
+            {t("adminProducts.cancel")}
           </Button>
 
           <Button
@@ -630,7 +645,7 @@ function AdminProductsPage() {
             variant="contained"
             onClick={confirmRemoveImage}
           >
-            Remove
+            {t("adminProducts.remove")}
           </Button>
         </DialogActions>
       </Dialog>

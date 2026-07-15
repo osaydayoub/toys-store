@@ -77,6 +77,12 @@ const orderSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    adminNote: {
+      type: String,
+      trim: true,
+      maxlength: [1000, "Admin note cannot exceed 1000 characters"],
+      default: "",
+    },
 
     itemsPrice: {
       type: Number,

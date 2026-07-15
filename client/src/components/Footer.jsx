@@ -12,6 +12,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "react-i18next";
 
 import { Link } from "react-router-dom";
@@ -46,14 +47,26 @@ function Footer() {
             }}
           >
             <Box
-              component="img"
-              src={logo}
-              alt="Baby Kids Toys"
+              component={Link}
+              to="/products"
+              aria-label={t("navbar.products")}
               sx={{
-                width: 120,
-                borderRadius: "50%",
+                display: "block",
+                lineHeight: 0,
+                textDecoration: "none",
               }}
-            />
+            >
+              <Box
+                component="img"
+                src={logo}
+                alt="Baby Kids Toys"
+                sx={{
+                  width: 120,
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                }}
+              />
+            </Box>
 
             <Box
               sx={{
@@ -134,6 +147,21 @@ function Footer() {
                 >
                   <ReceiptLongIcon fontSize="small" />
                   {t("navbar.myOrders")}
+                </Typography>
+
+                <Typography
+                  component={Link}
+                  to="/about"
+                  sx={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                  }}
+                >
+                  <InfoOutlinedIcon fontSize="small" />
+                  {t("navbar.about")}
                 </Typography>
               </Stack>
 

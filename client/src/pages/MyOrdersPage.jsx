@@ -12,6 +12,7 @@ import {
     StepLabel,
     Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 
 const orderSteps = ["pending", "processing", "shipped", "delivered"];
@@ -33,6 +34,7 @@ function MyOrdersPage() {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -40,19 +42,21 @@ function MyOrdersPage() {
                 const response = await api.get("/orders/my-orders");
                 setOrders(response.data.data);
             } catch (error) {
-                setError(error.response?.data?.message || "Failed to load orders");
+                setError(
+                    error.response?.data?.message || t("myOrders.failedToLoad")
+                );
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchOrders();
-    }, []);
+    }, [t]);
 
     if (isLoading) {
         return (
             <Container sx={{ mt: 4 }}>
-                <Typography>Loading orders...</Typography>
+                <Typography>{t("myOrders.loading")}</Typography>
             </Container>
         );
     }
@@ -60,7 +64,7 @@ function MyOrdersPage() {
     return (
         <Container sx={{ mt: 4, mb: 6 }}>
             <Typography variant="h4" gutterBottom>
-                My Orders
+                {t("myOrders.title")}
             </Typography>
 
             {error && (
@@ -71,7 +75,7 @@ function MyOrdersPage() {
 
             {!error && orders.length === 0 && (
                 <Typography color="text.secondary">
-                    You have no orders yet.
+                    {t("myOrders.noOrders")}
                 </Typography>
             )}
 
@@ -89,11 +93,11 @@ function MyOrdersPage() {
                         >
                             <Box>
                                 <Typography variant="h6">
-                                    Order #{order.orderNumber}
+                                    {t("myOrders.orderNumber", { number: order.orderNumber })}
                                 </Typography>
 
                                 <Typography color="text.secondary">
-                                    {new Date(order.createdAt).toLocaleString("en-GB", {
+                                    {new Date(order.createdAt).toLocaleString(i18n.language, {
                                         day: "2-digit",
                                         month: "2-digit",
                                         year: "numeric",
@@ -104,7 +108,7 @@ function MyOrdersPage() {
                             </Box>
 
                             <Chip
-                                label={order.status}
+                                label={t(`orderStatus.${order.status}`)}
                                 color={statusColors[order.status] || "default"}
                             />
                         </Box>
@@ -112,7 +116,7 @@ function MyOrdersPage() {
                         <Divider sx={{ mb: 2 }} />
                         {order.status === "cancelled" ? (
                             <Typography color="error" sx={{ mb: 2 }}>
-                                This order was cancelled.
+                                {t("myOrders.cancelled")}
                             </Typography>
                         ) : (
                             <Stepper
@@ -122,45 +126,116 @@ function MyOrdersPage() {
                             >
                                 {orderSteps.map((step) => (
                                     <Step key={step}>
-                                        <StepLabel>{step}</StepLabel>
+                                        <StepLabel>{t(`orderStatus.${step}`)}</StepLabel>
                                     </Step>
                                 ))}
                             </Stepper>
                         )}
 
                         {order.items.map((item) => (
-                            <Box key={item.product} sx={{ mb: 1 }}>
-                                <Typography>
-                                    {item.name} x {item.quantity}
-                                </Typography>
-                                <Typography color="text.secondary">
-                                    ₪{item.price} each
-                                </Typography>
+                            <Box
+                                key={item.product}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: { xs: "column", sm: "row" },
+                                    alignItems: { xs: "center", sm: "flex-start" },
+                                    gap: 2,
+                                    mb: 2,
+                                    textAlign: { xs: "center", sm: "start" },
+                                }}
+                            >
+                                {item.image ? (
+                                    <Box
+                                        component="img"
+                                        src={item.image}
+                                        alt={t("myOrders.productImageAlt", {
+                                            name: item.name,
+                                        })}
+                                        sx={{
+                                            width: { xs: 130, sm: 110 },
+                                            height: { xs: 130, sm: 110 },
+                                            flexShrink: 0,
+                                            objectFit: "cover",
+                                            borderRadius: 2,
+                                            border: "1px solid",
+                                            borderColor: "divider",
+                                        }}
+                                    />
+                                ) : (
+                                    <Box
+                                        role="img"
+                                        aria-label={t("myOrders.productImageAlt", {
+                                            name: item.name,
+                                        })}
+                                        sx={{
+                                            width: { xs: 130, sm: 110 },
+                                            height: { xs: 130, sm: 110 },
+                                            flexShrink: 0,
+                                            display: "grid",
+                                            placeItems: "center",
+                                            borderRadius: 2,
+                                            border: "1px solid",
+                                            borderColor: "divider",
+                                            backgroundColor: "action.hover",
+                                            fontSize: "2rem",
+                                        }}
+                                    >
+                                        🧸
+                                    </Box>
+                                )}
+
+                                <Box>
+                                    <Typography fontWeight={600}>
+                                        {t("myOrders.itemQuantity", {
+                                            name: item.name,
+                                            quantity: item.quantity,
+                                        })}
+                                    </Typography>
+
+                                    <Typography color="text.secondary">
+                                        {t("myOrders.priceEach", { price: item.price })}
+                                    </Typography>
+                                </Box>
                             </Box>
                         ))}
                         <Typography color="text.secondary">
-                            Shipping Cost: ₪{order.shippingCost?.toFixed(2)}
+                            {t("myOrders.shippingCost", {
+                                cost: order.shippingCost?.toFixed(2),
+                            })}
                         </Typography>
 
                         <Divider sx={{ my: 2 }} />
 
 
                         <Typography variant="h6">
-                            Total: ₪{order.totalPrice.toFixed(2)}
+                            {t("myOrders.total", {
+                                total: order.totalPrice.toFixed(2),
+                            })}
                         </Typography>
                         <Typography color="text.secondary">
-                            Shipping:{order.shippingAddress.region}, {order.shippingAddress.city},{" "}
-                            {order.shippingAddress.street}
+                            {t("myOrders.shippingAddress", {
+                                region: t(`regions.${order.shippingAddress.region}`),
+                                city: order.shippingAddress.city,
+                                street: order.shippingAddress.street,
+                            })}
                         </Typography>
 
                         {order.deliveryNote && (
                             <>
                                 <Divider sx={{ my: 2 }} />
                                 <Typography color="text.secondary">
-                                    Note: {order.deliveryNote}
+                                    {t("myOrders.note", { note: order.deliveryNote })}
                                 </Typography>
                             </>
 
+                        )}
+
+                        {order.adminNote && (
+                            <Alert severity="info" sx={{ mt: 2 }}>
+                                {t("myOrders.adminNote", {
+                                    note: order.adminNote,
+                                })}
+                            </Alert>
                         )}
                     </Paper>
                 ))}
