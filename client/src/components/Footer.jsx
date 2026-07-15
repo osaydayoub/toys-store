@@ -47,14 +47,26 @@ function Footer() {
             }}
           >
             <Box
-              component="img"
-              src={logo}
-              alt="Baby Kids Toys"
+              component={Link}
+              to="/products"
+              aria-label={t("navbar.products")}
               sx={{
-                width: 120,
-                borderRadius: "50%",
+                display: "block",
+                lineHeight: 0,
+                textDecoration: "none",
               }}
-            />
+            >
+              <Box
+                component="img"
+                src={logo}
+                alt="Baby Kids Toys"
+                sx={{
+                  width: 120,
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                }}
+              />
+            </Box>
 
             <Box
               sx={{
