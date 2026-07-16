@@ -41,9 +41,18 @@ function LoginPage() {
         setIsLoading(true);
 
         try {
-            const user = await login(formData.email, formData.password);
+            await login(formData.email, formData.password);
             navigate(redirectPath);
         } catch (error) {
+            if (error.response?.data?.code === "EMAIL_NOT_VERIFIED") {
+                const verificationEmail = formData.email.trim().toLowerCase();
+                sessionStorage.setItem("verificationEmail", verificationEmail);
+                navigate("/verify-email", {
+                    state: { email: verificationEmail },
+                });
+                return;
+            }
+
             setError(error.response?.data?.message || t("login.loginFailed"));
         } finally {
             setIsLoading(false);
