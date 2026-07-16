@@ -37,6 +37,7 @@ function VerifyEmailPage() {
     const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(""));
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [isVerified, setIsVerified] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [countdown, setCountdown] = useState(
@@ -67,6 +68,7 @@ function VerifyEmailPage() {
 
             completeAuthentication(response.data.data);
             sessionStorage.removeItem("verificationEmail");
+            setIsVerified(true);
             setSuccess(t("verifyEmail.success"));
 
             window.setTimeout(() => navigate("/products", { replace: true }), 1000);
@@ -87,6 +89,7 @@ function VerifyEmailPage() {
         nextDigits[index] = digit;
         setDigits(nextDigits);
         setError("");
+        setSuccess("");
 
         if (digit && index < CODE_LENGTH - 1) {
             inputRefs.current[index + 1]?.focus();
@@ -114,6 +117,7 @@ function VerifyEmailPage() {
             .map((_, index) => pastedCode[index] || "");
 
         setDigits(nextDigits);
+        setSuccess("");
         inputRefs.current[Math.min(pastedCode.length, CODE_LENGTH) - 1]?.focus();
 
     };
@@ -184,10 +188,10 @@ function VerifyEmailPage() {
                 {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
                 <Box
+                    dir="ltr"
                     onPaste={handlePaste}
                     sx={{
                         display: "flex",
-                        direction: "ltr",
                         justifyContent: "center",
                         gap: { xs: 0.75, sm: 1.25 },
                         mb: 3,
@@ -205,8 +209,9 @@ function VerifyEmailPage() {
                                 handleDigitChange(index, event.target.value)
                             }
                             onKeyDown={(event) => handleKeyDown(index, event)}
-                            disabled={isVerifying || Boolean(success)}
+                            disabled={isVerifying || isVerified}
                             inputProps={{
+                                dir: "ltr",
                                 inputMode: "numeric",
                                 maxLength: 1,
                                 "aria-label": t("verifyEmail.digitLabel", {
@@ -231,7 +236,7 @@ function VerifyEmailPage() {
                     disabled={
                         digits.join("").length !== CODE_LENGTH ||
                         isVerifying ||
-                        Boolean(success)
+                        isVerified
                     }
                 >
                     {isVerifying
@@ -242,7 +247,7 @@ function VerifyEmailPage() {
                 <Box sx={{ mt: 2, textAlign: "center" }}>
                     <Button
                         onClick={resendCode}
-                        disabled={countdown > 0 || isResending || Boolean(success)}
+                        disabled={countdown > 0 || isResending || isVerified}
                     >
                         {countdown > 0
                             ? t("verifyEmail.resendIn", { seconds: countdown })
