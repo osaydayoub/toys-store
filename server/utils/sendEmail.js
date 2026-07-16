@@ -1,21 +1,27 @@
-import nodemailer from "nodemailer";
+import { readFile } from "fs/promises";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 10000,
-});
+const isRemotePath = (path) => /^https?:\/\//i.test(path);
 
-transporter.verify((error) => {
-  if (error) {
-    console.error("Email configuration error:", error);
-  } else {
-    console.log("Email service is ready");
+const prepareAttachment = async ({ cid, contentId, path, ...attachment }) => {
+  const preparedAttachment = {
+    ...attachment,
+    ...(contentId || cid ? { contentId: contentId || cid } : {}),
+  };
+
+  if (!path) {
+    return preparedAttachment;
   }
-});
+
+  if (isRemotePath(path)) {
+    return { ...preparedAttachment, path };
+  }
+
+  return {
+    ...preparedAttachment,
+    content: await readFile(path),
+  };
+};
 
 const sendEmail = async ({
   to,
@@ -24,19 +30,32 @@ const sendEmail = async ({
   text,
   attachments = [],
 }) => {
-  try {
-    await transporter.sendMail({
-      from: `"Baby Kids Toys" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      text,
-      html,
-      attachments,
-    });
-  } catch (error) {
-    console.error("Failed to send email:", error);
-    throw error;
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const preparedAttachments = await Promise.all(
+    attachments.map(prepareAttachment)
+  );
+
+  const { data, error } = await resend.emails.send({
+    from:
+      process.env.EMAIL_FROM ||
+      "Baby Kids Toys <no-reply@firststeptoys.com>",
+    to,
+    subject,
+    text,
+    html,
+    attachments: preparedAttachments,
+  });
+
+  if (error) {
+    console.error("Failed to send email with Resend:", error);
+    throw new Error(error.message || "Failed to send email");
+  }
+
+  return data;
 };
 
 export default sendEmail;
