@@ -84,7 +84,24 @@ function VerifyEmailPage() {
     };
 
     const handleDigitChange = (index, value) => {
-        const digit = value.replace(/\D/g, "").slice(-1);
+        const numericValue = value.replace(/\D/g, "");
+
+        if (numericValue.length > 1) {
+            const nextDigits = [...digits];
+            const pastedDigits = numericValue.slice(0, CODE_LENGTH - index);
+
+            pastedDigits.split("").forEach((digit, offset) => {
+                nextDigits[index + offset] = digit;
+            });
+
+            setDigits(nextDigits);
+            setError("");
+            setSuccess("");
+            inputRefs.current[index + pastedDigits.length - 1]?.focus();
+            return;
+        }
+
+        const digit = numericValue;
         const nextDigits = [...digits];
         nextDigits[index] = digit;
         setDigits(nextDigits);
