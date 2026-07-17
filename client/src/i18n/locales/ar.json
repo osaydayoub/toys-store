@@ -276,7 +276,10 @@
         "saveAdminNote": "حفظ الملاحظة",
         "savingAdminNote": "جارٍ الحفظ...",
         "adminNoteSaved": "تم حفظ ملاحظة الإدارة بنجاح",
-        "failedToSaveAdminNote": "فشل حفظ ملاحظة الإدارة"
+        "failedToSaveAdminNote": "فشل حفظ ملاحظة الإدارة",
+        "productImageAlt": "صورة المنتج {{name}}",
+        "showProducts": "عرض المنتجات ({{count}})",
+        "hideProducts": "إخفاء المنتجات"
     },
     "orderStatus": {
         "pending": "قيد الانتظار",

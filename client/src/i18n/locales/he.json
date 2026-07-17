@@ -276,7 +276,10 @@
         "saveAdminNote": "שמירת הערה",
         "savingAdminNote": "שומר...",
         "adminNoteSaved": "הערת המנהל נשמרה בהצלחה",
-        "failedToSaveAdminNote": "שמירת הערת המנהל נכשלה"
+        "failedToSaveAdminNote": "שמירת הערת המנהל נכשלה",
+        "productImageAlt": "תמונת המוצר {{name}}",
+        "showProducts": "הצגת מוצרים ({{count}})",
+        "hideProducts": "הסתרת מוצרים"
     },
     "orderStatus": {
         "pending": "ממתין",

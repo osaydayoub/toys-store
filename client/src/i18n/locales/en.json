@@ -276,7 +276,10 @@
         "saveAdminNote": "Save note",
         "savingAdminNote": "Saving...",
         "adminNoteSaved": "Admin note saved successfully",
-        "failedToSaveAdminNote": "Failed to save admin note"
+        "failedToSaveAdminNote": "Failed to save admin note",
+        "productImageAlt": "{{name}} product",
+        "showProducts": "Show products ({{count}})",
+        "hideProducts": "Hide products"
     },
     "orderStatus": {
         "pending": "Pending",

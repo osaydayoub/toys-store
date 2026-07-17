@@ -3,6 +3,7 @@ import {
     Alert,
     Box,
     Chip,
+    Collapse,
     Container,
     Divider,
     FormControl,
@@ -43,7 +44,15 @@ function AdminOrdersPage() {
     const [orderForAdminNote, setOrderForAdminNote] = useState(null);
     const [adminNote, setAdminNote] = useState("");
     const [isSavingNote, setIsSavingNote] = useState(false);
+    const [expandedOrderItems, setExpandedOrderItems] = useState({});
     const { t, i18n } = useTranslation();
+
+    const toggleOrderItems = (orderId) => {
+        setExpandedOrderItems((current) => ({
+            ...current,
+            [orderId]: !current[orderId],
+        }));
+    };
 
     const fetchOrders = async () => {
         try {
@@ -268,21 +277,89 @@ function AdminOrdersPage() {
 
                             <Divider sx={{ mb: 2 }} />
 
-                            {order.items.map((item) => (
-                                <Box key={item.product} sx={{ mb: 1 }}>
-                                    <Typography>
-                                        {t("adminOrdersPage.itemQuantity", {
-                                            name: item.name,
-                                            quantity: item.quantity,
-                                        })}
-                                    </Typography>
-                                    <Typography color="text.secondary">
-                                        {t("adminOrdersPage.priceEach", {
-                                            price: item.price,
-                                        })}
-                                    </Typography>
-                                </Box>
-                            ))}
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => toggleOrderItems(order._id)}
+                                aria-expanded={Boolean(expandedOrderItems[order._id])}
+                                sx={{ mb: expandedOrderItems[order._id] ? 2 : 0 }}
+                            >
+                                {expandedOrderItems[order._id]
+                                    ? t("adminOrdersPage.hideProducts")
+                                    : t("adminOrdersPage.showProducts", {
+                                        count: order.items.length,
+                                    })}
+                            </Button>
+
+                            <Collapse in={Boolean(expandedOrderItems[order._id])}>
+                                {order.items.map((item) => (
+                                    <Box
+                                        key={item.product}
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: { xs: "column", sm: "row" },
+                                            alignItems: { xs: "center", sm: "flex-start" },
+                                            gap: 2,
+                                            mb: 2,
+                                            textAlign: { xs: "center", sm: "start" },
+                                        }}
+                                    >
+                                        {item.image ? (
+                                        <Box
+                                            component="img"
+                                            src={item.image}
+                                            alt={t("adminOrdersPage.productImageAlt", {
+                                                name: item.name,
+                                            })}
+                                            sx={{
+                                                width: { xs: 130, sm: 110 },
+                                                height: { xs: 130, sm: 110 },
+                                                flexShrink: 0,
+                                                objectFit: "cover",
+                                                borderRadius: 2,
+                                                border: "1px solid",
+                                                borderColor: "divider",
+                                            }}
+                                        />
+                                        ) : (
+                                            <Box
+                                            role="img"
+                                            aria-label={t("adminOrdersPage.productImageAlt", {
+                                                name: item.name,
+                                            })}
+                                            sx={{
+                                                width: { xs: 130, sm: 110 },
+                                                height: { xs: 130, sm: 110 },
+                                                flexShrink: 0,
+                                                display: "grid",
+                                                placeItems: "center",
+                                                borderRadius: 2,
+                                                border: "1px solid",
+                                                borderColor: "divider",
+                                                backgroundColor: "action.hover",
+                                                fontSize: "2rem",
+                                            }}
+                                            >
+                                                🧸
+                                            </Box>
+                                        )}
+
+                                        <Box>
+                                            <Typography fontWeight={600}>
+                                                {t("adminOrdersPage.itemQuantity", {
+                                                    name: item.name,
+                                                    quantity: item.quantity,
+                                                })}
+                                            </Typography>
+                                            <Typography color="text.secondary">
+                                                {t("adminOrdersPage.priceEach", {
+                                                    price: item.price,
+                                                })}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                ))}
+                            </Collapse>
 
                             <Typography color="text.secondary">
                                 {t("adminOrdersPage.shippingCost", {
