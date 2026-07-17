@@ -108,6 +108,7 @@
         "login": "התחברות",
         "loggingIn": "מתחבר...",
         "loginFailed": "ההתחברות נכשלה",
+        "forgotPassword": "שכחת סיסמה?",
         "noAccount": "אין לכם חשבון?",
         "register": "הרשמה"
     },
@@ -141,6 +142,28 @@
         "changeEmail": "שינוי אימייל או הרשמה מחדש",
         "missingEmail": "לא הצלחנו לזהות איזו כתובת אימייל יש לאמת. יש להירשם מחדש.",
         "backToRegister": "חזרה להרשמה"
+    },
+    "forgotPassword": {
+        "title": "איפוס סיסמה",
+        "requestInstructions": "הזינו את כתובת האימייל ונשלח אליכם קוד איפוס בן 6 ספרות.",
+        "resetInstructions": "הזינו את הקוד שנשלח אל {{email}} ובחרו סיסמה חדשה.",
+        "email": "אימייל",
+        "sendCode": "שליחת קוד איפוס",
+        "sending": "שולח...",
+        "codeSent": "אם קיים חשבון עבור כתובת זו, נשלח קוד איפוס.",
+        "sendFailed": "שליחת קוד האיפוס נכשלה",
+        "code": "קוד איפוס בן 6 ספרות",
+        "newPassword": "סיסמה חדשה",
+        "confirmPassword": "אישור הסיסמה החדשה",
+        "passwordsDoNotMatch": "הסיסמאות אינן תואמות",
+        "resetPassword": "איפוס סיסמה",
+        "resetting": "מאפס...",
+        "resetSuccess": "הסיסמה אופסה בהצלחה. מעבירים אתכם להתחברות...",
+        "resetFailed": "איפוס הסיסמה נכשל",
+        "resend": "שליחת קוד חדש",
+        "resendIn": "שליחת קוד חדש בעוד {{seconds}} שניות",
+        "changeEmail": "שינוי אימייל",
+        "backToLogin": "חזרה להתחברות"
     },
     "checkout": {
         "title": "מעבר לתשלום",

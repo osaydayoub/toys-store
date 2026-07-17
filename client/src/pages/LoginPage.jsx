@@ -120,6 +120,12 @@ function LoginPage() {
                         onChange={handleChange}
                     />
 
+                    <Typography textAlign="end" sx={{ mt: 1 }}>
+                        <Link to="/forgot-password">
+                            {t("login.forgotPassword")}
+                        </Link>
+                    </Typography>
+
                     <Button
                         fullWidth
                         type="submit"
