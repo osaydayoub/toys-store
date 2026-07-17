@@ -18,6 +18,7 @@ import MobileBottomNav from "./components/MobileBottomNav";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import AboutPage from "./pages/AboutPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ProfilePage from "./pages/ProfilePage";
 function App() {
   return (
     <CartProvider>
@@ -43,6 +44,14 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/checkout"
               element={

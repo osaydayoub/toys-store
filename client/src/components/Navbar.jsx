@@ -20,6 +20,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LanguageIcon from "@mui/icons-material/Language";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo.png";
@@ -189,15 +190,27 @@ function Navbar() {
                 <span style={{ marginLeft: 4 }}>{currentLanguage}</span>
               </MenuItem>
               {user ? (
-                <MenuItem
-                  onClick={() => {
-                    logout();
-                    handleCloseNavMenu();
-                  }}
-                >
-                  <LogoutIcon fontSize="small" />
-                  {t("navbar.logout")}
-                </MenuItem>
+                [
+                  <MenuItem
+                    key="profile"
+                    component={Link}
+                    to="/profile"
+                    onClick={handleCloseNavMenu}
+                  >
+                    <AccountCircleOutlinedIcon fontSize="small" />
+                    {t("navbar.profile")}
+                  </MenuItem>,
+                  <MenuItem
+                    key="logout"
+                    onClick={() => {
+                      logout();
+                      handleCloseNavMenu();
+                    }}
+                  >
+                    <LogoutIcon fontSize="small" />
+                    {t("navbar.logout")}
+                  </MenuItem>,
+                ]
               ) : (
                 <MenuItem
                   component={Link}
@@ -237,10 +250,16 @@ function Navbar() {
               {currentLanguage}
             </Button>
             {user ? (
-              <Button color="inherit" onClick={logout}>
-                <LogoutIcon fontSize="small" />
-                {t("navbar.logout")}
-              </Button>
+              <>
+                <Button component={Link} to="/profile" color="inherit">
+                  <AccountCircleOutlinedIcon fontSize="small" />
+                  {t("navbar.profile")}
+                </Button>
+                <Button color="inherit" onClick={logout}>
+                  <LogoutIcon fontSize="small" />
+                  {t("navbar.logout")}
+                </Button>
+              </>
             ) : (
               <Button component={Link} to="/login" color="inherit">
                 <LoginIcon fontSize="small" />
