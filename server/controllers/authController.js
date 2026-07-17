@@ -65,6 +65,48 @@ const sendVerificationCode = async (user) => {
   });
 };
 
+const sendPasswordResetCode = async (user) => {
+  const code = generateVerificationCode();
+
+  user.passwordResetToken = hashVerificationCode(code);
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  user.passwordResetAttempts = 0;
+  user.passwordResetLastSentAt = new Date();
+
+  await user.save({ validateBeforeSave: false });
+
+  await sendEmail({
+    to: user.email,
+    subject: "Reset your password - Baby Kids Toys",
+    text: `Your Baby Kids Toys password reset code is ${code}. This code expires in 10 minutes. If you did not request a password reset, ignore this email.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; text-align: center; max-width: 520px; margin: 0 auto; padding: 24px;">
+        <img
+          src="cid:baby-kids-toys-logo"
+          alt="Baby Kids Toys"
+          width="110"
+          height="110"
+          style="display: block; width: 110px; height: 110px; object-fit: cover; border-radius: 50%; margin: 0 auto 20px;"
+        />
+        <h2>Reset your password</h2>
+        <p>Enter this code to choose a new password:</p>
+        <div style="font-size: 32px; font-weight: 700; letter-spacing: 10px; margin: 24px 0;">
+          ${code}
+        </div>
+        <p>This code expires in 10 minutes.</p>
+        <p>If you did not request a password reset, you can ignore this email.</p>
+      </div>
+    `,
+    attachments: [
+      {
+        filename: "baby-kids-toys-logo.png",
+        path: emailLogoPath,
+        cid: "baby-kids-toys-logo",
+      },
+    ],
+  });
+};
+
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -146,6 +188,118 @@ export const loginUser = async (req, res, next) => {
         isEmailVerified: user.isEmailVerified,
         token: generateToken(user._id),
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const email = req.body.email?.trim().toLowerCase();
+
+    if (!email) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const responseMessage =
+      "If an account exists for this email, a password reset code was sent.";
+    const user = await User.findOne({ email }).select(
+      "+passwordResetLastSentAt"
+    );
+
+    if (!user) {
+      return res.status(STATUS_CODE.OK).json({
+        success: true,
+        message: responseMessage,
+      });
+    }
+
+    const secondsSinceLastSend = user.passwordResetLastSentAt
+      ? (Date.now() - user.passwordResetLastSentAt.getTime()) / 1000
+      : 60;
+
+    if (secondsSinceLastSend >= 60) {
+      await sendPasswordResetCode(user);
+    }
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: responseMessage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const email = req.body.email?.trim().toLowerCase();
+    const code = req.body.code?.trim();
+    const password = req.body.password;
+
+    if (!email || !/^\d{6}$/.test(code || "")) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Enter a valid 6-digit reset code",
+      });
+    }
+
+    if (typeof password !== "string" || password.length < 6) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+
+    const user = await User.findOne({ email }).select(
+      "+passwordResetToken +passwordResetAttempts"
+    );
+
+    if (
+      !user ||
+      !user.passwordResetToken ||
+      !user.passwordResetExpires ||
+      user.passwordResetExpires <= Date.now()
+    ) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid or expired reset code",
+      });
+    }
+
+    if (user.passwordResetAttempts >= 5) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Too many incorrect attempts. Request a new code.",
+      });
+    }
+
+    if (user.passwordResetToken !== hashVerificationCode(code)) {
+      user.passwordResetAttempts += 1;
+      await user.save({ validateBeforeSave: false });
+
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid or expired reset code",
+      });
+    }
+
+    user.password = password;
+    user.isEmailVerified = true;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetAttempts = 0;
+    user.passwordResetLastSentAt = undefined;
+
+    await user.save();
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Password reset successfully",
     });
   } catch (error) {
     next(error);

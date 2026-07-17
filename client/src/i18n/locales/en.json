@@ -108,6 +108,7 @@
         "login": "Login",
         "loggingIn": "Logging in...",
         "loginFailed": "Login failed",
+        "forgotPassword": "Forgot password?",
         "noAccount": "Don't have an account?",
         "register": "Register"
     },
@@ -141,6 +142,28 @@
         "changeEmail": "Change email or register again",
         "missingEmail": "We could not determine which email to verify. Please register again.",
         "backToRegister": "Back to registration"
+    },
+    "forgotPassword": {
+        "title": "Reset your password",
+        "requestInstructions": "Enter your email and we will send you a 6-digit reset code.",
+        "resetInstructions": "Enter the code sent to {{email}} and choose a new password.",
+        "email": "Email",
+        "sendCode": "Send reset code",
+        "sending": "Sending...",
+        "codeSent": "If an account exists for this email, a reset code was sent.",
+        "sendFailed": "Failed to send reset code",
+        "code": "6-digit reset code",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "resetPassword": "Reset password",
+        "resetting": "Resetting...",
+        "resetSuccess": "Password reset successfully. Redirecting you to login...",
+        "resetFailed": "Failed to reset password",
+        "resend": "Send a new code",
+        "resendIn": "Send a new code in {{seconds}}s",
+        "changeEmail": "Change email",
+        "backToLogin": "Back to login"
     },
     "checkout": {
         "title": "Checkout",
