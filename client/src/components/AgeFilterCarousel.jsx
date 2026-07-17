@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, Typography } from "@mui/material";
+import { Box, Card, CardActionArea } from "@mui/material";
 
 function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
     const ageOptions = [
@@ -17,13 +17,13 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
         <Box
             sx={(theme) => ({
                 display: "flex",
-                gap: 2,
-                pb: 1,
-                mb: 3,
+                gap: { xs: 1, sm: 2 },
+                pb: { xs: 0.5, sm: 1 },
+                mb: { xs: 1.5, sm: 3 },
                 overflowX: "auto",
 
                 "&::-webkit-scrollbar": {
-                    height: 8,
+                    height: { xs: 5, sm: 8 },
                 },
                 "&::-webkit-scrollbar-track": {
                     backgroundColor: theme.palette.grey[200],
@@ -45,7 +45,7 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                     <Card
                         key={age.value}
                         sx={{
-                            minWidth: 160,
+                            minWidth: { xs: 140, sm: 160 },
                             height: "auto",
                             borderRadius: 0.5,
                             scrollSnapAlign: "start",

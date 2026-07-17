@@ -155,7 +155,8 @@ function ProductsPage() {
             xs: 0,
             md: 4,
           },
-          mb: 6,
+          mb: { xs: 3, md: 6 },
+          px: { xs: 1, sm: 3 },
         }}
       >
         <Paper
@@ -163,6 +164,7 @@ function ProductsPage() {
             mb: 4,
             borderRadius: 4,
             overflow: "hidden",
+            display: { xs: "none", md: "block" },
           }}
         >
           <Box
@@ -182,42 +184,14 @@ function ProductsPage() {
 
         <Box
           sx={(theme) => ({
-            display: "flex",
-            justifyContent: "center",
-            mb: 4,
-            mt: 2,
-          })}
-        >
-          <Box
-            sx={(theme) => ({
-              "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              px: 4,
-              py: 1.2,
-              borderRadius: "999px",
-              backgroundColor: theme.palette.primary.main,
-              backgroundImage: "var(--gradient)",
-              color: theme.palette.primary.contrastText,
-              fontSize: "1.15rem",
-              fontWeight: 800,
-              boxShadow: theme.shadows[4],
-            })}
-          >
-            {t("productsPage.title")}
-          </Box>
-        </Box>
-        <Box
-          sx={(theme) => ({
             "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            px: 3,
-            py: 1,
-            mt: 4,
-            mb: 2,
+            px: { xs: 2, md: 3 },
+            py: { xs: 0.7, md: 1 },
+            mt: { xs: 1.5, md: 4 },
+            mb: { xs: 1, md: 2 },
             borderRadius: "999px",
             backgroundColor: theme.palette.primary.main,
             backgroundImage: "var(--gradient)",
@@ -239,10 +213,10 @@ function ProductsPage() {
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            px: 3,
-            py: 1,
-            mt: 4,
-            mb: 2,
+            px: { xs: 2, md: 3 },
+            py: { xs: 0.7, md: 1 },
+            mt: { xs: 1.5, md: 4 },
+            mb: { xs: 1, md: 2 },
             borderRadius: "999px",
             backgroundColor: theme.palette.primary.main,
             backgroundImage: "var(--gradient)",

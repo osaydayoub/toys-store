@@ -33,7 +33,7 @@
         "priceHighLow": "السعر: من الأعلى إلى الأقل",
         "noProducts": "لا توجد منتجات تطابق الفلاتر.",
         "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
-        "shopByAge": "إختر اللعبة حسب العمر",
+        "shopByAge": "اكتشف الألعاب حسب العمر",
         "shopByCategory": "ما نوع اللعبة التي تريدها؟"
     },
     "categories": {
