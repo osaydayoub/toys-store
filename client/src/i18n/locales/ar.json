@@ -33,7 +33,7 @@
         "priceHighLow": "السعر: من الأعلى إلى الأقل",
         "noProducts": "لا توجد منتجات تطابق الفلاتر.",
         "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
-        "shopByAge": "إختر اللعبة حسب العمر",
+        "shopByAge": "اكتشف الألعاب حسب العمر",
         "shopByCategory": "ما نوع اللعبة التي تريدها؟"
     },
     "categories": {
@@ -276,7 +276,10 @@
         "saveAdminNote": "حفظ الملاحظة",
         "savingAdminNote": "جارٍ الحفظ...",
         "adminNoteSaved": "تم حفظ ملاحظة الإدارة بنجاح",
-        "failedToSaveAdminNote": "فشل حفظ ملاحظة الإدارة"
+        "failedToSaveAdminNote": "فشل حفظ ملاحظة الإدارة",
+        "productImageAlt": "صورة المنتج {{name}}",
+        "showProducts": "عرض المنتجات ({{count}})",
+        "hideProducts": "إخفاء المنتجات"
     },
     "orderStatus": {
         "pending": "قيد الانتظار",

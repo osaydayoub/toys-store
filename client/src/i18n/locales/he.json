@@ -33,7 +33,7 @@
         "priceHighLow": "מחיר: מהגבוה לנמוך",
         "noProducts": "אין מוצרים שמתאימים לסינון.",
         "showing": "מציג {{start}}-{{end}} מתוך {{total}} מוצרים",
-        "shopByAge": "לאיזה גיל אתם מחפשים צעצוע?",
+        "shopByAge": "גלו צעצועים לפי גיל",
         "shopByCategory": "איזה סוג צעצוע אתם מחפשים?"
     },
     "categories": {
@@ -276,7 +276,10 @@
         "saveAdminNote": "שמירת הערה",
         "savingAdminNote": "שומר...",
         "adminNoteSaved": "הערת המנהל נשמרה בהצלחה",
-        "failedToSaveAdminNote": "שמירת הערת המנהל נכשלה"
+        "failedToSaveAdminNote": "שמירת הערת המנהל נכשלה",
+        "productImageAlt": "תמונת המוצר {{name}}",
+        "showProducts": "הצגת מוצרים ({{count}})",
+        "hideProducts": "הסתרת מוצרים"
     },
     "orderStatus": {
         "pending": "ממתין",

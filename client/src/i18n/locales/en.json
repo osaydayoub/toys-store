@@ -33,7 +33,7 @@
         "priceHighLow": "Price: High to Low",
         "noProducts": "No products match your filters.",
         "showing": "Showing {{start}}-{{end}} of {{total}} products",
-        "shopByAge": "What age are you shopping for?",
+        "shopByAge": "Discover Toys by Age",
         "shopByCategory": "What type of toy are you looking for?"
     },
     "categories": {
@@ -276,7 +276,10 @@
         "saveAdminNote": "Save note",
         "savingAdminNote": "Saving...",
         "adminNoteSaved": "Admin note saved successfully",
-        "failedToSaveAdminNote": "Failed to save admin note"
+        "failedToSaveAdminNote": "Failed to save admin note",
+        "productImageAlt": "{{name}} product",
+        "showProducts": "Show products ({{count}})",
+        "hideProducts": "Hide products"
     },
     "orderStatus": {
         "pending": "Pending",
