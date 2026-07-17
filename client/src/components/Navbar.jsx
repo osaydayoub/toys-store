@@ -34,13 +34,7 @@ function Navbar() {
   const [anchorElLang, setAnchorElLang] = React.useState(null);
   const { t, i18n } = useTranslation();
 
-  const pages = [
-    {
-      key: "about",
-      label: t("navbar.about"),
-      path: "/about",
-      icon: <InfoOutlinedIcon fontSize="small" />,
-    },
+  const primaryPages = [
     {
       key: "products",
       label: t("navbar.products"),
@@ -63,22 +57,46 @@ function Navbar() {
         },
       ]
       : []),
-    ...(isAdmin
+  ];
+
+  const adminPages = isAdmin
+    ? [
+      {
+        key: "adminProducts",
+        label: t("navbar.adminProducts"),
+        path: "/admin/products",
+        icon: <AdminPanelSettingsIcon fontSize="small" />,
+      },
+      {
+        key: "adminOrders",
+        label: t("navbar.adminOrders"),
+        path: "/admin/orders",
+        icon: <ReceiptLongIcon fontSize="small" />,
+      },
+    ]
+    : [];
+
+  const aboutPage = {
+    key: "about",
+    label: t("navbar.about"),
+    path: "/about",
+    icon: <InfoOutlinedIcon fontSize="small" />,
+  };
+
+  const desktopPages = [
+    ...primaryPages,
+    ...adminPages,
+    ...(user
       ? [
         {
-          key: "adminProducts",
-          label: t("navbar.adminProducts"),
-          path: "/admin/products",
-          icon: <AdminPanelSettingsIcon fontSize="small" />,
-        },
-        {
-          key: "adminOrders",
-          label: t("navbar.adminOrders"),
-          path: "/admin/orders",
-          icon: <ReceiptLongIcon fontSize="small" />,
+          key: "profile",
+          label: t("navbar.profile"),
+          path: "/profile",
+          icon: <AccountCircleOutlinedIcon fontSize="small" />,
         },
       ]
       : []),
+    aboutPage,
   ];
 
   const handleOpenNavMenu = (event) => {
@@ -174,9 +192,9 @@ function Navbar() {
                 horizontal: "left",
               }}
             >
-              {pages.map((page) => (
+              {adminPages.map((page) => (
                 <MenuItem
-                  key={page.label}
+                  key={page.key}
                   component={Link}
                   to={page.path}
                   onClick={handleCloseNavMenu}
@@ -185,32 +203,38 @@ function Navbar() {
 
                 </MenuItem>
               ))}
+              {user && (
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={handleCloseNavMenu}
+                >
+                  <AccountCircleOutlinedIcon fontSize="small" />
+                  <span style={{ marginLeft: 4 }}>{t("navbar.profile")}</span>
+                </MenuItem>
+              )}
               <MenuItem onClick={handleOpenLangMenu}>
                 <LanguageIcon fontSize="small" />
                 <span style={{ marginLeft: 4 }}>{currentLanguage}</span>
               </MenuItem>
+              <MenuItem
+                component={Link}
+                to={aboutPage.path}
+                onClick={handleCloseNavMenu}
+              >
+                {aboutPage.icon}
+                <span style={{ marginLeft: 4 }}>{aboutPage.label}</span>
+              </MenuItem>
               {user ? (
-                [
-                  <MenuItem
-                    key="profile"
-                    component={Link}
-                    to="/profile"
-                    onClick={handleCloseNavMenu}
-                  >
-                    <AccountCircleOutlinedIcon fontSize="small" />
-                    {t("navbar.profile")}
-                  </MenuItem>,
-                  <MenuItem
-                    key="logout"
-                    onClick={() => {
-                      logout();
-                      handleCloseNavMenu();
-                    }}
-                  >
-                    <LogoutIcon fontSize="small" />
-                    {t("navbar.logout")}
-                  </MenuItem>,
-                ]
+                <MenuItem
+                  onClick={() => {
+                    logout();
+                    handleCloseNavMenu();
+                  }}
+                >
+                  <LogoutIcon fontSize="small" />
+                  <span style={{ marginLeft: 4 }}>{t("navbar.logout")}</span>
+                </MenuItem>
               ) : (
                 <MenuItem
                   component={Link}
@@ -231,9 +255,9 @@ function Navbar() {
               display: { xs: "none", md: "flex" },
             }}
           >
-            {pages.map((page) => (
+            {desktopPages.map((page) => (
               <Button
-                key={page.label}
+                key={page.key}
                 component={Link}
                 to={page.path}
                 color="inherit"
@@ -250,16 +274,10 @@ function Navbar() {
               {currentLanguage}
             </Button>
             {user ? (
-              <>
-                <Button component={Link} to="/profile" color="inherit">
-                  <AccountCircleOutlinedIcon fontSize="small" />
-                  {t("navbar.profile")}
-                </Button>
                 <Button color="inherit" onClick={logout}>
                   <LogoutIcon fontSize="small" />
                   {t("navbar.logout")}
                 </Button>
-              </>
             ) : (
               <Button component={Link} to="/login" color="inherit">
                 <LoginIcon fontSize="small" />
