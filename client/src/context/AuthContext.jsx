@@ -32,11 +32,26 @@ function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (profileData) => {
+    setUser((currentUser) => {
+      const updatedUser = { ...currentUser, ...profileData };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   const isAdmin = user?.role === "admin";
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAdmin, completeAuthentication }}
+      value={{
+        user,
+        login,
+        logout,
+        isAdmin,
+        completeAuthentication,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

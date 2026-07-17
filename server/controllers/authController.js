@@ -421,3 +421,101 @@ export const resendVerificationCode = async (req, res, next) => {
     next(error);
   }
 };
+
+const profileData = (user) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+  isEmailVerified: user.isEmailVerified,
+});
+
+export const getProfile = async (req, res) => {
+  res.status(STATUS_CODE.OK).json({
+    success: true,
+    data: profileData(req.user),
+  });
+};
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const name = req.body.name?.trim();
+    const phone = req.body.phone?.trim();
+
+    if (!name) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Name is required",
+      });
+    }
+
+    if (!/^05\d{8}$/.test(phone || "")) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Enter a valid Israeli phone number",
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+    user.name = name;
+    user.phone = phone;
+    await user.save();
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: profileData(user),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const currentPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
+
+    if (!currentPassword) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Current password is required",
+      });
+    }
+
+    if (typeof newPassword !== "string" || newPassword.length < 6) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "New password must be at least 6 characters",
+      });
+    }
+
+    const user = await User.findById(req.user._id).select("+password");
+    const isCurrentPasswordValid = await user.matchPassword(currentPassword);
+
+    if (!isCurrentPasswordValid) {
+      return res.status(STATUS_CODE.UNAUTHORIZED).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    if (await user.matchPassword(newPassword)) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "New password must be different from the current password",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
