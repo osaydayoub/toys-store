@@ -25,6 +25,7 @@ import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { useTranslation } from "react-i18next";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 
 const categories = [
@@ -52,26 +53,68 @@ const ageRanges = [
   "7+ Years",
 ];
 
+const sortOptions = ["default", "price-low-high", "price-high-low"];
+const perPageOptions = [4, 6, 8, 10, 12];
+
 function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedAgeRange, setSelectedAgeRange] = useState("All");
-  const [sortBy, setSortBy] = useState("default");
-  const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { t } = useTranslation();
+
+  const categoryParam = searchParams.get("category");
+  const ageParam = searchParams.get("age");
+  const sortParam = searchParams.get("sort");
+  const pageParam = Number(searchParams.get("page"));
+  const perPageParam = Number(searchParams.get("perPage"));
+
+  const selectedCategory = categories.includes(categoryParam)
+    ? categoryParam
+    : "All";
+  const selectedAgeRange = ageRanges.includes(ageParam) ? ageParam : "All";
+  const sortBy = sortOptions.includes(sortParam) ? sortParam : "default";
+  const searchTerm = searchParams.get("search") || "";
+  const currentPage =
+    Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const productsPerPage = perPageOptions.includes(perPageParam)
+    ? perPageParam
+    : 10;
+
+  const updateProductParams = (updates, { resetPage = true } = {}) => {
+    const nextParams = new URLSearchParams(searchParams);
+    const defaults = {
+      category: "All",
+      age: "All",
+      sort: "default",
+      search: "",
+      page: 1,
+      perPage: 10,
+    };
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === defaults[key]) {
+        nextParams.delete(key);
+      } else {
+        nextParams.set(key, String(value));
+      }
+    });
+
+    if (resetPage && !Object.hasOwn(updates, "page")) {
+      nextParams.delete("page");
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  };
 
   useEffect(() => {
     const getProducts = async () => {
       try {
         const response = await api.get("/products");
         setProducts(response.data.data);
-      } catch (error) {
+      } catch {
         setError(t("productsPage.failedToLoad"));
       } finally {
         setIsLoading(false);
@@ -79,11 +122,26 @@ function ProductsPage() {
     };
 
     getProducts();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedAgeRange, sortBy, productsPerPage]);
+    if (isLoading) return;
+
+    const storageKey = `products-scroll:${location.pathname}${location.search}`;
+    const savedScrollPosition = sessionStorage.getItem(storageKey);
+
+    if (savedScrollPosition === null) return;
+
+    sessionStorage.removeItem(storageKey);
+    const timeoutId = window.setTimeout(() => {
+      window.scrollTo({
+        top: Number(savedScrollPosition),
+        behavior: "auto",
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isLoading, location.pathname, location.search]);
 
   const normalizedSearch = searchTerm.trim().toLowerCase();
 
@@ -110,6 +168,26 @@ function ProductsPage() {
 
   const totalProducts = filteredAndSortedProducts.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+  useEffect(() => {
+    if (isLoading || totalPages === 0 || currentPage <= totalPages) return;
+
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (totalPages === 1) {
+      nextParams.delete("page");
+    } else {
+      nextParams.set("page", String(totalPages));
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  }, [
+    currentPage,
+    isLoading,
+    searchParams,
+    setSearchParams,
+    totalPages,
+  ]);
 
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = Math.min(startIndex + productsPerPage, totalProducts);
@@ -205,7 +283,7 @@ function ProductsPage() {
         </Box>
         <AgeFilterCarousel
           selectedAgeRange={selectedAgeRange}
-          onSelectAge={setSelectedAgeRange}
+          onSelectAge={(age) => updateProductParams({ age })}
         />
         <Box
           sx={(theme) => ({
@@ -230,7 +308,7 @@ function ProductsPage() {
         </Box>
         <CategoryFilterCarousel
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={(category) => updateProductParams({ category })}
         />
 
         <Box
@@ -246,7 +324,9 @@ function ProductsPage() {
             fullWidth
             label={t("productsPage.search")}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              updateProductParams({ search: e.target.value })
+            }
             slotProps={{
               input: {
                 startAdornment: (
@@ -298,7 +378,9 @@ function ProductsPage() {
                 <Select
                   label={t("productsPage.category")}
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={(e) =>
+                    updateProductParams({ category: e.target.value })
+                  }
                 >
                   {categories.map((category) => (
                     <MenuItem key={category} value={category}>
@@ -313,7 +395,9 @@ function ProductsPage() {
                 <Select
                   label={t("productsPage.ageRange")}
                   value={selectedAgeRange}
-                  onChange={(e) => setSelectedAgeRange(e.target.value)}
+                  onChange={(e) =>
+                    updateProductParams({ age: e.target.value })
+                  }
                 >
                   {ageRanges.map((age) => (
                     <MenuItem key={age} value={age}>
@@ -328,7 +412,9 @@ function ProductsPage() {
                 <Select
                   label={t("productsPage.sort")}
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) =>
+                    updateProductParams({ sort: e.target.value })
+                  }
                 >
                   <MenuItem value="default">{t("productsPage.defaultSort")}</MenuItem>
                   <MenuItem value="price-low-high">{t("productsPage.priceLowHigh")}</MenuItem>
@@ -341,11 +427,16 @@ function ProductsPage() {
                 <Select
                   label={t("productsPage.perPage")}
                   value={productsPerPage}
-                  onChange={(e) => setProductsPerPage(Number(e.target.value))}
+                  onChange={(e) =>
+                    updateProductParams({
+                      perPage: Number(e.target.value),
+                    })
+                  }
                 >
                   <MenuItem value={4}>4</MenuItem>
                   <MenuItem value={6}>6</MenuItem>
                   <MenuItem value={8}>8</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
                   <MenuItem value={12}>12</MenuItem>
                 </Select>
               </FormControl>
@@ -386,7 +477,9 @@ function ProductsPage() {
                 <Pagination
                   count={totalPages}
                   page={currentPage}
-                  onChange={(event, value) => setCurrentPage(value)}
+                  onChange={(event, page) =>
+                    updateProductParams({ page }, { resetPage: false })
+                  }
                   color="primary"
                   shape="rounded"
                 />

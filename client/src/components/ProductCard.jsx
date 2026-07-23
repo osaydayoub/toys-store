@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Button,
   Card,
@@ -12,6 +12,16 @@ import { useTranslation } from "react-i18next";
 
 function ProductCard({ product }) {
   const { t } = useTranslation();
+  const location = useLocation();
+  const productsLocation = `${location.pathname}${location.search}`;
+
+  const rememberProductsScrollPosition = () => {
+    sessionStorage.setItem(
+      `products-scroll:${productsLocation}`,
+      String(window.scrollY)
+    );
+  };
+
   return (
     <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {product.images?.[0] && (
@@ -45,6 +55,8 @@ function ProductCard({ product }) {
         <Button
           component={Link}
           to={`/products/${product.slug}`}
+          state={{ fromProducts: productsLocation }}
+          onClick={rememberProductsScrollPosition}
           variant="contained"
           fullWidth
         >
