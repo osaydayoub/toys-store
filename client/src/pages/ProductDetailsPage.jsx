@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -26,6 +26,7 @@ function ProductDetailsPage() {
     const { slug } = useParams();
     const { addToCart, totalItems } = useCart();
     const navigate = useNavigate();
+    const location = useLocation();
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isOutOfStock, setIsOutOfStock] = useState(false);
@@ -38,7 +39,7 @@ function ProductDetailsPage() {
                 const response = await api.get(`/products/${slug}`);
                 setProduct(response.data.data);
                 setIsOutOfStock(response.data.data.stock === 0);
-            } catch (error) {
+            } catch {
                 setError(t("productDetails.notFound"));
             } finally {
                 setIsLoading(false);
@@ -46,7 +47,7 @@ function ProductDetailsPage() {
         };
 
         getProduct();
-    }, [slug]);
+    }, [slug, t]);
 
     const handleAddToCart = () => {
         addToCart(product);
@@ -58,7 +59,12 @@ function ProductDetailsPage() {
 
     return (
         <Container sx={{ py: 4 }}>
-            <Button component={Link} to="/products" variant="outlined" sx={{ mb: 3 }}>
+            <Button
+                component={Link}
+                to={location.state?.fromProducts || "/products"}
+                variant="outlined"
+                sx={{ mb: 3 }}
+            >
                 {t("productDetails.backToProducts")}
             </Button>
 

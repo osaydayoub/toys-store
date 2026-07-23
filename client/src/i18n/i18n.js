@@ -6,15 +6,12 @@ import ar from "./locales/ar.json";
 import he from "./locales/he.json";
 
 const savedLanguage = localStorage.getItem("language");
-const browserLanguage = navigator.language.split("-")[0];
 
 const supportedLanguages = ["en", "ar", "he"];
 
 const defaultLanguage = supportedLanguages.includes(savedLanguage)
   ? savedLanguage
-  : supportedLanguages.includes(browserLanguage)
-  ? browserLanguage
-  : "en";
+  : "ar";
 
 i18n.use(initReactI18next).init({
   resources: {
