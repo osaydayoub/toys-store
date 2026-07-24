@@ -2,15 +2,15 @@ import { Box, Card, CardActionArea } from "@mui/material";
 
 function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
     const ageOptions = [
-        { label: "All", value: "All", image: "/age/all.png" },
-        { label: "0-6 Months", value: "0-6 Months", image: "/age/0-6.png" },
-        { label: "6-12 Months", value: "6-12 Months", image: "/age/6-12.png" },
-        { label: "1-2 Years", value: "1-2 Years", image: "/age/1-2.png" },
-        { label: "2+ Years", value: "2+ Years", image: "/age/2-plus.png" },
-        { label: "3-5 Years", value: "3-5 Years", image: "/age/3-5.png" },
-        { label: "5+ Years", value: "5+ Years", image: "/age/5-plus.png" },
-        { label: "6+ Years", value: "6+ Years", image: "/age/6-plus.png" },
-        { label: "7+ Years", value: "7+ Years", image: "/age/7-plus.png" },
+        { label: "All", value: "All", image: "/age/all.webp" },
+        { label: "0-6 Months", value: "0-6 Months", image: "/age/0-6.webp" },
+        { label: "6-12 Months", value: "6-12 Months", image: "/age/6-12.webp" },
+        { label: "1-2 Years", value: "1-2 Years", image: "/age/1-2.webp" },
+        { label: "2+ Years", value: "2+ Years", image: "/age/2-plus.webp" },
+        { label: "3-5 Years", value: "3-5 Years", image: "/age/3-5.webp" },
+        { label: "5+ Years", value: "5+ Years", image: "/age/5-plus.webp" },
+        { label: "6+ Years", value: "6+ Years", image: "/age/6-plus.webp" },
+        { label: "7+ Years", value: "7+ Years", image: "/age/7-plus.webp" },
     ];
 
     return (
@@ -38,7 +38,7 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                 },
             })}
         >
-            {ageOptions.map((age) => {
+            {ageOptions.map((age, index) => {
                 const isSelected = selectedAgeRange === age.value;
 
                 return (
@@ -58,6 +58,8 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                                 component="img"
                                 src={age.image}
                                 alt={age.label}
+                                loading={index < 2 ? "eager" : "lazy"}
+                                decoding="async"
                                 sx={{
                                     width: "100%",
                                     height: "auto",
