@@ -2,16 +2,16 @@ import { Box, Card, CardActionArea } from "@mui/material";
 
 function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
     const categoryOptions = [
-        { label: "All", value: "All", image: "/category/all.png" },
-        { label: "Educational Toys", value: "Educational Toys", image: "/category/educational.png" },
-        { label: "Sensory Toys", value: "Sensory Toys", image: "/category/sensory.png" },
-        { label: "Puzzle & Brain Games", value: "Puzzle & Brain Games", image: "/category/puzzle.png" },
-        { label: "Motor Skills Toys", value: "Motor Skills Toys", image: "/category/motor.png" },
-        { label: "Outdoor Toys", value: "Outdoor Toys", image: "/category/outdoor.png" },
-        { label: "Role-Play Toys", value: "Role-Play Toys", image: "/category/role-play.png" },
-        { label: "Books & Stories", value: "Books & Stories", image: "/category/books.png" },
-        { label: "Toy Sets", value: "Toy Sets", image: "/category/sets.png" },
-        { label: "Other", value: "Other", image: "/category/other.png" },
+        { label: "All", value: "All", image: "/category/all.webp" },
+        { label: "Educational Toys", value: "Educational Toys", image: "/category/educational.webp" },
+        { label: "Sensory Toys", value: "Sensory Toys", image: "/category/sensory.webp" },
+        { label: "Puzzle & Brain Games", value: "Puzzle & Brain Games", image: "/category/puzzle.webp" },
+        { label: "Motor Skills Toys", value: "Motor Skills Toys", image: "/category/motor.webp" },
+        { label: "Outdoor Toys", value: "Outdoor Toys", image: "/category/outdoor.webp" },
+        { label: "Role-Play Toys", value: "Role-Play Toys", image: "/category/role-play.webp" },
+        { label: "Books & Stories", value: "Books & Stories", image: "/category/books.webp" },
+        { label: "Toy Sets", value: "Toy Sets", image: "/category/sets.webp" },
+        { label: "Other", value: "Other", image: "/category/other.webp" },
     ];
 
     return (
@@ -59,6 +59,8 @@ function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
                                 component="img"
                                 src={category.image}
                                 alt={category.label}
+                                loading="lazy"
+                                decoding="async"
                                 sx={{
                                     width: "100%",
                                     height: "auto",
