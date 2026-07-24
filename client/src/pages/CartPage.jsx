@@ -196,22 +196,56 @@ function CartPage() {
                 {t("cart.totalPrice", { total: totalPrice.toFixed(2) })}
             </Typography>
 
-            <Button
-                color="error"
-                variant="contained"
-                sx={{ mt: 2 }}
-                onClick={() => setClearCartDialogOpen(true)}
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: { xs: 1, sm: 2.5 },
+                    width: "100%",
+                    maxWidth: { xs: 360, sm: "none" },
+                    mx: "auto",
+                    mt: { xs: 3, sm: 4 },
+                    mb: 2,
+                    px: { xs: 1, sm: 0 },
+                }}
             >
-                {t("cart.clearCart")}
-            </Button>
-            <Button
-                component={Link}
-                to="/checkout"
-                variant="contained"
-                sx={{ mt: 2, mr: 2 }}
-            >
-                {t("cart.checkout")}
-            </Button>
+                <Button
+                    color="error"
+                    variant="contained"
+                    onClick={() => setClearCartDialogOpen(true)}
+                    sx={{
+                        flex: { xs: 1, sm: "0 0 auto" },
+                        width: { sm: "auto" },
+                        minWidth: { sm: 180 },
+                        minHeight: 48,
+                        px: { xs: 1.5, sm: 4 },
+                        py: 1.25,
+                        borderRadius: 2.5,
+                        fontWeight: 700,
+                    }}
+                >
+                    {t("cart.clearCart")}
+                </Button>
+
+                <Button
+                    component={Link}
+                    to="/checkout"
+                    variant="contained"
+                    sx={{
+                        flex: { xs: 1, sm: "0 0 auto" },
+                        width: { sm: "auto" },
+                        minWidth: { sm: 180 },
+                        minHeight: 48,
+                        px: { xs: 1.5, sm: 4 },
+                        py: 1.25,
+                        borderRadius: 2.5,
+                        fontWeight: 700,
+                    }}
+                >
+                    {t("cart.checkout")}
+                </Button>
+            </Box>
 
             <Dialog
                 open={Boolean(productToRemove)}

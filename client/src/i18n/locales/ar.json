@@ -212,7 +212,20 @@
         "deliveryNotePlaceholder": "مثال: اتصل قبل الوصول",
         "backToCart": "العودة إلى السلة",
         "placingOrder": "جارٍ إرسال الطلب...",
-        "placeOrder": "إرسال الطلب"
+        "placeOrder": "إرسال الطلب",
+        "deliveryAddress": "عنوان التوصيل",
+        "loadingAddresses": "جاري تحميل العناوين المحفوظة...",
+        "lastUsedAddress": "آخر عنوان مستخدم",
+        "savedAddress": "العنوان المحفوظ {{number}}",
+        "newAddress": "استخدام عنوان جديد",
+        "deleteAddress": "حذف العنوان المحفوظ",
+        "deleteAddressTitle": "حذف العنوان المحفوظ",
+        "deleteAddressMessage": "هل تريد حذف العنوان المحفوظ في {{street}}، {{city}}؟",
+        "cancelDeleteAddress": "الاحتفاظ بالعنوان",
+        "confirmDeleteAddress": "حذف العنوان",
+        "deletingAddress": "جاري الحذف...",
+        "addressLoadFailed": "تعذر تحميل العناوين المحفوظة. لا يزال بإمكانك إدخال عنوان جديد.",
+        "addressDeleteFailed": "فشل حذف العنوان المحفوظ"
     },
     "regions": {
         "Jerusalem District": "منطقة القدس",

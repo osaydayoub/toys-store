@@ -472,6 +472,44 @@ export const updateProfile = async (req, res, next) => {
   }
 };
 
+export const getSavedAddresses = async (req, res) => {
+  const savedAddresses = [...req.user.savedAddresses].sort(
+    (first, second) => second.lastUsedAt - first.lastUsedAt
+  );
+
+  res.status(STATUS_CODE.OK).json({
+    success: true,
+    data: savedAddresses,
+  });
+};
+
+export const deleteSavedAddress = async (req, res, next) => {
+  try {
+    const addressId = req.params.id;
+    const remainingAddresses = req.user.savedAddresses.filter(
+      (address) => address._id.toString() !== addressId
+    );
+
+    if (remainingAddresses.length === req.user.savedAddresses.length) {
+      return res.status(STATUS_CODE.NOT_FOUND).json({
+        success: false,
+        message: "Saved address not found",
+      });
+    }
+
+    req.user.savedAddresses = remainingAddresses;
+    await req.user.save();
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Saved address deleted successfully",
+      data: req.user.savedAddresses,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const changePassword = async (req, res, next) => {
   try {
     const currentPassword = req.body.currentPassword;

@@ -212,7 +212,20 @@
         "deliveryNotePlaceholder": "Example: Call before arriving",
         "backToCart": "Back to Cart",
         "placingOrder": "Placing order...",
-        "placeOrder": "Place Order"
+        "placeOrder": "Place Order",
+        "deliveryAddress": "Delivery address",
+        "loadingAddresses": "Loading saved addresses...",
+        "lastUsedAddress": "Last used address",
+        "savedAddress": "Saved address {{number}}",
+        "newAddress": "Use a new address",
+        "deleteAddress": "Delete saved address",
+        "deleteAddressTitle": "Delete saved address",
+        "deleteAddressMessage": "Delete the saved address at {{street}}, {{city}}?",
+        "cancelDeleteAddress": "Keep address",
+        "confirmDeleteAddress": "Delete address",
+        "deletingAddress": "Deleting...",
+        "addressLoadFailed": "Saved addresses could not be loaded. You can still enter a new address.",
+        "addressDeleteFailed": "Failed to delete the saved address"
     },
     "regions": {
         "Jerusalem District": "Jerusalem District",
