@@ -1,18 +1,30 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../services/api";
 import {
   Alert,
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  FormControlLabel,
+  IconButton,
   MenuItem,
   Paper,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useTranslation } from "react-i18next";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const shippingCosts = {
   "Jerusalem District": 70,
@@ -23,30 +35,131 @@ const shippingCosts = {
   "West Bank": 70,
 };
 
+const emptyAddress = {
+  region: "",
+  city: "",
+  street: "",
+};
+
 function CheckoutPage() {
   const { cartItems, totalPrice, clearCart } = useCart();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
-    region: "",
-    city: "",
-    street: "",
-    phone: "",
+    ...emptyAddress,
+    phone: user?.phone || "",
   });
+  const [newAddressDraft, setNewAddressDraft] = useState(emptyAddress);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("new");
+  const [addressToDelete, setAddressToDelete] = useState(null);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
+  const [isDeletingAddress, setIsDeletingAddress] = useState(false);
+  const [addressError, setAddressError] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
 
   const [success, setSuccess] = useState("");
   const [createdOrderNumber, setCreatedOrderNumber] = useState("");
   const shippingCost = formData.region ? shippingCosts[formData.region] : 0;
   const finalTotal = totalPrice + shippingCost;
+
+  useEffect(() => {
+    const loadSavedAddresses = async () => {
+      try {
+        const response = await api.get("/auth/saved-addresses");
+        const addresses = response.data.data;
+        setSavedAddresses(addresses);
+
+        if (addresses.length > 0) {
+          const latestAddress = addresses[0];
+          setSelectedAddressId(latestAddress._id);
+          setFormData((current) => ({
+            region: latestAddress.region,
+            city: latestAddress.city,
+            street: latestAddress.street,
+            phone: current.phone || user?.phone || "",
+          }));
+        }
+      } catch {
+        setAddressError(t("checkout.addressLoadFailed"));
+      } finally {
+        setIsLoadingAddresses(false);
+      }
+    };
+
+    loadSavedAddresses();
+  }, [t, user?.phone]);
+
+  const selectAddress = (addressId, addresses = savedAddresses) => {
+    setSelectedAddressId(addressId);
+
+    if (addressId === "new") {
+      setFormData((current) => ({
+        ...newAddressDraft,
+        phone: current.phone || user?.phone || "",
+      }));
+      return;
+    }
+
+    const selectedAddress = addresses.find(
+      (address) => address._id === addressId
+    );
+
+    if (!selectedAddress) return;
+
+    setFormData((current) => ({
+      region: selectedAddress.region,
+      city: selectedAddress.city,
+      street: selectedAddress.street,
+      phone: current.phone || user?.phone || "",
+    }));
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+
+    if (Object.hasOwn(emptyAddress, name)) {
+      setNewAddressDraft((current) => ({
+        ...current,
+        [name]: value,
+      }));
+    }
+  };
+
+  const confirmDeleteAddress = async () => {
+    if (!addressToDelete) return;
+
+    try {
+      setIsDeletingAddress(true);
+      setAddressError("");
+      const response = await api.delete(
+        `/auth/saved-addresses/${addressToDelete._id}`
+      );
+      const remainingAddresses = response.data.data;
+      setSavedAddresses(remainingAddresses);
+
+      if (selectedAddressId === addressToDelete._id) {
+        if (remainingAddresses.length > 0) {
+          selectAddress(remainingAddresses[0]._id, remainingAddresses);
+        } else {
+          selectAddress("new", remainingAddresses);
+        }
+      }
+
+      setAddressToDelete(null);
+    } catch {
+      setAddressError(t("checkout.addressDeleteFailed"));
+    } finally {
+      setIsDeletingAddress(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -138,6 +251,79 @@ function CheckoutPage() {
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit}>
+              <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                {t("checkout.deliveryAddress")}
+              </Typography>
+
+              {addressError && (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                  {addressError}
+                </Alert>
+              )}
+
+              {isLoadingAddresses ? (
+                <Typography color="text.secondary" sx={{ py: 2 }}>
+                  {t("checkout.loadingAddresses")}
+                </Typography>
+              ) : (
+                <RadioGroup
+                  value={selectedAddressId}
+                  onChange={(event) => selectAddress(event.target.value)}
+                  sx={{ mb: 1 }}
+                >
+                  {savedAddresses.map((address, index) => (
+                    <Box key={address._id}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          py: 1,
+                        }}
+                      >
+                        <FormControlLabel
+                          value={address._id}
+                          control={<Radio />}
+                          sx={{ flexGrow: 1, m: 0 }}
+                          label={
+                            <Box>
+                              <Typography fontWeight={700}>
+                                {index === 0
+                                  ? t("checkout.lastUsedAddress")
+                                  : t("checkout.savedAddress", {
+                                    number: index + 1,
+                                  })}
+                              </Typography>
+                              <Typography color="text.secondary">
+                                {t(`regions.${address.region}`)}, {address.city},{" "}
+                                {address.street}
+                              </Typography>
+                            </Box>
+                          }
+                        />
+                        <IconButton
+                          color="error"
+                          aria-label={t("checkout.deleteAddress")}
+                          onClick={() => setAddressToDelete(address)}
+                        >
+                          <DeleteOutlinedIcon />
+                        </IconButton>
+                      </Box>
+                      <Divider />
+                    </Box>
+                  ))}
+
+                  <FormControlLabel
+                    value="new"
+                    control={<Radio />}
+                    label={t("checkout.newAddress")}
+                    sx={{ mt: savedAddresses.length > 0 ? 1 : 0, mx: 0 }}
+                  />
+                </RadioGroup>
+              )}
+
+              {selectedAddressId === "new" && (
+                <>
               <TextField
                 fullWidth
                 required
@@ -173,6 +359,8 @@ function CheckoutPage() {
                 value={formData.street}
                 onChange={handleChange}
               />
+                </>
+              )}
 
               <TextField
                 fullWidth
@@ -218,6 +406,41 @@ function CheckoutPage() {
           </>
         )}
       </Paper>
+
+      <Dialog
+        open={Boolean(addressToDelete)}
+        onClose={() => {
+          if (!isDeletingAddress) setAddressToDelete(null);
+        }}
+      >
+        <DialogTitle>{t("checkout.deleteAddressTitle")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {t("checkout.deleteAddressMessage", {
+              city: addressToDelete?.city,
+              street: addressToDelete?.street,
+            })}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setAddressToDelete(null)}
+            disabled={isDeletingAddress}
+          >
+            {t("checkout.cancelDeleteAddress")}
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={confirmDeleteAddress}
+            disabled={isDeletingAddress}
+          >
+            {isDeletingAddress
+              ? t("checkout.deletingAddress")
+              : t("checkout.confirmDeleteAddress")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

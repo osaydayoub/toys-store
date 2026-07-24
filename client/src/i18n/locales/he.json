@@ -212,7 +212,20 @@
         "deliveryNotePlaceholder": "לדוגמה: להתקשר לפני ההגעה",
         "backToCart": "חזרה לעגלה",
         "placingOrder": "מבצע הזמנה...",
-        "placeOrder": "ביצוע הזמנה"
+        "placeOrder": "ביצוע הזמנה",
+        "deliveryAddress": "כתובת למשלוח",
+        "loadingAddresses": "טוען כתובות שמורות...",
+        "lastUsedAddress": "הכתובת האחרונה שהייתה בשימוש",
+        "savedAddress": "כתובת שמורה {{number}}",
+        "newAddress": "שימוש בכתובת חדשה",
+        "deleteAddress": "מחיקת כתובת שמורה",
+        "deleteAddressTitle": "מחיקת כתובת שמורה",
+        "deleteAddressMessage": "למחוק את הכתובת השמורה ברחוב {{street}}, {{city}}?",
+        "cancelDeleteAddress": "שמירת הכתובת",
+        "confirmDeleteAddress": "מחיקת הכתובת",
+        "deletingAddress": "מוחק...",
+        "addressLoadFailed": "לא ניתן לטעון את הכתובות השמורות. עדיין אפשר להזין כתובת חדשה.",
+        "addressDeleteFailed": "מחיקת הכתובת השמורה נכשלה"
     },
     "regions": {
         "Jerusalem District": "מחוז ירושלים",

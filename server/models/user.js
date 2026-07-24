@@ -1,6 +1,33 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+const savedAddressSchema = new mongoose.Schema(
+    {
+        region: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        city: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [100, "City cannot exceed 100 characters"],
+        },
+        street: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [200, "Street cannot exceed 200 characters"],
+        },
+        lastUsedAt: {
+            type: Date,
+            default: Date.now,
+        },
+    },
+    { timestamps: false }
+);
+
 const userSchema = new mongoose.Schema(
     {
         name: {
@@ -31,6 +58,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["customer", "admin"],
             default: "customer",
+        },
+        savedAddresses: {
+            type: [savedAddressSchema],
+            default: [],
         },
         isEmailVerified: {
             type: Boolean,

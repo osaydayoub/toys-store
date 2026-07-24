@@ -1,5 +1,6 @@
 import Order from "../models/order.js";
 import Product from "../models/product.js";
+import User from "../models/user.js";
 import STATUS_CODE from "../constants/statusCodes.js";
 
 const shippingCosts = {
@@ -10,6 +11,48 @@ const shippingCosts = {
   "Southern District": 70,
   "West Bank": 70,
 };
+
+const normalizeAddressValue = (value) =>
+  value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+const saveRecentAddress = async (userId, shippingAddress) => {
+  const user = await User.findById(userId);
+
+  if (!user) return;
+
+  const address = {
+    region: shippingAddress.region.trim(),
+    city: shippingAddress.city.trim(),
+    street: shippingAddress.street.trim(),
+    lastUsedAt: new Date(),
+  };
+
+  const existingAddress = user.savedAddresses.find(
+    (savedAddress) =>
+      normalizeAddressValue(savedAddress.region) ===
+        normalizeAddressValue(address.region) &&
+      normalizeAddressValue(savedAddress.city) ===
+        normalizeAddressValue(address.city) &&
+      normalizeAddressValue(savedAddress.street) ===
+        normalizeAddressValue(address.street)
+  );
+
+  if (existingAddress) {
+    address._id = existingAddress._id;
+  }
+
+  user.savedAddresses = [
+    address,
+    ...user.savedAddresses.filter(
+      (savedAddress) =>
+        !existingAddress ||
+        savedAddress._id.toString() !== existingAddress._id.toString()
+    ),
+  ].slice(0, 3);
+
+  await user.save();
+};
+
 export const createOrder = async (req, res, next) => {
   try {
     const { items, shippingAddress, deliveryNote } = req.body;
@@ -83,6 +126,12 @@ export const createOrder = async (req, res, next) => {
       await Product.findByIdAndUpdate(item._id, {
         $inc: { stock: -item.quantity },
       });
+    }
+
+    try {
+      await saveRecentAddress(req.user._id, shippingAddress);
+    } catch (addressError) {
+      console.error("Failed to save recent delivery address:", addressError);
     }
 
     res.status(STATUS_CODE.CREATED).json({
