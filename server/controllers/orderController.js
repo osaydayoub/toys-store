@@ -399,6 +399,41 @@ export const updateOrderStatus = async (req, res, next) => {
   }
 };
 
+export const updateOrderPaymentStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { paymentStatus } = req.body;
+
+    if (!["unpaid", "paid"].includes(paymentStatus)) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid payment status",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { paymentStatus },
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(STATUS_CODE.NOT_FOUND).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: "Payment status updated successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateOrderAdminNote = async (req, res, next) => {
   try {
     const { id } = req.params;

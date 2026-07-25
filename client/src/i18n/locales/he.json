@@ -249,6 +249,9 @@
         "shippingAddress": "משלוח: {{region}}, {{city}}, {{street}}",
         "note": "הערה: {{note}}",
         "adminNote": "הודעה מהחנות: {{note}}",
+        "paymentNote": "ניתן לשלם במזומן בעת המסירה. לתשלום באמצעות Bit או העברה בנקאית, צרו איתנו קשר בוואטסאפ.",
+        "contactWhatsApp": "יצירת קשר בוואטסאפ",
+        "whatsAppOrderMessage": "שלום, ברצוני להסדיר תשלום עבור הזמנה מספר {{number}}.",
         "productImageAlt": "תמונת המוצר {{name}}"
     },
     "adminOrdersPage": {
@@ -257,6 +260,8 @@
         "failedToLoad": "טעינת ההזמנות נכשלה",
         "statusUpdated": "סטטוס ההזמנה עודכן בהצלחה",
         "failedToUpdate": "עדכון סטטוס ההזמנה נכשל",
+        "paymentStatusUpdated": "סטטוס התשלום עודכן בהצלחה",
+        "failedToUpdatePaymentStatus": "עדכון סטטוס התשלום נכשל",
         "filterByStatus": "סינון לפי סטטוס",
         "allOrders": "כל ההזמנות",
         "searchByOrderNumber": "חיפוש לפי מספר הזמנה",
@@ -265,6 +270,8 @@
         "customer": "לקוח: {{name}} | {{email}}",
         "phone": "טלפון: {{phone}}",
         "status": "סטטוס",
+        "paymentStatus": "סטטוס תשלום",
+        "cancelledPaidWarning": "הזמנה זו בוטלה אך מסומנת כשולמה. יש לבדוק אם הלקוח זקוק להחזר.",
         "itemQuantity": "{{name}} × {{quantity}}",
         "priceEach": "₪{{price}} ליחידה",
         "shippingCost": "עלות משלוח: ₪{{cost}}",
@@ -300,6 +307,10 @@
         "shipped": "נשלח",
         "delivered": "נמסר",
         "cancelled": "בוטל"
+    },
+    "paymentStatus": {
+        "unpaid": "לא שולם",
+        "paid": "שולם"
     },
     "adminProducts": {
         "title": "ניהול מוצרים",
