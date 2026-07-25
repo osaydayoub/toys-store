@@ -62,6 +62,12 @@ function AdminProductsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  const [stockFilter, setStockFilter] = useState({
+    type: "all",
+    maximum: null,
+  });
+  const [lowStockDialogOpen, setLowStockDialogOpen] = useState(false);
+  const [maximumStockInput, setMaximumStockInput] = useState("5");
   const [productToDelete, setProductToDelete] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -203,9 +209,39 @@ function AdminProductsPage() {
     setProductToDelete(null);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const outOfStockCount = products.filter(
+    (product) => Number(product.stock) === 0
+  ).length;
+
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const productStock = Number(product.stock);
+    const matchesStock =
+      stockFilter.type === "all" ||
+      (stockFilter.type === "out" && productStock === 0) ||
+      (stockFilter.type === "maximum" &&
+        productStock <= stockFilter.maximum);
+
+    return matchesSearch && matchesStock;
+  });
+
+  const parsedMaximumStock = Number(maximumStockInput);
+  const isMaximumStockValid =
+    maximumStockInput.trim() !== "" &&
+    Number.isInteger(parsedMaximumStock) &&
+    parsedMaximumStock >= 0;
+
+  const applyMaximumStockFilter = () => {
+    if (!isMaximumStockValid) return;
+
+    setStockFilter({
+      type: "maximum",
+      maximum: parsedMaximumStock,
+    });
+    setLowStockDialogOpen(false);
+  };
 
   const viewProduct = (product) => {
     setViewedProductIds((prevIds) =>
@@ -508,16 +544,68 @@ function AdminProductsPage() {
         {t("adminProducts.existingProducts")}
       </Typography>
 
-      <TextField
-        label={t("adminProducts.searchProducts")}
-        size="small"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        sx={{ mb: 3, minWidth: 260 }}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: 2,
+          mb: 3,
+        }}
+      >
+        <TextField
+          label={t("adminProducts.searchProducts")}
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ minWidth: 260, flexGrow: { xs: 1, sm: 0 } }}
+        />
+
+        <Button
+          variant={stockFilter.type === "out" ? "contained" : "outlined"}
+          color={stockFilter.type === "out" ? "warning" : "primary"}
+          onClick={() => setStockFilter({ type: "out", maximum: null })}
+          sx={{ minHeight: 40 }}
+        >
+          {t("adminProducts.showOutOfStock", {
+            count: outOfStockCount,
+          })}
+        </Button>
+
+        <Button
+          variant={stockFilter.type === "maximum" ? "contained" : "outlined"}
+          color={stockFilter.type === "maximum" ? "warning" : "primary"}
+          onClick={() => setLowStockDialogOpen(true)}
+          sx={{ minHeight: 40 }}
+        >
+          {stockFilter.type === "maximum"
+            ? t("adminProducts.stockAtMostActive", {
+              maximum: stockFilter.maximum,
+            })
+            : t("adminProducts.stockAtMost")}
+        </Button>
+
+        {stockFilter.type !== "all" && (
+          <Button
+            variant="text"
+            onClick={() => setStockFilter({ type: "all", maximum: null })}
+            sx={{ minHeight: 40 }}
+          >
+            {t("adminProducts.showAllProducts")}
+          </Button>
+        )}
+      </Box>
 
       {filteredProducts.length === 0 ? (
-        <Typography color="text.secondary"> {t("adminProducts.noProducts")}</Typography>
+        <Typography color="text.secondary">
+          {stockFilter.type === "out"
+            ? t("adminProducts.noOutOfStockProducts")
+            : stockFilter.type === "maximum"
+              ? t("adminProducts.noProductsAtMost", {
+                maximum: stockFilter.maximum,
+              })
+              : t("adminProducts.noProducts")}
+        </Typography>
       ) : (
         <Stack spacing={2}>
           {filteredProducts.map((product) => (
@@ -573,6 +661,47 @@ function AdminProductsPage() {
           ))}
         </Stack>
       )}
+
+      <Dialog
+        open={lowStockDialogOpen}
+        onClose={() => setLowStockDialogOpen(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle>{t("adminProducts.stockAtMostTitle")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            {t("adminProducts.stockAtMostMessage")}
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            type="number"
+            label={t("adminProducts.maximumStock")}
+            value={maximumStockInput}
+            onChange={(event) => setMaximumStockInput(event.target.value)}
+            inputProps={{ min: 0, step: 1 }}
+            error={maximumStockInput.trim() !== "" && !isMaximumStockValid}
+            helperText={
+              maximumStockInput.trim() !== "" && !isMaximumStockValid
+                ? t("adminProducts.maximumStockInvalid")
+                : " "
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLowStockDialogOpen(false)}>
+            {t("adminProducts.cancel")}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={applyMaximumStockFilter}
+            disabled={!isMaximumStockValid}
+          >
+            {t("adminProducts.applyStockFilter")}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={Boolean(productToDelete)}
