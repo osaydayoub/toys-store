@@ -249,6 +249,9 @@
         "shippingAddress": "Shipping: {{region}}, {{city}}, {{street}}",
         "note": "Note: {{note}}",
         "adminNote": "Store message: {{note}}",
+        "paymentNote": "You can pay cash on delivery. For payment by Bit or bank transfer, contact us on WhatsApp.",
+        "contactWhatsApp": "Contact on WhatsApp",
+        "whatsAppOrderMessage": "Hello, I would like to arrange payment for order #{{number}}.",
         "productImageAlt": "{{name}} product"
     },
     "adminOrdersPage": {
@@ -257,6 +260,8 @@
         "failedToLoad": "Failed to load orders",
         "statusUpdated": "Order status updated successfully",
         "failedToUpdate": "Failed to update status",
+        "paymentStatusUpdated": "Payment status updated successfully",
+        "failedToUpdatePaymentStatus": "Failed to update payment status",
         "filterByStatus": "Filter by Status",
         "allOrders": "All Orders",
         "searchByOrderNumber": "Search by Order Number",
@@ -265,6 +270,8 @@
         "customer": "Customer: {{name}} | {{email}}",
         "phone": "Phone: {{phone}}",
         "status": "Status",
+        "paymentStatus": "Payment status",
+        "cancelledPaidWarning": "This cancelled order is marked as paid. Check whether the customer needs a refund.",
         "itemQuantity": "{{name}} × {{quantity}}",
         "priceEach": "₪{{price}} each",
         "shippingCost": "Shipping Cost: ₪{{cost}}",
@@ -300,6 +307,10 @@
         "shipped": "Shipped",
         "delivered": "Delivered",
         "cancelled": "Cancelled"
+    },
+    "paymentStatus": {
+        "unpaid": "Unpaid",
+        "paid": "Paid"
     },
     "adminProducts": {
         "title": "Admin Products",

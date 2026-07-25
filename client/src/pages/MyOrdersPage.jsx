@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
     Alert,
     Box,
+    Button,
     Chip,
     Container,
     Divider,
@@ -12,6 +13,7 @@ import {
     StepLabel,
     Typography,
 } from "@mui/material";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 
@@ -212,6 +214,26 @@ function MyOrdersPage() {
                                 total: order.totalPrice.toFixed(2),
                             })}
                         </Typography>
+                        <Chip
+                            label={t(
+                                `paymentStatus.${order.paymentStatus || "unpaid"}`
+                            )}
+                            color={
+                                order.paymentStatus === "paid"
+                                    ? "success"
+                                    : "warning"
+                            }
+                            sx={{
+                                my: 1.5,
+                                height: 38,
+                                borderRadius: 2,
+                                fontSize: "1rem",
+                                fontWeight: 700,
+                                "& .MuiChip-label": {
+                                    px: 2.5,
+                                },
+                            }}
+                        />
                         <Typography color="text.secondary">
                             {t("myOrders.shippingAddress", {
                                 region: t(`regions.${order.shippingAddress.region}`),
@@ -219,6 +241,30 @@ function MyOrdersPage() {
                                 street: order.shippingAddress.street,
                             })}
                         </Typography>
+
+                        {order.status !== "cancelled" && (
+                            <Alert severity="info" sx={{ mt: 2 }}>
+                                <Typography sx={{ mb: 1 }}>
+                                    {t("myOrders.paymentNote")}
+                                </Typography>
+                                <Button
+                                    component="a"
+                                    href={`https://wa.me/972533413368?text=${encodeURIComponent(
+                                        t("myOrders.whatsAppOrderMessage", {
+                                            number: order.orderNumber,
+                                        })
+                                    )}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    variant="outlined"
+                                    color="success"
+                                    size="small"
+                                    startIcon={<WhatsAppIcon />}
+                                >
+                                    {t("myOrders.contactWhatsApp")}
+                                </Button>
+                            </Alert>
+                        )}
 
                         {order.deliveryNote && (
                             <>

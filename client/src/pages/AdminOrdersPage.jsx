@@ -85,6 +85,20 @@ function AdminOrdersPage() {
         }
     };
 
+    const handlePaymentStatusChange = async (orderId, paymentStatus) => {
+        try {
+            await api.put(`/orders/${orderId}/payment-status`, {
+                paymentStatus,
+            });
+
+            setError("");
+            setFeedback(t("adminOrdersPage.paymentStatusUpdated"));
+            await fetchOrders();
+        } catch {
+            setError(t("adminOrdersPage.failedToUpdatePaymentStatus"));
+        }
+    };
+
     const openAdminNoteDialog = (order) => {
         setOrderForAdminNote(order);
         setAdminNote(order.adminNote || "");
@@ -244,7 +258,14 @@ function AdminOrdersPage() {
                                     </Typography>
                                 </Box>
 
-                                <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        gap: 2,
+                                        alignItems: "center",
+                                        flexWrap: "wrap",
+                                    }}
+                                >
                                     <Chip
                                         label={t(`orderStatus.${order.status}`)}
                                         color={statusColors[order.status] || "default"}
@@ -272,8 +293,38 @@ function AdminOrdersPage() {
                                             ))}
                                         </Select>
                                     </FormControl>
+
+                                    <FormControl size="small" sx={{ minWidth: 160 }}>
+                                        <InputLabel>
+                                            {t("adminOrdersPage.paymentStatus")}
+                                        </InputLabel>
+                                        <Select
+                                            label={t("adminOrdersPage.paymentStatus")}
+                                            value={order.paymentStatus || "unpaid"}
+                                            onChange={(e) =>
+                                                handlePaymentStatusChange(
+                                                    order._id,
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <MenuItem value="unpaid">
+                                                {t("paymentStatus.unpaid")}
+                                            </MenuItem>
+                                            <MenuItem value="paid">
+                                                {t("paymentStatus.paid")}
+                                            </MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Box>
                             </Box>
+
+                            {order.status === "cancelled" &&
+                                order.paymentStatus === "paid" && (
+                                    <Alert severity="warning" sx={{ mb: 2 }}>
+                                        {t("adminOrdersPage.cancelledPaidWarning")}
+                                    </Alert>
+                                )}
 
                             <Divider sx={{ mb: 2 }} />
 

@@ -249,6 +249,9 @@
         "shippingAddress": "عنوان التوصيل: {{region}}، {{city}}، {{street}}",
         "note": "ملاحظة: {{note}}",
         "adminNote": "رسالة المتجر: {{note}}",
+        "paymentNote": "يمكن الدفع نقدًا عند الاستلام. للدفع عبر Bit أو التحويل البنكي، تواصلوا معنا عبر واتساب.",
+        "contactWhatsApp": "التواصل عبر واتساب",
+        "whatsAppOrderMessage": "مرحبًا، أريد ترتيب الدفع للطلب رقم {{number}}.",
         "productImageAlt": "صورة المنتج {{name}}"
     },
     "adminOrdersPage": {
@@ -257,6 +260,8 @@
         "failedToLoad": "فشل تحميل الطلبات",
         "statusUpdated": "تم تحديث حالة الطلب بنجاح",
         "failedToUpdate": "فشل تحديث حالة الطلب",
+        "paymentStatusUpdated": "تم تحديث حالة الدفع بنجاح",
+        "failedToUpdatePaymentStatus": "فشل تحديث حالة الدفع",
         "filterByStatus": "عرض حسب الحالة",
         "allOrders": "جميع الطلبات",
         "searchByOrderNumber": "البحث برقم الطلب",
@@ -265,6 +270,8 @@
         "customer": "الزبون: {{name}} | {{email}}",
         "phone": "الهاتف: {{phone}}",
         "status": "الحالة",
+        "paymentStatus": "حالة الدفع",
+        "cancelledPaidWarning": "هذا الطلب ملغي لكنه مسجل كمدفوع. تحقق مما إذا كان يجب إعادة المبلغ للزبون.",
         "itemQuantity": "{{name}} × {{quantity}}",
         "priceEach": "₪{{price}} للقطعة",
         "shippingCost": "تكلفة التوصيل: ₪{{cost}}",
@@ -300,6 +307,10 @@
         "shipped": "تم الشحن",
         "delivered": "تم التوصيل",
         "cancelled": "ملغي"
+    },
+    "paymentStatus": {
+        "unpaid": "غير مدفوع",
+        "paid": "مدفوع"
     },
     "adminProducts": {
         "title": "إدارة المنتجات",
