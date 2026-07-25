@@ -2,6 +2,12 @@ import Order from "../models/order.js";
 import Product from "../models/product.js";
 import User from "../models/user.js";
 import STATUS_CODE from "../constants/statusCodes.js";
+import { fileURLToPath } from "url";
+import sendEmail from "../utils/sendEmail.js";
+
+const emailLogoPath = fileURLToPath(
+  new URL("../../client/src/assets/logo.png", import.meta.url)
+);
 
 const shippingCosts = {
   "Jerusalem District": 70,
@@ -14,6 +20,147 @@ const shippingCosts = {
 
 const normalizeAddressValue = (value) =>
   value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+const escapeHtml = (value = "") =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+const getOrderNotificationRecipients = () =>
+  process.env.ORDER_NOTIFICATION_EMAIL?.split(",")
+    .map((email) => email.trim())
+    .filter(Boolean) || [];
+
+const sendNewOrderNotification = async (order, customer) => {
+  const recipients = [...new Set(getOrderNotificationRecipients())];
+
+  if (recipients.length === 0) {
+    console.warn(
+      `New order ${order.orderNumber} created, but ORDER_NOTIFICATION_EMAIL is not configured.`
+    );
+    return;
+  }
+
+  const itemsText = order.items
+    .map(
+      (item) =>
+        `${item.name} × ${item.quantity} — ₪${(
+          item.price * item.quantity
+        ).toFixed(2)}`
+    )
+    .join("\n");
+
+  const itemsHtml = order.items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            ${escapeHtml(item.name)}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+            ${item.quantity}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            ₪${(item.price * item.quantity).toFixed(2)}
+          </td>
+        </tr>
+      `
+    )
+    .join("");
+
+  const customerName = customer?.name || "Customer";
+  const customerEmail = customer?.email || "";
+  const customerPhone =
+    order.shippingAddress.phone || customer?.phone || "";
+  const address = [
+    order.shippingAddress.region,
+    order.shippingAddress.city,
+    order.shippingAddress.street,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  await sendEmail({
+    to: recipients,
+    subject: `New order #${order.orderNumber} - Baby Kids Toys`,
+    text: `A new order has been created.
+
+Order: #${order.orderNumber}
+Customer: ${customerName}
+Email: ${customerEmail}
+Phone: ${customerPhone}
+Address: ${address}
+
+Items:
+${itemsText}
+
+Items total: ₪${order.itemsPrice.toFixed(2)}
+Delivery: ₪${order.shippingCost.toFixed(2)}
+Order total: ₪${order.totalPrice.toFixed(2)}
+${order.deliveryNote ? `Delivery note: ${order.deliveryNote}` : ""}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 620px; margin: 0 auto; padding: 24px;">
+        <img
+          src="cid:baby-kids-toys-logo"
+          alt="Baby Kids Toys"
+          width="90"
+          height="90"
+          style="display: block; width: 90px; height: 90px; object-fit: cover; border-radius: 50%; margin: 0 auto 18px;"
+        />
+        <h2 style="text-align: center; margin-bottom: 4px;">A new order was created</h2>
+        <p style="text-align: center; color: #666; margin-top: 0;">
+          Order #${escapeHtml(order.orderNumber)}
+        </p>
+
+        <h3>Customer details</h3>
+        <p>
+          <strong>Name:</strong> ${escapeHtml(customerName)}<br />
+          <strong>Email:</strong> ${escapeHtml(customerEmail)}<br />
+          <strong>Phone:</strong> ${escapeHtml(customerPhone)}<br />
+          <strong>Address:</strong> ${escapeHtml(address)}
+        </p>
+
+        <h3>Items</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f6f2ed;">
+              <th style="padding: 10px; text-align: left;">Product</th>
+              <th style="padding: 10px;">Quantity</th>
+              <th style="padding: 10px; text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>${itemsHtml}</tbody>
+        </table>
+
+        <div style="margin-top: 20px; text-align: right;">
+          <div>Items: ₪${order.itemsPrice.toFixed(2)}</div>
+          <div>Delivery: ₪${order.shippingCost.toFixed(2)}</div>
+          <div style="font-size: 20px; font-weight: 700;">
+            Total: ₪${order.totalPrice.toFixed(2)}
+          </div>
+        </div>
+
+        ${
+          order.deliveryNote
+            ? `<p style="margin-top: 20px;"><strong>Delivery note:</strong> ${escapeHtml(
+                order.deliveryNote
+              )}</p>`
+            : ""
+        }
+      </div>
+    `,
+    attachments: [
+      {
+        filename: "baby-kids-toys-logo.png",
+        path: emailLogoPath,
+        cid: "baby-kids-toys-logo",
+      },
+    ],
+  });
+};
 
 const saveRecentAddress = async (userId, shippingAddress) => {
   const user = await User.findById(userId);
@@ -133,6 +280,13 @@ export const createOrder = async (req, res, next) => {
     } catch (addressError) {
       console.error("Failed to save recent delivery address:", addressError);
     }
+
+    sendNewOrderNotification(order, req.user).catch((emailError) => {
+      console.error(
+        `Failed to send notification for order ${order.orderNumber}:`,
+        emailError
+      );
+    });
 
     res.status(STATUS_CODE.CREATED).json({
       success: true,
