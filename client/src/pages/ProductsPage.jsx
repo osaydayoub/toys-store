@@ -401,7 +401,11 @@ function ProductsPage() {
 
             <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
               {paginatedProducts.map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  key={product._id}
+                  sx={{ display: "flex" }}
+                >
                   <ProductCard product={product} />
                 </Grid>
               ))}
