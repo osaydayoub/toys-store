@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Container,
@@ -48,6 +48,7 @@ function ProductsPage() {
   const [error, setError] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const productsGridRef = useRef(null);
   const location = useLocation();
   const { t } = useTranslation();
 
@@ -88,6 +89,17 @@ function ProductsPage() {
     }
 
     setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleProductPageChange = (_event, page) => {
+    updateProductParams({ page }, { resetPage: false });
+
+    window.requestAnimationFrame(() => {
+      productsGridRef.current?.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
+    });
   };
 
   useEffect(() => {
@@ -399,7 +411,13 @@ function ProductsPage() {
               })}
             </Typography>
 
-            <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
+            <Grid
+              ref={productsGridRef}
+              container
+              spacing={3}
+              justifyContent="center"
+              sx={{ mt: 2, scrollMarginTop: { xs: 80, md: 96 } }}
+            >
               {paginatedProducts.map((product) => (
                 <Grid
                   size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
@@ -416,9 +434,7 @@ function ProductsPage() {
                 <Pagination
                   count={totalPages}
                   page={currentPage}
-                  onChange={(event, page) =>
-                    updateProductParams({ page }, { resetPage: false })
-                  }
+                  onChange={handleProductPageChange}
                   color="primary"
                   shape="rounded"
                 />
