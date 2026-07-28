@@ -23,32 +23,83 @@ function ProductCard({ product }) {
   };
 
   return (
-    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {product.images?.[0] && (
         <CardMedia
           component="img"
-          height="190"
           image={product.images[0]}
           alt={product.name}
-          sx={{ objectFit: "cover", backgroundColor: "#f5f5f5" }}
+          sx={{
+            width: "100%",
+            height: "auto",
+            display: "block",
+            flexShrink: 0,
+            backgroundColor: "#f5f5f5",
+          }}
         />
       )}
 
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" gutterBottom>
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Typography
+          sx={{
+            mb: 1,
+            fontSize: { xs: "1rem", md: "1.05rem" },
+            fontWeight: 600,
+            lineHeight: 1.35,
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: 2,
+            overflow: "hidden",
+          }}
+        >
           {product.name}
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            mb: 1,
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: 1,
+            overflow: "hidden",
+          }}
+        >
           {product.description}
         </Typography>
 
-        <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap" }}>
-          <Chip label={t(`ageRanges.${product.ageRange}`)} size="small" color="secondary" />
-          <Chip label={t(`categories.${product.category}`)} size="small" variant="outlined" />
+        <Stack direction="row" spacing={1} sx={{ mb: 1, flexWrap: "wrap" }}>
+          <Chip
+            label={t(`ageRanges.${product.ageRange}`)}
+            size="small"
+            color="secondary"
+          />
+          <Chip
+            label={t(`categories.${product.category}`)}
+            size="small"
+            variant="outlined"
+          />
         </Stack>
 
-        <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
+        <Typography
+          variant="h6"
+          color="primary"
+          sx={{ mt: 0, mb: 2, fontWeight: 700 }}
+        >
           ₪{product.price}
         </Typography>
 
@@ -59,6 +110,7 @@ function ProductCard({ product }) {
           onClick={rememberProductsScrollPosition}
           variant="contained"
           fullWidth
+          sx={{ mt: { xs: 0, md: "auto" } }}
         >
           {t("productCard.viewDetails")}
         </Button>

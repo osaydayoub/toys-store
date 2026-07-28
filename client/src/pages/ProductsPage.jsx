@@ -19,7 +19,6 @@ import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import AgeFilterCarousel from "../components/AgeFilterCarousel";
-import CategoryFilterCarousel from "../components/CategoryFilterCarousel";
 import banner1 from "../assets/banner.png";
 import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -27,19 +26,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
 
-
-const categories = [
-  "All",
-  "Educational Toys",
-  "Sensory Toys",
-  "Puzzle & Brain Games",
-  "Motor Skills Toys",
-  "Outdoor Toys",
-  "Role-Play Toys",
-  "Books & Stories",
-  "Toy Sets",
-  "Other",
-];
 
 const ageRanges = [
   "All",
@@ -65,15 +51,11 @@ function ProductsPage() {
   const location = useLocation();
   const { t } = useTranslation();
 
-  const categoryParam = searchParams.get("category");
   const ageParam = searchParams.get("age");
   const sortParam = searchParams.get("sort");
   const pageParam = Number(searchParams.get("page"));
   const perPageParam = Number(searchParams.get("perPage"));
 
-  const selectedCategory = categories.includes(categoryParam)
-    ? categoryParam
-    : "All";
   const selectedAgeRange = ageRanges.includes(ageParam) ? ageParam : "All";
   const sortBy = sortOptions.includes(sortParam) ? sortParam : "default";
   const searchTerm = searchParams.get("search") || "";
@@ -86,7 +68,6 @@ function ProductsPage() {
   const updateProductParams = (updates, { resetPage = true } = {}) => {
     const nextParams = new URLSearchParams(searchParams);
     const defaults = {
-      category: "All",
       age: "All",
       sort: "default",
       search: "",
@@ -147,9 +128,6 @@ function ProductsPage() {
 
   const filteredAndSortedProducts = products
     .filter((product) => {
-      const matchesCategory =
-        selectedCategory === "All" || product.category === selectedCategory;
-
       const matchesAgeRange =
         selectedAgeRange === "All" || product.ageRange === selectedAgeRange;
 
@@ -157,7 +135,7 @@ function ProductsPage() {
         normalizedSearch === "" ||
         product.name.toLowerCase().includes(normalizedSearch);
 
-      return matchesCategory && matchesAgeRange && matchesSearch;
+      return matchesAgeRange && matchesSearch;
     })
     .slice()
     .sort((a, b) => {
@@ -286,32 +264,6 @@ function ProductsPage() {
           onSelectAge={(age) => updateProductParams({ age })}
         />
         <Box
-          sx={(theme) => ({
-            "--gradient": `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            px: { xs: 2, md: 3 },
-            py: { xs: 0.7, md: 1 },
-            mt: { xs: 1.5, md: 4 },
-            mb: { xs: 1, md: 2 },
-            borderRadius: "999px",
-            backgroundColor: theme.palette.primary.main,
-            backgroundImage: "var(--gradient)",
-            color: theme.palette.primary.contrastText,
-            fontWeight: 800,
-            fontSize: "1rem",
-            boxShadow: theme.shadows[3],
-          })}
-        >
-          {t("productsPage.shopByCategory")}
-        </Box>
-        <CategoryFilterCarousel
-          selectedCategory={selectedCategory}
-          onSelectCategory={(category) => updateProductParams({ category })}
-        />
-
-        <Box
           sx={{
             display: "flex",
             gap: 1,
@@ -373,23 +325,6 @@ function ProductsPage() {
                 gap: 2,
               }}
             >
-              <FormControl>
-                <InputLabel>{t("productsPage.category")}</InputLabel>
-                <Select
-                  label={t("productsPage.category")}
-                  value={selectedCategory}
-                  onChange={(e) =>
-                    updateProductParams({ category: e.target.value })
-                  }
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {t(`categories.${category}`)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
               <FormControl>
                 <InputLabel>{t("productsPage.ageRange")}</InputLabel>
                 <Select
@@ -466,7 +401,11 @@ function ProductsPage() {
 
             <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
               {paginatedProducts.map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  key={product._id}
+                  sx={{ display: "flex" }}
+                >
                   <ProductCard product={product} />
                 </Grid>
               ))}
