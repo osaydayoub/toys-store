@@ -35,7 +35,8 @@
         "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
         "shopByAge": "اكتشف الألعاب حسب العمر",
         "shopByCategory": "ما نوع اللعبة التي تريدها؟",
-        "toysByAge": "ألعاب حسب العمر"
+        "toysByAge": "ألعاب حسب العمر",
+        "allProductsAllAges": "كل المنتجات · كل الأعمار"
     },
     "categories": {
         "All": "الكل",

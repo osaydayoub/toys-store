@@ -19,7 +19,6 @@ import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import AgeFilterCarousel from "../components/AgeFilterCarousel";
-import CategoryFilterCarousel from "../components/CategoryFilterCarousel";
 import banner1 from "../assets/banner.png";
 import banner2 from "../assets/desktop-banner.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -102,6 +101,21 @@ function ProductsPage() {
     updateProductParams({
       group,
       age: "All",
+    });
+  };
+
+  const selectedCarouselFilter =
+    selectedGroup === "all" ? selectedAgeRange : selectedGroup;
+
+  const handleCarouselFilterChange = (filter) => {
+    if (filter === "books" || filter === "educational") {
+      handleGroupChange(filter);
+      return;
+    }
+
+    updateProductParams({
+      group: "all",
+      age: filter,
     });
   };
 
@@ -273,18 +287,10 @@ function ProductsPage() {
           />
         </Paper>
 
-        <CategoryFilterCarousel
-          selectedCategory={selectedGroup}
-          onSelectCategory={handleGroupChange}
+        <AgeFilterCarousel
+          selectedFilter={selectedCarouselFilter}
+          onSelectFilter={handleCarouselFilterChange}
         />
-        {selectedGroup === "all" && (
-          <>
-            <AgeFilterCarousel
-              selectedAgeRange={selectedAgeRange}
-              onSelectAge={(age) => updateProductParams({ age })}
-            />
-          </>
-        )}
         <Box
           sx={{
             display: "flex",
