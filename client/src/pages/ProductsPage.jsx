@@ -41,7 +41,7 @@ const ageRanges = [
 
 const sortOptions = ["default", "price-low-high", "price-high-low"];
 const perPageOptions = [4, 6, 8, 10, 12];
-const productGroups = ["all", "educational", "books"];
+const productGroups = ["all", "educational", "books", "sets"];
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -108,7 +108,7 @@ function ProductsPage() {
     selectedGroup === "all" ? selectedAgeRange : selectedGroup;
 
   const handleCarouselFilterChange = (filter) => {
-    if (filter === "books" || filter === "educational") {
+    if (["books", "sets", "educational"].includes(filter)) {
       handleGroupChange(filter);
       return;
     }
@@ -168,11 +168,17 @@ function ProductsPage() {
 
   const filteredAndSortedProducts = products
     .filter((product) => {
+      const productCategories =
+        product.categories?.length > 0
+          ? product.categories
+          : [product.category];
       const matchesGroup =
         selectedGroup === "books"
-          ? product.category === "Books & Stories"
+          ? productCategories.includes("Books & Stories")
+          : selectedGroup === "sets"
+            ? productCategories.includes("Toy Sets")
           : selectedGroup === "educational"
-            ? product.category === "Educational Toys"
+            ? productCategories.includes("Educational Toys")
             : true;
 
       const matchesAgeRange =

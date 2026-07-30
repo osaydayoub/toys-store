@@ -32,6 +32,12 @@ function ProductDetailsPage() {
     const [isOutOfStock, setIsOutOfStock] = useState(false);
     const [error, setError] = useState("");
     const [cartMessageOpen, setCartMessageOpen] = useState(false);
+    const productCategories =
+        product?.categories?.length > 0
+            ? product.categories
+            : product?.category
+                ? [product.category]
+                : [];
 
     useEffect(() => {
         const getProduct = async () => {
@@ -103,7 +109,12 @@ function ProductDetailsPage() {
                         </Typography>
 
                         <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
-                            <Chip label={t(`categories.${product.category}`)} />
+                            {productCategories.map((category) => (
+                                <Chip
+                                    key={category}
+                                    label={t(`categories.${category}`)}
+                                />
+                            ))}
                             <Chip label={t(`ageRanges.${product.ageRange}`)} variant="outlined" />
                         </Box>
 

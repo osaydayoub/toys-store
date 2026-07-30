@@ -14,6 +14,7 @@ function AgeFilterCarousel({ selectedFilter, onSelectFilter }) {
         { translationKey: "ageRanges.6+ Years", value: "6+ Years", image: "/age/6-plus.webp" },
         { translationKey: "ageRanges.7+ Years", value: "7+ Years", image: "/age/7-plus.webp" },
         { translationKey: "categories.Books & Stories", value: "books", image: "/category/books.webp", showChip: false },
+        { translationKey: "categories.Toy Sets", value: "sets", image: "/category/sets.webp", showChip: false },
         { translationKey: "categories.Educational Toys", value: "educational", image: "/category/educational.webp", showChip: false },
     ];
 

@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
+
+const productCategories = [
+    "Educational Toys",
+    "Sensory Toys",
+    "Puzzle & Brain Games",
+    "Motor Skills Toys",
+    "Outdoor Toys",
+    "Role-Play Toys",
+    "Books & Stories",
+    "Toy Sets",
+    "Other",
+];
+
 const productSchema = new mongoose.Schema(
     {
         name: {
@@ -27,7 +40,17 @@ const productSchema = new mongoose.Schema(
         category: {
             type: String,
             required: [true, "Product category is required"],
-            enum: ["Educational Toys", "Sensory Toys", "Puzzle & Brain Games", "Motor Skills Toys", "Outdoor Toys", "Role-Play Toys", "Books & Stories","Toy Sets", "Other"]
+            enum: productCategories,
+        },
+        categories: {
+            type: [{
+                type: String,
+                enum: productCategories,
+            }],
+            validate: {
+                validator: (value) => value.length > 0,
+                message: "At least one product category is required",
+            },
         },
         ageRange: {
             type: String,
@@ -60,6 +83,15 @@ const productSchema = new mongoose.Schema(
 // productSchema.index({ slug: 1 });
 
 productSchema.pre("validate", function () {
+    if (!this.categories?.length && this.category) {
+        this.categories = [this.category];
+    }
+
+    if (this.categories?.length) {
+        this.categories = [...new Set(this.categories)];
+        this.category = this.categories[0];
+    }
+
     if (this.name) {
         this.slug = slugify(this.name, {
             lower: true,
