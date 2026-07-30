@@ -16,6 +16,8 @@ import {
   Typography,
   Snackbar,
   Collapse,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
@@ -50,7 +52,7 @@ const initialFormData = {
   name: "",
   description: "",
   price: "",
-  category: "",
+  categories: [],
   ageRange: "",
   stock: "",
 };
@@ -129,7 +131,10 @@ function AdminProductsPage() {
       name: product.name,
       description: product.description,
       price: product.price,
-      category: product.category,
+      categories:
+        product.categories?.length > 0
+          ? product.categories
+          : [product.category],
       ageRange: product.ageRange,
       stock: product.stock,
     });
@@ -144,6 +149,7 @@ function AdminProductsPage() {
 
   const buildProductPayload = () => ({
     ...formData,
+    category: formData.categories[0],
     price: Number(formData.price),
     stock: Number(formData.stock),
     images: imageUrls,
@@ -556,13 +562,25 @@ function AdminProductsPage() {
                 select
                 fullWidth
                 label={t("adminProducts.category")}
-                name="category"
-                value={formData.category}
+                name="categories"
+                value={formData.categories}
                 onChange={handleChange}
+                slotProps={{
+                  select: {
+                    multiple: true,
+                    renderValue: (selected) =>
+                      selected
+                        .map((category) => t(`categories.${category}`))
+                        .join(", "),
+                  },
+                }}
               >
                 {categories.map((category) => (
                   <MenuItem key={category} value={category}>
-                    {t(`categories.${category}`)}
+                    <Checkbox
+                      checked={formData.categories.includes(category)}
+                    />
+                    <ListItemText primary={t(`categories.${category}`)} />
                   </MenuItem>
                 ))}
               </TextField>
@@ -725,7 +743,11 @@ function AdminProductsPage() {
               )}
 
               <Box sx={{ display: "flex", gap: 2 }}>
-                <Button type="submit" variant="contained" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isLoading || formData.categories.length === 0}
+                >
                   {isLoading
                     ? editingSlug
                       ? t("adminProducts.updating")

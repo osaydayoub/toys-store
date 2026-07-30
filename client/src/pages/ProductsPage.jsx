@@ -168,13 +168,17 @@ function ProductsPage() {
 
   const filteredAndSortedProducts = products
     .filter((product) => {
+      const productCategories =
+        product.categories?.length > 0
+          ? product.categories
+          : [product.category];
       const matchesGroup =
         selectedGroup === "books"
-          ? product.category === "Books & Stories"
+          ? productCategories.includes("Books & Stories")
           : selectedGroup === "sets"
-            ? product.category === "Toy Sets"
+            ? productCategories.includes("Toy Sets")
           : selectedGroup === "educational"
-            ? product.category === "Educational Toys"
+            ? productCategories.includes("Educational Toys")
             : true;
 
       const matchesAgeRange =

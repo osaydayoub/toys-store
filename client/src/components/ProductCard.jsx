@@ -13,6 +13,10 @@ import { useTranslation } from "react-i18next";
 function ProductCard({ product }) {
   const { t } = useTranslation();
   const location = useLocation();
+  const productCategories =
+    product.categories?.length > 0
+      ? product.categories
+      : [product.category];
   const productsLocation = `${location.pathname}${location.search}`;
 
   const rememberProductsScrollPosition = () => {
@@ -88,11 +92,14 @@ function ProductCard({ product }) {
             size="small"
             color="secondary"
           />
-          <Chip
-            label={t(`categories.${product.category}`)}
-            size="small"
-            variant="outlined"
-          />
+          {productCategories.slice(0, 2).map((category) => (
+            <Chip
+              key={category}
+              label={t(`categories.${category}`)}
+              size="small"
+              variant="outlined"
+            />
+          ))}
         </Stack>
 
         <Typography

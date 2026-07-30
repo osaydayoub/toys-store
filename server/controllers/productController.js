@@ -1,16 +1,29 @@
 import Product from "../models/product.js";
 import STATUS_CODE from "../constants/statusCodes.js";
 
+const normalizeCategories = (categories, category) => {
+    const selectedCategories =
+        Array.isArray(categories) && categories.length > 0
+            ? categories
+            : category
+                ? [category]
+                : [];
+
+    return [...new Set(selectedCategories)];
+};
+
 export const createProduct = async (req, res, next) => {
     try {
-        const { name, description, price, category, ageRange, stock, images } =
+        const { name, description, price, category, categories, ageRange, stock, images } =
             req.body;
+        const normalizedCategories = normalizeCategories(categories, category);
 
         const newProduct = await Product.create({
             name,
             description,
             price,
-            category,
+            category: normalizedCategories[0],
+            categories: normalizedCategories,
             ageRange,
             stock,
             images,
@@ -55,10 +68,20 @@ export const getProductBySlug = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
     try {
         const { slug } = req.params;
-        const { name, description, price, category, ageRange, stock, images } = req.body;
+        const { name, description, price, category, categories, ageRange, stock, images } = req.body;
+        const normalizedCategories = normalizeCategories(categories, category);
         const product = await Product.findOneAndUpdate(
             { slug },
-            { name, description, price, category, ageRange, stock, images },
+            {
+                name,
+                description,
+                price,
+                category: normalizedCategories[0],
+                categories: normalizedCategories,
+                ageRange,
+                stock,
+                images,
+            },
             { returnDocument: "after", runValidators: true }
         );
         if (!product) {
