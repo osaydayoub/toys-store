@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, Chip } from "@mui/material";
+import { Box, Card, CardActionArea } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
@@ -68,19 +68,6 @@ function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
                                     aspectRatio: "1 / 1",
                                     objectFit: "cover",
                                     display: "block",
-                                }}
-                            />
-                            <Chip
-                                label={t(category.translationKey)}
-                                size="small"
-                                color="secondary"
-                                sx={{
-                                    position: "absolute",
-                                    insetInlineEnd: 8,
-                                    bottom: 8,
-                                    maxWidth: "calc(100% - 16px)",
-                                    fontWeight: 700,
-                                    boxShadow: 2,
                                 }}
                             />
                         </CardActionArea>

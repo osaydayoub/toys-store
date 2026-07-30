@@ -159,9 +159,7 @@ function ProductsPage() {
           ? product.category === "Books & Stories"
           : selectedGroup === "educational"
             ? product.category === "Educational Toys"
-            : !["Books & Stories", "Educational Toys"].includes(
-                product.category,
-              );
+            : true;
 
       const matchesAgeRange =
         selectedGroup !== "all" ||
