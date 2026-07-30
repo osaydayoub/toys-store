@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -79,6 +79,7 @@ function AdminProductsPage() {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
   const [draggedImageIndex, setDraggedImageIndex] = useState(null);
+  const touchedImageIndexRef = useRef(null);
 
   const fetchProducts = async () => {
     try {
@@ -104,6 +105,7 @@ function AdminProductsPage() {
     setImageUrls([]);
     setShowUrlInput(false);
     setDraggedImageIndex(null);
+    touchedImageIndexRef.current = null;
   };
 
   const handleChange = (e) => {
@@ -327,6 +329,44 @@ function AdminProductsPage() {
     setDraggedImageIndex(null);
   };
 
+  const handleImageTouchStart = (index) => {
+    touchedImageIndexRef.current = index;
+    setDraggedImageIndex(index);
+  };
+
+  const handleImageTouchMove = (event) => {
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    const imageRow = document
+      .elementFromPoint(touch.clientX, touch.clientY)
+      ?.closest("[data-image-index]");
+    const targetIndex = Number(imageRow?.dataset.imageIndex);
+    const sourceIndex = touchedImageIndexRef.current;
+
+    if (
+      !Number.isInteger(targetIndex) ||
+      !Number.isInteger(sourceIndex) ||
+      sourceIndex === targetIndex
+    ) {
+      return;
+    }
+
+    setImageUrls((previousUrls) => {
+      const reorderedUrls = [...previousUrls];
+      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
+      reorderedUrls.splice(targetIndex, 0, movedUrl);
+      return reorderedUrls;
+    });
+    touchedImageIndexRef.current = targetIndex;
+    setDraggedImageIndex(targetIndex);
+  };
+
+  const handleImageTouchEnd = () => {
+    touchedImageIndexRef.current = null;
+    setDraggedImageIndex(null);
+  };
+
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
@@ -493,6 +533,7 @@ function AdminProductsPage() {
                   {imageUrls.map((url, index) => (
                     <Box
                       key={`${url}-${index}`}
+                      data-image-index={index}
                       draggable
                       onDragStart={(event) =>
                         handleImageDragStart(event, index)
@@ -522,11 +563,25 @@ function AdminProductsPage() {
                         },
                       }}
                     >
-                      <DragIndicatorIcon
-                        color="action"
-                        aria-hidden="true"
-                        sx={{ flexShrink: 0 }}
-                      />
+                      <Box
+                        onTouchStart={() => handleImageTouchStart(index)}
+                        onTouchMove={handleImageTouchMove}
+                        onTouchEnd={handleImageTouchEnd}
+                        onTouchCancel={handleImageTouchEnd}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          alignSelf: "stretch",
+                          touchAction: "none",
+                          cursor: "grab",
+                        }}
+                      >
+                        <DragIndicatorIcon
+                          color="action"
+                          aria-hidden="true"
+                          sx={{ flexShrink: 0 }}
+                        />
+                      </Box>
                       <Box
                         component="img"
                         src={url}
