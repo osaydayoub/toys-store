@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Portal,
   Typography,
   Snackbar,
   Collapse,
@@ -79,7 +80,9 @@ function AdminProductsPage() {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
   const [draggedImageIndex, setDraggedImageIndex] = useState(null);
-  const touchedImageIndexRef = useRef(null);
+  const [imageDragPreview, setImageDragPreview] = useState(null);
+  const activeImageIndexRef = useRef(null);
+  const imageListRef = useRef(null);
 
   const fetchProducts = async () => {
     try {
@@ -105,7 +108,8 @@ function AdminProductsPage() {
     setImageUrls([]);
     setShowUrlInput(false);
     setDraggedImageIndex(null);
-    touchedImageIndexRef.current = null;
+    setImageDragPreview(null);
+    activeImageIndexRef.current = null;
   };
 
   const handleChange = (e) => {
@@ -305,44 +309,77 @@ function AdminProductsPage() {
     setImageToDelete(null);
   };
 
-  const handleImageDragStart = (event, index) => {
+  const handleImagePointerDown = (event, index, url) => {
+    event.preventDefault();
+    const imageRow = event.currentTarget.closest("[data-image-index]");
+    const rowRect = imageRow.getBoundingClientRect();
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    activeImageIndexRef.current = index;
     setDraggedImageIndex(index);
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", String(index));
+    setImageDragPreview({
+      url,
+      width: rowRect.width,
+      x: rowRect.left,
+      y: rowRect.top,
+      offsetX: event.clientX - rowRect.left,
+      offsetY: event.clientY - rowRect.top,
+    });
   };
 
-  const handleImageDrop = (event, dropIndex) => {
+  const animateReorderedImageRows = (previousPositions) => {
+    window.requestAnimationFrame(() => {
+      imageListRef.current
+        ?.querySelectorAll("[data-image-url]")
+        .forEach((row) => {
+          const previousTop = previousPositions.get(row.dataset.imageUrl);
+          if (previousTop === undefined) return;
+
+          const distance = previousTop - row.getBoundingClientRect().top;
+          if (distance === 0) return;
+
+          row.animate(
+            [
+              { transform: `translateY(${distance}px)` },
+              { transform: "translateY(0)" },
+            ],
+            { duration: 180, easing: "ease-out" },
+          );
+        });
+    });
+  };
+
+  const handleImagePointerMove = (event) => {
+    if (activeImageIndexRef.current === null) return;
     event.preventDefault();
 
-    const sourceIndex = Number(event.dataTransfer.getData("text/plain"));
-    if (!Number.isInteger(sourceIndex) || sourceIndex === dropIndex) {
-      setDraggedImageIndex(null);
-      return;
+    const dialogContent = event.currentTarget.closest(".MuiDialogContent-root");
+    if (dialogContent) {
+      const contentRect = dialogContent.getBoundingClientRect();
+      const scrollEdgeSize = 56;
+
+      if (event.clientY < contentRect.top + scrollEdgeSize) {
+        dialogContent.scrollBy({ top: -12 });
+      } else if (event.clientY > contentRect.bottom - scrollEdgeSize) {
+        dialogContent.scrollBy({ top: 12 });
+      }
     }
 
-    setImageUrls((previousUrls) => {
-      const reorderedUrls = [...previousUrls];
-      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
-      reorderedUrls.splice(dropIndex, 0, movedUrl);
-      return reorderedUrls;
-    });
-    setDraggedImageIndex(null);
-  };
+    setImageDragPreview((previous) =>
+      previous
+        ? {
+            ...previous,
+            x: event.clientX - previous.offsetX,
+            y: event.clientY - previous.offsetY,
+          }
+        : previous,
+    );
 
-  const handleImageTouchStart = (index) => {
-    touchedImageIndexRef.current = index;
-    setDraggedImageIndex(index);
-  };
-
-  const handleImageTouchMove = (event) => {
-    event.preventDefault();
-
-    const touch = event.touches[0];
     const imageRow = document
-      .elementFromPoint(touch.clientX, touch.clientY)
+      .elementFromPoint(event.clientX, event.clientY)
       ?.closest("[data-image-index]");
     const targetIndex = Number(imageRow?.dataset.imageIndex);
-    const sourceIndex = touchedImageIndexRef.current;
+    const sourceIndex = activeImageIndexRef.current;
 
     if (
       !Number.isInteger(targetIndex) ||
@@ -352,19 +389,31 @@ function AdminProductsPage() {
       return;
     }
 
+    const previousPositions = new Map();
+    imageListRef.current
+      ?.querySelectorAll("[data-image-url]")
+      .forEach((row) => {
+        previousPositions.set(
+          row.dataset.imageUrl,
+          row.getBoundingClientRect().top,
+        );
+      });
+
     setImageUrls((previousUrls) => {
       const reorderedUrls = [...previousUrls];
       const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
       reorderedUrls.splice(targetIndex, 0, movedUrl);
       return reorderedUrls;
     });
-    touchedImageIndexRef.current = targetIndex;
+    activeImageIndexRef.current = targetIndex;
     setDraggedImageIndex(targetIndex);
+    animateReorderedImageRows(previousPositions);
   };
 
-  const handleImageTouchEnd = () => {
-    touchedImageIndexRef.current = null;
+  const handleImagePointerEnd = () => {
+    activeImageIndexRef.current = null;
     setDraggedImageIndex(null);
+    setImageDragPreview(null);
   };
 
   return (
@@ -529,21 +578,12 @@ function AdminProductsPage() {
               )}
 
               {imageUrls.length > 0 && (
-                <Stack spacing={1}>
+                <Stack ref={imageListRef} spacing={1}>
                   {imageUrls.map((url, index) => (
                     <Box
-                      key={`${url}-${index}`}
+                      key={url}
                       data-image-index={index}
-                      draggable
-                      onDragStart={(event) =>
-                        handleImageDragStart(event, index)
-                      }
-                      onDragOver={(event) => {
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
-                      }}
-                      onDrop={(event) => handleImageDrop(event, index)}
-                      onDragEnd={() => setDraggedImageIndex(null)}
+                      data-image-url={url}
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -564,10 +604,12 @@ function AdminProductsPage() {
                       }}
                     >
                       <Box
-                        onTouchStart={() => handleImageTouchStart(index)}
-                        onTouchMove={handleImageTouchMove}
-                        onTouchEnd={handleImageTouchEnd}
-                        onTouchCancel={handleImageTouchEnd}
+                        onPointerDown={(event) =>
+                          handleImagePointerDown(event, index, url)
+                        }
+                        onPointerMove={handleImagePointerMove}
+                        onPointerUp={handleImagePointerEnd}
+                        onPointerCancel={handleImagePointerEnd}
                         sx={{
                           display: "flex",
                           alignItems: "center",
@@ -617,6 +659,56 @@ function AdminProductsPage() {
                     </Box>
                   ))}
                 </Stack>
+              )}
+
+              {imageDragPreview && (
+                <Portal>
+                  <Box
+                    sx={(theme) => ({
+                      position: "fixed",
+                      zIndex: theme.zIndex.modal + 1,
+                      left: imageDragPreview.x,
+                      top: imageDragPreview.y,
+                      width: imageDragPreview.width,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      p: 1,
+                      border: "2px solid",
+                      borderColor: "secondary.main",
+                      borderRadius: 2,
+                      backgroundColor: "background.paper",
+                      boxShadow: 8,
+                      pointerEvents: "none",
+                      opacity: 0.96,
+                    })}
+                  >
+                    <DragIndicatorIcon color="secondary" />
+                    <Box
+                      component="img"
+                      src={imageDragPreview.url}
+                      alt={t("adminProducts.productImageAlt")}
+                      sx={{
+                        width: 70,
+                        height: 70,
+                        objectFit: "cover",
+                        borderRadius: 1,
+                      }}
+                    />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        minWidth: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {imageDragPreview.url}
+                    </Typography>
+                  </Box>
+                </Portal>
               )}
 
               <Box sx={{ display: "flex", gap: 2 }}>
