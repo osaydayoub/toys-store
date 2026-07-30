@@ -124,6 +124,18 @@ function AdminProductsPage() {
     }));
   };
 
+  const handleCategoriesChange = (event) => {
+    const value = event.target.value;
+
+    setFormData((previous) => ({
+      ...previous,
+      categories:
+        typeof value === "string"
+          ? value.split(",").filter(Boolean)
+          : value,
+    }));
+  };
+
   const handleEdit = (product) => {
     setEditingSlug(product.slug);
 
@@ -564,7 +576,7 @@ function AdminProductsPage() {
                 label={t("adminProducts.category")}
                 name="categories"
                 value={formData.categories}
-                onChange={handleChange}
+                onChange={handleCategoriesChange}
                 slotProps={{
                   select: {
                     multiple: true,
