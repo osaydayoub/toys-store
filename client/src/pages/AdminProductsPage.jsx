@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Portal,
   Typography,
   Snackbar,
   Collapse,
@@ -80,8 +79,10 @@ function AdminProductsPage() {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
   const [draggedImageIndex, setDraggedImageIndex] = useState(null);
-  const [imageDragPreview, setImageDragPreview] = useState(null);
+  const [imageDragState, setImageDragState] = useState(null);
+  const [areImagesSettling, setAreImagesSettling] = useState(false);
   const activeImageIndexRef = useRef(null);
+  const targetImageIndexRef = useRef(null);
   const imageListRef = useRef(null);
 
   const fetchProducts = async () => {
@@ -108,8 +109,10 @@ function AdminProductsPage() {
     setImageUrls([]);
     setShowUrlInput(false);
     setDraggedImageIndex(null);
-    setImageDragPreview(null);
+    setImageDragState(null);
+    setAreImagesSettling(false);
     activeImageIndexRef.current = null;
+    targetImageIndexRef.current = null;
   };
 
   const handleChange = (e) => {
@@ -313,39 +316,20 @@ function AdminProductsPage() {
     event.preventDefault();
     const imageRow = event.currentTarget.closest("[data-image-index]");
     const rowRect = imageRow.getBoundingClientRect();
+    const nextRow = imageRow.nextElementSibling;
+    const rowStep = nextRow
+      ? nextRow.getBoundingClientRect().top - rowRect.top
+      : rowRect.height + 8;
 
     event.currentTarget.setPointerCapture(event.pointerId);
     activeImageIndexRef.current = index;
+    targetImageIndexRef.current = index;
     setDraggedImageIndex(index);
-    setImageDragPreview({
+    setImageDragState({
       url,
-      width: rowRect.width,
-      x: rowRect.left,
-      y: rowRect.top,
-      offsetX: event.clientX - rowRect.left,
-      offsetY: event.clientY - rowRect.top,
-    });
-  };
-
-  const animateReorderedImageRows = (previousPositions) => {
-    window.requestAnimationFrame(() => {
-      imageListRef.current
-        ?.querySelectorAll("[data-image-url]")
-        .forEach((row) => {
-          const previousTop = previousPositions.get(row.dataset.imageUrl);
-          if (previousTop === undefined) return;
-
-          const distance = previousTop - row.getBoundingClientRect().top;
-          if (distance === 0) return;
-
-          row.animate(
-            [
-              { transform: `translateY(${distance}px)` },
-              { transform: "translateY(0)" },
-            ],
-            { duration: 180, easing: "ease-out" },
-          );
-        });
+      startY: event.clientY,
+      currentY: event.clientY,
+      rowStep,
     });
   };
 
@@ -365,31 +349,38 @@ function AdminProductsPage() {
       }
     }
 
-    setImageDragPreview((previous) =>
+    setImageDragState((previous) =>
       previous
         ? {
             ...previous,
-            x: event.clientX - previous.offsetX,
-            y: event.clientY - previous.offsetY,
+            currentY: event.clientY,
           }
         : previous,
     );
 
-    const imageRow = document
-      .elementFromPoint(event.clientX, event.clientY)
-      ?.closest("[data-image-index]");
-    const targetIndex = Number(imageRow?.dataset.imageIndex);
+    const imageRows = Array.from(
+      imageListRef.current?.querySelectorAll("[data-image-index]") || [],
+    );
+    const listRect = imageListRef.current?.getBoundingClientRect();
+    const rowHeight = imageRows[0]?.getBoundingClientRect().height || 1;
+    const rowStep =
+      imageRows.length > 1
+        ? imageRows[1].offsetTop - imageRows[0].offsetTop
+        : rowHeight + 8;
+    const rawTargetIndex = Math.round(
+      (event.clientY - (listRect?.top || 0) - rowHeight / 2) / rowStep,
+    );
+    targetImageIndexRef.current = Math.max(
+      0,
+      Math.min(imageRows.length - 1, rawTargetIndex),
+    );
+  };
+
+  const handleImagePointerEnd = () => {
     const sourceIndex = activeImageIndexRef.current;
-
-    if (
-      !Number.isInteger(targetIndex) ||
-      !Number.isInteger(sourceIndex) ||
-      sourceIndex === targetIndex
-    ) {
-      return;
-    }
-
+    const targetIndex = targetImageIndexRef.current;
     const previousPositions = new Map();
+
     imageListRef.current
       ?.querySelectorAll("[data-image-url]")
       .forEach((row) => {
@@ -399,21 +390,86 @@ function AdminProductsPage() {
         );
       });
 
-    setImageUrls((previousUrls) => {
-      const reorderedUrls = [...previousUrls];
-      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
-      reorderedUrls.splice(targetIndex, 0, movedUrl);
-      return reorderedUrls;
+    if (
+      Number.isInteger(sourceIndex) &&
+      Number.isInteger(targetIndex) &&
+      sourceIndex !== targetIndex
+    ) {
+      setImageUrls((previousUrls) => {
+        const reorderedUrls = [...previousUrls];
+        const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
+        reorderedUrls.splice(targetIndex, 0, movedUrl);
+        return reorderedUrls;
+      });
+    }
+
+    activeImageIndexRef.current = null;
+    targetImageIndexRef.current = null;
+    setAreImagesSettling(true);
+    setDraggedImageIndex(null);
+    setImageDragState(null);
+
+    window.requestAnimationFrame(() => {
+      const animations = [];
+
+      imageListRef.current
+        ?.querySelectorAll("[data-image-url]")
+        .forEach((row) => {
+          const previousTop = previousPositions.get(row.dataset.imageUrl);
+          if (previousTop === undefined) return;
+
+          const distance = previousTop - row.getBoundingClientRect().top;
+          if (Math.abs(distance) < 1) return;
+
+          animations.push(row.animate(
+            [
+              { transform: `translateY(${distance}px)` },
+              { transform: "translateY(0)" },
+            ],
+            {
+              duration: 180,
+              easing: "cubic-bezier(0.2, 0, 0, 1)",
+            },
+          ));
+        });
+
+      if (animations.length === 0) {
+        setAreImagesSettling(false);
+        return;
+      }
+
+      Promise.allSettled(animations.map((animation) => animation.finished))
+        .then(() => setAreImagesSettling(false));
     });
-    activeImageIndexRef.current = targetIndex;
-    setDraggedImageIndex(targetIndex);
-    animateReorderedImageRows(previousPositions);
   };
 
-  const handleImagePointerEnd = () => {
-    activeImageIndexRef.current = null;
-    setDraggedImageIndex(null);
-    setImageDragPreview(null);
+  const getImageRowTransform = (index) => {
+    if (!imageDragState || draggedImageIndex === null) return "translateY(0)";
+
+    const targetIndex = targetImageIndexRef.current ?? draggedImageIndex;
+    const rowStep = imageDragState.rowStep;
+
+    if (index === draggedImageIndex) {
+      return `translateY(${imageDragState.currentY - imageDragState.startY}px) scale(1.01)`;
+    }
+
+    if (
+      draggedImageIndex < targetIndex &&
+      index > draggedImageIndex &&
+      index <= targetIndex
+    ) {
+      return `translateY(-${rowStep}px)`;
+    }
+
+    if (
+      draggedImageIndex > targetIndex &&
+      index >= targetIndex &&
+      index < draggedImageIndex
+    ) {
+      return `translateY(${rowStep}px)`;
+    }
+
+    return "translateY(0)";
   };
 
   return (
@@ -595,9 +651,16 @@ function AdminProductsPage() {
                             ? "secondary.main"
                             : "divider",
                         borderRadius: 2,
-                        cursor: "grab",
-                        opacity: draggedImageIndex === index ? 0.55 : 1,
-                        transition: "border-color 120ms, opacity 120ms",
+                        position: "relative",
+                        zIndex: draggedImageIndex === index ? 2 : 1,
+                        transform: getImageRowTransform(index),
+                        transition:
+                          areImagesSettling
+                            ? "none"
+                            : draggedImageIndex === index
+                            ? "border-color 120ms"
+                            : "transform 180ms ease, border-color 120ms",
+                        backgroundColor: "background.paper",
                         "&:active": {
                           cursor: "grabbing",
                         },
@@ -659,56 +722,6 @@ function AdminProductsPage() {
                     </Box>
                   ))}
                 </Stack>
-              )}
-
-              {imageDragPreview && (
-                <Portal>
-                  <Box
-                    sx={(theme) => ({
-                      position: "fixed",
-                      zIndex: theme.zIndex.modal + 1,
-                      left: imageDragPreview.x,
-                      top: imageDragPreview.y,
-                      width: imageDragPreview.width,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      p: 1,
-                      border: "2px solid",
-                      borderColor: "secondary.main",
-                      borderRadius: 2,
-                      backgroundColor: "background.paper",
-                      boxShadow: 8,
-                      pointerEvents: "none",
-                      opacity: 0.96,
-                    })}
-                  >
-                    <DragIndicatorIcon color="secondary" />
-                    <Box
-                      component="img"
-                      src={imageDragPreview.url}
-                      alt={t("adminProducts.productImageAlt")}
-                      sx={{
-                        width: 70,
-                        height: 70,
-                        objectFit: "cover",
-                        borderRadius: 1,
-                      }}
-                    />
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        minWidth: 0,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {imageDragPreview.url}
-                    </Typography>
-                  </Box>
-                </Portal>
               )}
 
               <Box sx={{ display: "flex", gap: 2 }}>
