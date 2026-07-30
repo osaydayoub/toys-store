@@ -1,16 +1,20 @@
-import { Box, Card, CardActionArea } from "@mui/material";
+import { Box, Card, CardActionArea, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
-    const ageOptions = [
-        { label: "All", value: "All", image: "/age/all.webp" },
-        { label: "0-6 Months", value: "0-6 Months", image: "/age/0-6.webp" },
-        { label: "6-12 Months", value: "6-12 Months", image: "/age/6-12.webp" },
-        { label: "1-2 Years", value: "1-2 Years", image: "/age/1-2.webp" },
-        { label: "2+ Years", value: "2+ Years", image: "/age/2-plus.webp" },
-        { label: "3-5 Years", value: "3-5 Years", image: "/age/3-5.webp" },
-        { label: "5+ Years", value: "5+ Years", image: "/age/5-plus.webp" },
-        { label: "6+ Years", value: "6+ Years", image: "/age/6-plus.webp" },
-        { label: "7+ Years", value: "7+ Years", image: "/age/7-plus.webp" },
+function AgeFilterCarousel({ selectedFilter, onSelectFilter }) {
+    const { t } = useTranslation();
+    const filterOptions = [
+        { translationKey: "productsPage.allProductsAllAges", value: "All", image: "/category/all.webp", showChip: false },
+        { translationKey: "ageRanges.0-6 Months", value: "0-6 Months", image: "/age/0-6.webp" },
+        { translationKey: "ageRanges.6-12 Months", value: "6-12 Months", image: "/age/6-12.webp" },
+        { translationKey: "ageRanges.1-2 Years", value: "1-2 Years", image: "/age/1-2.webp" },
+        { translationKey: "ageRanges.2+ Years", value: "2+ Years", image: "/age/2-plus.webp" },
+        { translationKey: "ageRanges.3-5 Years", value: "3-5 Years", image: "/age/3-5.webp" },
+        { translationKey: "ageRanges.5+ Years", value: "5+ Years", image: "/age/5-plus.webp" },
+        { translationKey: "ageRanges.6+ Years", value: "6+ Years", image: "/age/6-plus.webp" },
+        { translationKey: "ageRanges.7+ Years", value: "7+ Years", image: "/age/7-plus.webp" },
+        { translationKey: "categories.Books & Stories", value: "books", image: "/category/books.webp", showChip: false },
+        { translationKey: "categories.Educational Toys", value: "educational", image: "/category/educational.webp", showChip: false },
     ];
 
     return (
@@ -18,6 +22,7 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
             sx={(theme) => ({
                 display: "flex",
                 gap: { xs: 1, sm: 2 },
+                mt: { xs: 1.5, md: 4 },
                 pb: { xs: 0.5, sm: 1 },
                 mb: { xs: 1.5, sm: 3 },
                 overflowX: "auto",
@@ -38,12 +43,12 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                 },
             })}
         >
-            {ageOptions.map((age, index) => {
-                const isSelected = selectedAgeRange === age.value;
+            {filterOptions.map((filter, index) => {
+                const isSelected = selectedFilter === filter.value;
 
                 return (
                     <Card
-                        key={age.value}
+                        key={filter.value}
                         sx={{
                             minWidth: { xs: 140, sm: 160 },
                             height: "auto",
@@ -53,11 +58,14 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                             borderColor: isSelected ? "primary.main" : "divider",
                         }}
                     >
-                        <CardActionArea onClick={() => onSelectAge(age.value)}>
+                        <CardActionArea
+                            onClick={() => onSelectFilter(filter.value)}
+                            sx={{ position: "relative" }}
+                        >
                             <Box
                                 component="img"
-                                src={age.image}
-                                alt={age.label}
+                                src={filter.image}
+                                alt={t(filter.translationKey)}
                                 loading={index < 2 ? "eager" : "lazy"}
                                 decoding="async"
                                 sx={{
@@ -67,8 +75,21 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                                     display: "block",
                                 }}
                             />
-
-
+                            {filter.showChip !== false && (
+                                <Chip
+                                    label={t(filter.translationKey)}
+                                    size="small"
+                                    color="secondary"
+                                    sx={{
+                                        position: "absolute",
+                                        insetInlineEnd: 8,
+                                        bottom: 8,
+                                        maxWidth: "calc(100% - 16px)",
+                                        fontWeight: 700,
+                                        boxShadow: 2,
+                                    }}
+                                />
+                            )}
                         </CardActionArea>
                     </Card>
                 );
