@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -20,6 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 const categories = [
   "Educational Toys",
@@ -77,6 +78,8 @@ function AdminProductsPage() {
   const [imageUrls, setImageUrls] = useState([]);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
+  const [draggedImageIndex, setDraggedImageIndex] = useState(null);
+  const touchedImageIndexRef = useRef(null);
 
   const fetchProducts = async () => {
     try {
@@ -101,6 +104,8 @@ function AdminProductsPage() {
     setImageUrlInput("");
     setImageUrls([]);
     setShowUrlInput(false);
+    setDraggedImageIndex(null);
+    touchedImageIndexRef.current = null;
   };
 
   const handleChange = (e) => {
@@ -300,6 +305,68 @@ function AdminProductsPage() {
     setImageToDelete(null);
   };
 
+  const handleImageDragStart = (event, index) => {
+    setDraggedImageIndex(index);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(index));
+  };
+
+  const handleImageDrop = (event, dropIndex) => {
+    event.preventDefault();
+
+    const sourceIndex = Number(event.dataTransfer.getData("text/plain"));
+    if (!Number.isInteger(sourceIndex) || sourceIndex === dropIndex) {
+      setDraggedImageIndex(null);
+      return;
+    }
+
+    setImageUrls((previousUrls) => {
+      const reorderedUrls = [...previousUrls];
+      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
+      reorderedUrls.splice(dropIndex, 0, movedUrl);
+      return reorderedUrls;
+    });
+    setDraggedImageIndex(null);
+  };
+
+  const handleImageTouchStart = (index) => {
+    touchedImageIndexRef.current = index;
+    setDraggedImageIndex(index);
+  };
+
+  const handleImageTouchMove = (event) => {
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    const imageRow = document
+      .elementFromPoint(touch.clientX, touch.clientY)
+      ?.closest("[data-image-index]");
+    const targetIndex = Number(imageRow?.dataset.imageIndex);
+    const sourceIndex = touchedImageIndexRef.current;
+
+    if (
+      !Number.isInteger(targetIndex) ||
+      !Number.isInteger(sourceIndex) ||
+      sourceIndex === targetIndex
+    ) {
+      return;
+    }
+
+    setImageUrls((previousUrls) => {
+      const reorderedUrls = [...previousUrls];
+      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
+      reorderedUrls.splice(targetIndex, 0, movedUrl);
+      return reorderedUrls;
+    });
+    touchedImageIndexRef.current = targetIndex;
+    setDraggedImageIndex(targetIndex);
+  };
+
+  const handleImageTouchEnd = () => {
+    touchedImageIndexRef.current = null;
+    setDraggedImageIndex(null);
+  };
+
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
@@ -463,19 +530,58 @@ function AdminProductsPage() {
 
               {imageUrls.length > 0 && (
                 <Stack spacing={1}>
-                  {imageUrls.map((url) => (
+                  {imageUrls.map((url, index) => (
                     <Box
-                      key={url}
+                      key={`${url}-${index}`}
+                      data-image-index={index}
+                      draggable
+                      onDragStart={(event) =>
+                        handleImageDragStart(event, index)
+                      }
+                      onDragOver={(event) => {
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = "move";
+                      }}
+                      onDrop={(event) => handleImageDrop(event, index)}
+                      onDragEnd={() => setDraggedImageIndex(null)}
                       sx={{
                         display: "flex",
                         alignItems: "center",
                         gap: 2,
                         p: 1,
                         border: "1px solid",
-                        borderColor: "divider",
+                        borderColor:
+                          draggedImageIndex === index
+                            ? "secondary.main"
+                            : "divider",
                         borderRadius: 2,
+                        cursor: "grab",
+                        opacity: draggedImageIndex === index ? 0.55 : 1,
+                        transition: "border-color 120ms, opacity 120ms",
+                        "&:active": {
+                          cursor: "grabbing",
+                        },
                       }}
                     >
+                      <Box
+                        onTouchStart={() => handleImageTouchStart(index)}
+                        onTouchMove={handleImageTouchMove}
+                        onTouchEnd={handleImageTouchEnd}
+                        onTouchCancel={handleImageTouchEnd}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          alignSelf: "stretch",
+                          touchAction: "none",
+                          cursor: "grab",
+                        }}
+                      >
+                        <DragIndicatorIcon
+                          color="action"
+                          aria-hidden="true"
+                          sx={{ flexShrink: 0 }}
+                        />
+                      </Box>
                       <Box
                         component="img"
                         src={url}
