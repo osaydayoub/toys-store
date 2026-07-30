@@ -34,7 +34,8 @@
         "noProducts": "אין מוצרים שמתאימים לסינון.",
         "showing": "מציג {{start}}-{{end}} מתוך {{total}} מוצרים",
         "shopByAge": "גלו צעצועים לפי גיל",
-        "shopByCategory": "איזה סוג צעצוע אתם מחפשים?"
+        "shopByCategory": "איזה סוג צעצוע אתם מחפשים?",
+        "toysByAge": "צעצועים לפי גיל"
     },
     "categories": {
         "All": "הכול",

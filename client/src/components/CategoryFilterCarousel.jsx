@@ -1,17 +1,12 @@
-import { Box, Card, CardActionArea } from "@mui/material";
+import { Box, Card, CardActionArea, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
+    const { t } = useTranslation();
     const categoryOptions = [
-        { label: "All", value: "All", image: "/category/all.webp" },
-        { label: "Educational Toys", value: "Educational Toys", image: "/category/educational.webp" },
-        { label: "Sensory Toys", value: "Sensory Toys", image: "/category/sensory.webp" },
-        { label: "Puzzle & Brain Games", value: "Puzzle & Brain Games", image: "/category/puzzle.webp" },
-        { label: "Motor Skills Toys", value: "Motor Skills Toys", image: "/category/motor.webp" },
-        { label: "Outdoor Toys", value: "Outdoor Toys", image: "/category/outdoor.webp" },
-        { label: "Role-Play Toys", value: "Role-Play Toys", image: "/category/role-play.webp" },
-        { label: "Books & Stories", value: "Books & Stories", image: "/category/books.webp" },
-        { label: "Toy Sets", value: "Toy Sets", image: "/category/sets.webp" },
-        { label: "Other", value: "Other", image: "/category/other.webp" },
+        { translationKey: "productsPage.toysByAge", value: "all", image: "/category/all.webp" },
+        { translationKey: "categories.Educational Toys", value: "educational", image: "/category/educational.webp" },
+        { translationKey: "categories.Books & Stories", value: "books", image: "/category/books.webp" },
     ];
 
     return (
@@ -19,6 +14,7 @@ function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
             sx={(theme) => ({
                 display: "flex",
                 gap: { xs: 1, sm: 2 },
+                mt: { xs: 1.5, md: 4 },
                 pb: { xs: 0.5, sm: 1 },
                 mb: { xs: 1.5, sm: 3 },
                 overflowX: "auto",
@@ -39,14 +35,17 @@ function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
                 },
             })}
         >
-            {categoryOptions.map((category) => {
+            {categoryOptions.map((category, index) => {
                 const isSelected = selectedCategory === category.value;
 
                 return (
                     <Card
                         key={category.value}
                         sx={{
+                            width: { xs: 140, sm: 160 },
                             minWidth: { xs: 140, sm: 160 },
+                            maxWidth: { xs: 140, sm: 160 },
+                            flex: "0 0 auto",
                             height: "auto",
                             borderRadius: 0.5,
                             scrollSnapAlign: "start",
@@ -54,22 +53,36 @@ function CategoryFilterCarousel({ selectedCategory, onSelectCategory }) {
                             borderColor: isSelected ? "primary.main" : "divider",
                         }}
                     >
-                        <CardActionArea onClick={() => onSelectCategory(category.value)}>
+                        <CardActionArea
+                            onClick={() => onSelectCategory(category.value)}
+                            sx={{ position: "relative" }}
+                        >
                             <Box
                                 component="img"
                                 src={category.image}
-                                alt={category.label}
-                                loading="lazy"
+                                alt={t(category.translationKey)}
+                                loading={index < 2 ? "eager" : "lazy"}
                                 decoding="async"
                                 sx={{
                                     width: "100%",
-                                    height: "auto",
+                                    aspectRatio: "1 / 1",
                                     objectFit: "cover",
                                     display: "block",
                                 }}
                             />
-
-
+                            <Chip
+                                label={t(category.translationKey)}
+                                size="small"
+                                color="secondary"
+                                sx={{
+                                    position: "absolute",
+                                    insetInlineEnd: 8,
+                                    bottom: 8,
+                                    maxWidth: "calc(100% - 16px)",
+                                    fontWeight: 700,
+                                    boxShadow: 2,
+                                }}
+                            />
                         </CardActionArea>
                     </Card>
                 );

@@ -34,7 +34,8 @@
         "noProducts": "لا توجد منتجات تطابق الفلاتر.",
         "showing": "عرض {{start}}-{{end}} من أصل {{total}} منتج",
         "shopByAge": "اكتشف الألعاب حسب العمر",
-        "shopByCategory": "ما نوع اللعبة التي تريدها؟"
+        "shopByCategory": "ما نوع اللعبة التي تريدها؟",
+        "toysByAge": "ألعاب حسب العمر"
     },
     "categories": {
         "All": "الكل",

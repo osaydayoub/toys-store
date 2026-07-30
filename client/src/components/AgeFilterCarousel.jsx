@@ -1,6 +1,8 @@
-import { Box, Card, CardActionArea } from "@mui/material";
+import { Box, Card, CardActionArea, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
+    const { t } = useTranslation();
     const ageOptions = [
         { label: "All", value: "All", image: "/age/all.webp" },
         { label: "0-6 Months", value: "0-6 Months", image: "/age/0-6.webp" },
@@ -53,11 +55,14 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                             borderColor: isSelected ? "primary.main" : "divider",
                         }}
                     >
-                        <CardActionArea onClick={() => onSelectAge(age.value)}>
+                        <CardActionArea
+                            onClick={() => onSelectAge(age.value)}
+                            sx={{ position: "relative" }}
+                        >
                             <Box
                                 component="img"
                                 src={age.image}
-                                alt={age.label}
+                                alt={t(`ageRanges.${age.label}`)}
                                 loading={index < 2 ? "eager" : "lazy"}
                                 decoding="async"
                                 sx={{
@@ -67,8 +72,19 @@ function AgeFilterCarousel({ selectedAgeRange, onSelectAge }) {
                                     display: "block",
                                 }}
                             />
-
-
+                            <Chip
+                                label={t(`ageRanges.${age.label}`)}
+                                size="small"
+                                color="secondary"
+                                sx={{
+                                    position: "absolute",
+                                    insetInlineEnd: 8,
+                                    bottom: 8,
+                                    maxWidth: "calc(100% - 16px)",
+                                    fontWeight: 700,
+                                    boxShadow: 2,
+                                }}
+                            />
                         </CardActionArea>
                     </Card>
                 );
