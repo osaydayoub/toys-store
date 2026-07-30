@@ -20,6 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 const categories = [
   "Educational Toys",
@@ -77,6 +78,7 @@ function AdminProductsPage() {
   const [imageUrls, setImageUrls] = useState([]);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
+  const [draggedImageIndex, setDraggedImageIndex] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -101,6 +103,7 @@ function AdminProductsPage() {
     setImageUrlInput("");
     setImageUrls([]);
     setShowUrlInput(false);
+    setDraggedImageIndex(null);
   };
 
   const handleChange = (e) => {
@@ -300,6 +303,30 @@ function AdminProductsPage() {
     setImageToDelete(null);
   };
 
+  const handleImageDragStart = (event, index) => {
+    setDraggedImageIndex(index);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(index));
+  };
+
+  const handleImageDrop = (event, dropIndex) => {
+    event.preventDefault();
+
+    const sourceIndex = Number(event.dataTransfer.getData("text/plain"));
+    if (!Number.isInteger(sourceIndex) || sourceIndex === dropIndex) {
+      setDraggedImageIndex(null);
+      return;
+    }
+
+    setImageUrls((previousUrls) => {
+      const reorderedUrls = [...previousUrls];
+      const [movedUrl] = reorderedUrls.splice(sourceIndex, 1);
+      reorderedUrls.splice(dropIndex, 0, movedUrl);
+      return reorderedUrls;
+    });
+    setDraggedImageIndex(null);
+  };
+
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
@@ -463,19 +490,43 @@ function AdminProductsPage() {
 
               {imageUrls.length > 0 && (
                 <Stack spacing={1}>
-                  {imageUrls.map((url) => (
+                  {imageUrls.map((url, index) => (
                     <Box
-                      key={url}
+                      key={`${url}-${index}`}
+                      draggable
+                      onDragStart={(event) =>
+                        handleImageDragStart(event, index)
+                      }
+                      onDragOver={(event) => {
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = "move";
+                      }}
+                      onDrop={(event) => handleImageDrop(event, index)}
+                      onDragEnd={() => setDraggedImageIndex(null)}
                       sx={{
                         display: "flex",
                         alignItems: "center",
                         gap: 2,
                         p: 1,
                         border: "1px solid",
-                        borderColor: "divider",
+                        borderColor:
+                          draggedImageIndex === index
+                            ? "secondary.main"
+                            : "divider",
                         borderRadius: 2,
+                        cursor: "grab",
+                        opacity: draggedImageIndex === index ? 0.55 : 1,
+                        transition: "border-color 120ms, opacity 120ms",
+                        "&:active": {
+                          cursor: "grabbing",
+                        },
                       }}
                     >
+                      <DragIndicatorIcon
+                        color="action"
+                        aria-hidden="true"
+                        sx={{ flexShrink: 0 }}
+                      />
                       <Box
                         component="img"
                         src={url}
