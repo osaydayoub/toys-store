@@ -281,24 +281,6 @@ function ProductsPage() {
         />
         {selectedGroup === "all" && (
           <>
-            <Box
-              sx={(theme) => ({
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                px: { xs: 2, md: 3 },
-                py: { xs: 0.7, md: 1 },
-                mb: { xs: 1, md: 2 },
-                borderRadius: "999px",
-                backgroundColor: theme.palette.secondary.main,
-                color: theme.palette.secondary.contrastText,
-                fontWeight: 800,
-                fontSize: "1rem",
-                boxShadow: theme.shadows[3],
-              })}
-            >
-              {t("productsPage.shopByAge")}
-            </Box>
             <AgeFilterCarousel
               selectedAgeRange={selectedAgeRange}
               onSelectAge={(age) => updateProductParams({ age })}
