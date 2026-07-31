@@ -899,10 +899,6 @@ function AdminProductsPage() {
 
       {!isFormPage && (
       <>
-      <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-        {t("adminProducts.existingProducts")}
-      </Typography>
-
       <AgeFilterCarousel
         selectedFilter={carouselFilter}
         onSelectFilter={handleCarouselFilterChange}
