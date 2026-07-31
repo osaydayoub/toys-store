@@ -18,7 +18,9 @@ function MobileBottomNav() {
     ? "/cart"
     : location.pathname.startsWith("/my-orders")
     ? "/my-orders"
-    : "/products";
+    : location.pathname.startsWith("/products")
+    ? "/products"
+    : false;
 
   return (
     <Paper
