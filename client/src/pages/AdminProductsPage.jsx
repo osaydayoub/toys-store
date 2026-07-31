@@ -31,7 +31,12 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import AgeFilterCarousel from "../components/AgeFilterCarousel";
 
 const categories = [
@@ -57,6 +62,14 @@ const ageRanges = [
   "7+ Years",
 ];
 
+const carouselFilters = [
+  "All",
+  ...ageRanges,
+  "books",
+  "sets",
+  "educational",
+];
+
 
 const initialFormData = {
   name: "",
@@ -71,10 +84,17 @@ function AdminProductsPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { slug: routeSlug } = useParams();
   const isFormPage = location.pathname !== "/admin/products";
   const isEditing = Boolean(routeSlug);
   const isRtl = i18n.dir() === "rtl";
+  const filterParam = searchParams.get("filter");
+  const carouselFilter = carouselFilters.includes(filterParam)
+    ? filterParam
+    : "All";
+  const adminProductsReturnPath =
+    location.state?.fromAdmin || "/admin/products";
   const [products, setProducts] = useState([]);
   const [areProductsLoading, setAreProductsLoading] = useState(true);
   const [formData, setFormData] = useState(initialFormData);
@@ -83,7 +103,6 @@ function AdminProductsPage() {
     location.state?.feedback || { type: "", message: "" },
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const [carouselFilter, setCarouselFilter] = useState("All");
   const [stockFilter, setStockFilter] = useState({
     type: "all",
     maximum: null,
@@ -210,7 +229,30 @@ function AdminProductsPage() {
   };
 
   const handleEdit = (product) => {
-    navigate(`/admin/products/${product.slug}/edit`);
+    const adminProductsLocation = `${location.pathname}${location.search}`;
+
+    sessionStorage.setItem(
+      `products-scroll:${adminProductsLocation}`,
+      String(window.scrollY),
+    );
+
+    navigate(`/admin/products/${product.slug}/edit`, {
+      state: {
+        fromAdmin: adminProductsLocation,
+      },
+    });
+  };
+
+  const handleCarouselFilterChange = (filter) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (filter === "All") {
+      nextParams.delete("filter");
+    } else {
+      nextParams.set("filter", filter);
+    }
+
+    setSearchParams(nextParams, { replace: true });
   };
 
   const buildProductPayload = () => ({
@@ -250,8 +292,10 @@ function AdminProductsPage() {
         : t("adminProducts.createdSuccessfully");
 
       resetForm();
-      navigate("/admin/products", {
-        state: { feedback: { type: "success", message: successMessage } },
+      navigate(adminProductsReturnPath, {
+        state: {
+          feedback: { type: "success", message: successMessage },
+        },
       });
     } catch (error) {
       setFeedback({
@@ -841,7 +885,7 @@ function AdminProductsPage() {
                   variant="outlined"
                   onClick={() => {
                     resetForm();
-                    navigate("/admin/products");
+                    navigate(adminProductsReturnPath);
                   }}
                 >
                   {t("adminProducts.cancel")}
@@ -861,13 +905,19 @@ function AdminProductsPage() {
 
       <AgeFilterCarousel
         selectedFilter={carouselFilter}
-        onSelectFilter={setCarouselFilter}
+        onSelectFilter={handleCarouselFilterChange}
       />
 
       <Button
         variant="contained"
         startIcon={<AddIcon />}
-        onClick={() => navigate("/admin/products/new")}
+        onClick={() =>
+          navigate("/admin/products/new", {
+            state: {
+              fromAdmin: `${location.pathname}${location.search}`,
+            },
+          })
+        }
         sx={{ mb: 3 }}
       >
         {t("adminProducts.addProduct")}
