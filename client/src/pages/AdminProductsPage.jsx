@@ -15,14 +15,24 @@ import {
   DialogTitle,
   Typography,
   Snackbar,
-  Collapse,
   Checkbox,
   ListItemText,
+  Grid,
+  Chip,
+  IconButton,
+  Menu,
+  ListItemIcon,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import AgeFilterCarousel from "../components/AgeFilterCarousel";
 
 const categories = [
   "Educational Toys",
@@ -58,13 +68,22 @@ const initialFormData = {
 };
 
 function AdminProductsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { slug: routeSlug } = useParams();
+  const isFormPage = location.pathname !== "/admin/products";
+  const isEditing = Boolean(routeSlug);
+  const isRtl = i18n.dir() === "rtl";
   const [products, setProducts] = useState([]);
+  const [areProductsLoading, setAreProductsLoading] = useState(true);
   const [formData, setFormData] = useState(initialFormData);
-  const [editingSlug, setEditingSlug] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ type: "", message: "" });
+  const [feedback, setFeedback] = useState(
+    location.state?.feedback || { type: "", message: "" },
+  );
   const [searchTerm, setSearchTerm] = useState("");
+  const [carouselFilter, setCarouselFilter] = useState("All");
   const [stockFilter, setStockFilter] = useState({
     type: "all",
     maximum: null,
@@ -72,9 +91,9 @@ function AdminProductsPage() {
   const [lowStockDialogOpen, setLowStockDialogOpen] = useState(false);
   const [maximumStockInput, setMaximumStockInput] = useState("5");
   const [productToDelete, setProductToDelete] = useState(null);
+  const [productMenuAnchor, setProductMenuAnchor] = useState(null);
+  const [productMenuProduct, setProductMenuProduct] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [viewedProductIds, setViewedProductIds] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [imageUrlInput, setImageUrlInput] = useState("");
   const [imageUrls, setImageUrls] = useState([]);
@@ -88,6 +107,8 @@ function AdminProductsPage() {
   const imageListRef = useRef(null);
 
   const fetchProducts = async () => {
+    setAreProductsLoading(true);
+
     try {
       const response = await api.get("/products");
       setProducts(response.data.data);
@@ -96,6 +117,8 @@ function AdminProductsPage() {
         type: "error",
         message: t("adminProducts.failedToLoad"),
       });
+    } finally {
+      setAreProductsLoading(false);
     }
   };
 
@@ -103,9 +126,59 @@ function AdminProductsPage() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (areProductsLoading || location.pathname !== "/admin/products") return;
+
+    const storageKey = `products-scroll:${location.pathname}${location.search}`;
+    const savedScrollPosition = sessionStorage.getItem(storageKey);
+
+    if (savedScrollPosition === null) return;
+
+    sessionStorage.removeItem(storageKey);
+    const timeoutId = window.setTimeout(() => {
+      window.scrollTo({
+        top: Number(savedScrollPosition),
+        behavior: "auto",
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [areProductsLoading, location.pathname, location.search]);
+
+  useEffect(() => {
+    if (!routeSlug) return;
+
+    const loadProduct = async () => {
+      try {
+        const response = await api.get(`/products/${routeSlug}`);
+        const product = response.data.data;
+
+        setFormData({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          categories:
+            product.categories?.length > 0
+              ? product.categories
+              : [product.category],
+          ageRange: product.ageRange,
+          stock: product.stock,
+        });
+        setImageUrls(product.images || []);
+      } catch {
+        setFeedback({ type: "error", message: t("productDetails.notFound") });
+      }
+    };
+
+    loadProduct();
+  }, [routeSlug, t]);
+
   const resetForm = () => {
     setFormData(initialFormData);
-    setEditingSlug(null);
     setImageFile(null);
     setImageUrlInput("");
     setImageUrls([]);
@@ -137,26 +210,7 @@ function AdminProductsPage() {
   };
 
   const handleEdit = (product) => {
-    setEditingSlug(product.slug);
-
-    setFormData({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      categories:
-        product.categories?.length > 0
-          ? product.categories
-          : [product.category],
-      ageRange: product.ageRange,
-      stock: product.stock,
-    });
-
-    setFeedback({ type: "", message: "" });
-    setIsFormOpen(true);
-    setImageUrls(product.images || []);
-    setImageUrlInput("");
-    setImageFile(null);
-    setShowUrlInput(false);
+    navigate(`/admin/products/${product.slug}/edit`);
   };
 
   const buildProductPayload = () => ({
@@ -175,8 +229,8 @@ function AdminProductsPage() {
     try {
       const productPayload = buildProductPayload();
 
-      if (editingSlug) {
-        await api.put(`/products/${editingSlug}`, productPayload);
+      if (isEditing) {
+        await api.put(`/products/${routeSlug}`, productPayload);
 
         setFeedback({
           type: "success",
@@ -191,15 +245,20 @@ function AdminProductsPage() {
         });
       }
 
+      const successMessage = isEditing
+        ? t("adminProducts.updatedSuccessfully")
+        : t("adminProducts.createdSuccessfully");
+
       resetForm();
-      setIsFormOpen(false);
-      fetchProducts();
+      navigate("/admin/products", {
+        state: { feedback: { type: "success", message: successMessage } },
+      });
     } catch (error) {
       setFeedback({
         type: "error",
         message:
           error.response?.data?.message ||
-          (editingSlug
+          (isEditing
             ? t("adminProducts.failedToUpdate")
             : t("adminProducts.failedToCreate")),
       });
@@ -217,10 +276,6 @@ function AdminProductsPage() {
         type: "success",
         message: t("adminProducts.deletedSuccessfully"),
       });
-
-      if (editingSlug === slug) {
-        resetForm();
-      }
 
       fetchProducts();
     } catch (error) {
@@ -247,6 +302,19 @@ function AdminProductsPage() {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
+    const productCategories =
+      product.categories?.length > 0
+        ? product.categories
+        : [product.category];
+    const matchesCarousel =
+      carouselFilter === "All" ||
+      (carouselFilter === "books" &&
+        productCategories.includes("Books & Stories")) ||
+      (carouselFilter === "sets" &&
+        productCategories.includes("Toy Sets")) ||
+      (carouselFilter === "educational" &&
+        productCategories.includes("Educational Toys")) ||
+      product.ageRange === carouselFilter;
     const productStock = Number(product.stock);
     const matchesStock =
       stockFilter.type === "all" ||
@@ -254,7 +322,7 @@ function AdminProductsPage() {
       (stockFilter.type === "maximum" &&
         productStock <= stockFilter.maximum);
 
-    return matchesSearch && matchesStock;
+    return matchesSearch && matchesCarousel && matchesStock;
   });
 
   const parsedMaximumStock = Number(maximumStockInput);
@@ -273,12 +341,30 @@ function AdminProductsPage() {
     setLowStockDialogOpen(false);
   };
 
-  const viewProduct = (product) => {
-    setViewedProductIds((prevIds) =>
-      prevIds.includes(product._id)
-        ? prevIds.filter((id) => id !== product._id)
-        : [...prevIds, product._id]
-    );
+  const openProductMenu = (event, product) => {
+    setProductMenuAnchor(event.currentTarget);
+    setProductMenuProduct(product);
+  };
+
+  const closeProductMenu = () => {
+    setProductMenuAnchor(null);
+    setProductMenuProduct(null);
+  };
+
+  const updateProductFromMenu = () => {
+    if (!productMenuProduct) return;
+
+    const product = productMenuProduct;
+    closeProductMenu();
+    handleEdit(product);
+  };
+
+  const deleteProductFromMenu = () => {
+    if (!productMenuProduct) return;
+
+    const product = productMenuProduct;
+    closeProductMenu();
+    setProductToDelete(product);
   };
 
   const addImageUrl = () => {
@@ -493,7 +579,11 @@ function AdminProductsPage() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
-        {t("adminProducts.title")}
+        {isFormPage
+          ? isEditing
+            ? t("adminProducts.editProduct")
+            : t("adminProducts.createProduct")
+          : t("adminProducts.title")}
       </Typography>
 
       <Snackbar
@@ -511,32 +601,9 @@ function AdminProductsPage() {
         </Alert>
       </Snackbar>
 
-      <Button
-        variant="contained"
-        onClick={() => {
-          resetForm();
-          setIsFormOpen(true);
-        }}
-      >
-        {t("adminProducts.addProduct")}
-      </Button>
-
-      <Dialog
-        open={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          resetForm();
-        }}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>
-          {editingSlug
-            ? t("adminProducts.editProduct")
-            : t("adminProducts.createProduct")}
-        </DialogTitle>
-
-        <DialogContent dividers>
+      {isFormPage && (
+      <Paper sx={{ mt: 2, p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
+        <Box>
           <Box component="form" onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <TextField
@@ -761,10 +828,10 @@ function AdminProductsPage() {
                   disabled={isLoading || formData.categories.length === 0}
                 >
                   {isLoading
-                    ? editingSlug
+                    ? isEditing
                       ? t("adminProducts.updating")
                       : t("adminProducts.creating")
-                    : editingSlug
+                    : isEditing
                       ? t("adminProducts.updateProduct")
                       : t("adminProducts.createProduct")}
                 </Button>
@@ -774,7 +841,7 @@ function AdminProductsPage() {
                   variant="outlined"
                   onClick={() => {
                     resetForm();
-                    setIsFormOpen(false);
+                    navigate("/admin/products");
                   }}
                 >
                   {t("adminProducts.cancel")}
@@ -782,12 +849,29 @@ function AdminProductsPage() {
               </Box>
             </Stack>
           </Box>
-        </DialogContent>
-      </Dialog>
+        </Box>
+      </Paper>
+      )}
 
+      {!isFormPage && (
+      <>
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         {t("adminProducts.existingProducts")}
       </Typography>
+
+      <AgeFilterCarousel
+        selectedFilter={carouselFilter}
+        onSelectFilter={setCarouselFilter}
+      />
+
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => navigate("/admin/products/new")}
+        sx={{ mb: 3 }}
+      >
+        {t("adminProducts.addProduct")}
+      </Button>
 
       <Box
         sx={{
@@ -852,59 +936,54 @@ function AdminProductsPage() {
               : t("adminProducts.noProducts")}
         </Typography>
       ) : (
-        <Stack spacing={2}>
+        <Grid container spacing={3} justifyContent="center" sx={{ mt: 1 }}>
           {filteredProducts.map((product) => (
-            <Paper
+            <Grid
               key={product._id}
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: "column",
-                gap: 2,
-              }}
+              size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+              sx={{ display: "flex" }}
             >
-              <Box>
-                <Typography variant="h6">{product.name}</Typography>
-                <Typography color="text.secondary">
-                  {t("adminProducts.productStock", {
-                    price: product.price,
-                    stock: product.stock,
-                  })}
-                </Typography>
-                <Typography color="text.secondary">{product.slug}</Typography>
-              </Box>
-
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="outlined" onClick={() => viewProduct(product)}>
-                  {viewedProductIds.includes(product._id)
-                    ? t("adminProducts.hideProduct")
-                    : t("adminProducts.viewProduct")}
-                </Button>
-
-                <Button variant="outlined" onClick={() => handleEdit(product)}>
-                  {t("adminProducts.edit")}
-                </Button>
-
-                <Button
-                  color="error"
-                  variant="outlined"
-                  onClick={() => setProductToDelete(product)}
-                >
-                  {t("adminProducts.delete")}
-                </Button>
-              </Box>
-
-              <Collapse in={viewedProductIds.includes(product._id)}>
-                <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
-                  <ProductCard product={product} />
-                </Box>
-              </Collapse>
-            </Paper>
+              <ProductCard
+                product={product}
+                topAction={
+                  <IconButton
+                    aria-label={`${t("adminProducts.edit")} / ${t("adminProducts.delete")}`}
+                    onClick={(event) => openProductMenu(event, product)}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      insetInlineStart: 8,
+                      zIndex: 2,
+                      bgcolor: "background.paper",
+                      boxShadow: 1,
+                      "&:hover": { bgcolor: "background.paper" },
+                    }}
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                }
+                extraInfo={
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ mb: 2, flexWrap: "wrap", rowGap: 1 }}
+                  >
+                    <Chip
+                      label={product.slug}
+                      size="small"
+                      variant="outlined"
+                    />
+                    <Chip
+                      label={`${t("adminProducts.stock")}: ${product.stock}`}
+                      size="small"
+                      color={Number(product.stock) === 0 ? "error" : "success"}
+                    />
+                  </Stack>
+                }
+              />
+            </Grid>
           ))}
-        </Stack>
+        </Grid>
       )}
 
       <Dialog
@@ -955,11 +1034,37 @@ function AdminProductsPage() {
         <DialogTitle>{t("adminProducts.deleteProductTitle")}</DialogTitle>
 
         <DialogContent>
-          <DialogContentText>
-            {t("adminProducts.deleteProductMessage", {
-              name: productToDelete?.name,
-            })}
-          </DialogContentText>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              py: 1,
+            }}
+          >
+            {productToDelete?.images?.[0] && (
+              <Box
+                component="img"
+                src={productToDelete.images[0]}
+                alt={productToDelete.name}
+                sx={{
+                  width: 120,
+                  height: 120,
+                  objectFit: "cover",
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
+              />
+            )}
+
+            <DialogContentText textAlign="center">
+              {t("adminProducts.deleteProductMessage", {
+                name: productToDelete?.name,
+              })}
+            </DialogContentText>
+          </Box>
         </DialogContent>
 
         <DialogActions>
@@ -972,6 +1077,41 @@ function AdminProductsPage() {
           </Button>
         </DialogActions>
       </Dialog>
+      </>
+      )}
+
+      <Menu
+        anchorEl={productMenuAnchor}
+        open={Boolean(productMenuAnchor)}
+        onClose={closeProductMenu}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: isRtl ? "right" : "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: isRtl ? "right" : "left",
+        }}
+        slotProps={{
+          paper: {
+            sx: { minWidth: 125, borderRadius: 1, mt: 0.5 },
+          },
+        }}
+      >
+        <MenuItem onClick={updateProductFromMenu}>
+          <ListItemIcon>
+            <EditIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t("adminProducts.edit")} />
+        </MenuItem>
+
+        <MenuItem onClick={deleteProductFromMenu} sx={{ color: "error.main" }}>
+          <ListItemIcon sx={{ color: "error.main" }}>
+            <DeleteIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t("adminProducts.delete")} />
+        </MenuItem>
+      </Menu>
 
       <Dialog
         open={Boolean(imageToDelete)}

@@ -36,6 +36,22 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/products/new"
+              element={
+                <AdminRoute>
+                  <AdminProductsPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/products/:slug/edit"
+              element={
+                <AdminRoute>
+                  <AdminProductsPage />
+                </AdminRoute>
+              }
+            />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:slug" element={<ProductDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-function ProductCard({ product }) {
+function ProductCard({ product, extraInfo, topAction }) {
   const { t } = useTranslation();
   const location = useLocation();
   const productCategories =
@@ -29,12 +29,15 @@ function ProductCard({ product }) {
   return (
     <Card
       sx={{
+        position: "relative",
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
       }}
     >
+      {topAction}
+
       {product.images?.[0] && (
         <CardMedia
           component="img"
@@ -102,6 +105,8 @@ function ProductCard({ product }) {
           ))}
         </Stack>
 
+        {extraInfo}
+
         <Typography
           variant="h6"
           color="primary"
@@ -121,6 +126,7 @@ function ProductCard({ product }) {
         >
           {t("productCard.viewDetails")}
         </Button>
+
       </CardContent>
     </Card>
   );
