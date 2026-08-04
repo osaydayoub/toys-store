@@ -16,17 +16,26 @@ A full-stack e-commerce web application for browsing and managing kids' toys.
 ## 🏗️ Tech Stack
 
 ### Frontend
-- React (Vite)
+
+- React 19
+- Vite
 - Material UI
 - React Router
 - Axios
+- i18next for English, Arabic, and Hebrew localization
 
 ### Backend
-- Node.js
-- Express
-- MongoDB (Mongoose)
-- JWT Authentication
-- bcrypt
+
+- Node.js and Express
+- MongoDB Atlas with Mongoose
+- JWT authentication and bcryptjs
+- Product image uploads with Cloudinary
+- Transactional and order-notification emails with Resend
+
+### Deployment
+
+- Netlify for frontend hosting
+- Render for backend hosting
 
 ## 🌐 Live Demo
 
