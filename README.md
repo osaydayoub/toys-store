@@ -30,5 +30,4 @@ A full-stack e-commerce web application for browsing and managing kids' toys.
 
 ## 🌐 Live Demo
 
-- Frontend: https://roro-toys-kids.netlify.app/
-- Backend: https://toy-store-server-pip6.onrender.com
+- Website: [**toy-store-portfolio.netlify.app**](https://toy-store-portfolio.netlify.app/)
