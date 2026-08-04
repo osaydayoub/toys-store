@@ -16,7 +16,8 @@ import { useTranslation } from "react-i18next";
 function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const redirectPath = location.state?.from || "/products";
+    const savedRedirectPath = sessionStorage.getItem("authRedirectPath");
+    const redirectPath = location.state?.from || savedRedirectPath || "/products";
     const { login } = useAuth();
     const { t } = useTranslation();
 
@@ -42,6 +43,7 @@ function LoginPage() {
 
         try {
             await login(formData.email, formData.password);
+            sessionStorage.removeItem("authRedirectPath");
             navigate(redirectPath);
         } catch (error) {
             if (error.response?.data?.code === "EMAIL_NOT_VERIFIED") {

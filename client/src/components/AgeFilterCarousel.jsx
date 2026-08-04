@@ -2,7 +2,9 @@ import { Box, Card, CardActionArea, Chip } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 function AgeFilterCarousel({ selectedFilter, onSelectFilter }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const activeLanguage = (i18n.resolvedLanguage || i18n.language || "").split("-")[0];
+    const showTranslatedImageChips = ["en", "he"].includes(activeLanguage);
     const filterOptions = [
         { translationKey: "productsPage.allProductsAllAges", value: "All", image: "/category/all.webp", showChip: false },
         { translationKey: "ageRanges.0-6 Months", value: "0-6 Months", image: "/age/0-6.webp" },
@@ -46,6 +48,7 @@ function AgeFilterCarousel({ selectedFilter, onSelectFilter }) {
         >
             {filterOptions.map((filter, index) => {
                 const isSelected = selectedFilter === filter.value;
+                const shouldShowChip = filter.showChip !== false || showTranslatedImageChips;
 
                 return (
                     <Card
@@ -76,7 +79,7 @@ function AgeFilterCarousel({ selectedFilter, onSelectFilter }) {
                                     display: "block",
                                 }}
                             />
-                            {filter.showChip !== false && (
+                            {shouldShowChip && (
                                 <Chip
                                     label={t(filter.translationKey)}
                                     size="small"

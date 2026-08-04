@@ -17,6 +17,7 @@ export const protect = async (req, res, next) => {
       return res.status(STATUS_CODE.UNAUTHORIZED).json({
         success: false,
         message: "Not authorized, no token",
+        code: "AUTH_TOKEN_MISSING",
       });
     }
 
@@ -28,14 +29,20 @@ export const protect = async (req, res, next) => {
       return res.status(STATUS_CODE.UNAUTHORIZED).json({
         success: false,
         message: "User not found",
+        code: "AUTH_USER_NOT_FOUND",
       });
     }
 
     next();
   } catch (error) {
+    const isExpiredToken = error.name === "TokenExpiredError";
+
     return res.status(STATUS_CODE.UNAUTHORIZED).json({
       success: false,
-      message: "Not authorized, token failed",
+      message: isExpiredToken
+        ? "Not authorized, token expired"
+        : "Not authorized, token failed",
+      code: isExpiredToken ? "AUTH_TOKEN_EXPIRED" : "AUTH_TOKEN_INVALID",
     });
   }
 };
