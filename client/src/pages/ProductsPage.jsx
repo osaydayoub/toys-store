@@ -271,17 +271,19 @@ function ProductsPage() {
         }}
       >
         <Paper
+          elevation={0}
           sx={{
             mb: 4,
-            borderRadius: 4,
+            borderRadius: 2,
             overflow: "hidden",
+            bgcolor: "common.white",
             display: { xs: "none", md: "block" },
           }}
         >
           <Box
             component="img"
             src={banner2}
-            alt="Banner"
+            alt="Baby Kids Toys Banner"
             sx={{
               width: "100%",
               height: "auto",
