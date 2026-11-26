@@ -1,3 +1,4 @@
+import { cloudinaryImage } from "../utils/cloudinaryImage";
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -830,7 +831,9 @@ function AdminProductsPage() {
                       </Box>
                       <Box
                         component="img"
-                        src={url}
+                        {...cloudinaryImage(url, "thumbnail", "70px")}
+                        loading="lazy"
+                        decoding="async"
                         alt={t("adminProducts.productImageAlt")}
                         sx={{
                           width: 70,
@@ -1092,7 +1095,7 @@ function AdminProductsPage() {
             {productToDelete?.images?.[0] && (
               <Box
                 component="img"
-                src={productToDelete.images[0]}
+                {...cloudinaryImage(productToDelete.images[0], "thumbnail", "120px")}
                 alt={productToDelete.name}
                 sx={{
                   width: 120,
@@ -1177,7 +1180,7 @@ function AdminProductsPage() {
           >
             <Box
               component="img"
-              src={imageToDelete}
+              {...cloudinaryImage(imageToDelete, "thumbnail", "120px")}
               alt={t("adminProducts.imageToRemoveAlt")}
               sx={{
                 width: 120,

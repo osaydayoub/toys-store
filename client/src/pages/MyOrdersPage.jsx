@@ -1,3 +1,4 @@
+import { cloudinaryImage } from "../utils/cloudinaryImage";
 import { useEffect, useState } from "react";
 import {
     Alert,
@@ -149,7 +150,9 @@ function MyOrdersPage() {
                                 {item.image ? (
                                     <Box
                                         component="img"
-                                        src={item.image}
+                                        {...cloudinaryImage(item.image, "thumbnail", "(min-width: 600px) 110px, 130px")}
+                                        loading="lazy"
+                                        decoding="async"
                                         alt={t("myOrders.productImageAlt", {
                                             name: item.name,
                                         })}
