@@ -1,3 +1,4 @@
+import { cloudinaryImage } from "../utils/cloudinaryImage";
 import { useState } from "react";
 import { Box, Paper, Stack } from "@mui/material";
 
@@ -36,7 +37,9 @@ function ProductImageGallery({ images = [], productName = "Product image" }) {
       >
         <Box
           component="img"
-          src={selectedImage}
+          {...cloudinaryImage(selectedImage, "gallery",
+            "(min-width: 1200px) 540px, (min-width: 900px) calc((100vw - 128px) / 2), (min-width: 600px) calc(100vw - 96px), calc(100vw - 80px)")}
+          fetchPriority="high"
           alt={productName}
           sx={{
             width: "100%",
@@ -64,11 +67,14 @@ function ProductImageGallery({ images = [], productName = "Product image" }) {
               <Box
                 key={image}
                 component="img"
-                src={image}
+                {...cloudinaryImage(image, "thumbnail", "72px")}
+                loading="lazy"
+                decoding="async"
                 alt={productName}
                 onClick={() => setSelectedImage(image)}
                 sx={{
                   width: 72,
+                  flexShrink: 0,
                   height: 72,
                   objectFit: "cover",
                   borderRadius: 2,

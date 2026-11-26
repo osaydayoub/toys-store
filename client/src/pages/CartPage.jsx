@@ -1,3 +1,4 @@
+import { cloudinaryImage } from "../utils/cloudinaryImage";
 import { useState } from "react";
 import {
     Box,
@@ -172,7 +173,9 @@ function CartPage() {
                         >
                             <Box
                                 component="img"
-                                src={item.images?.[0]}
+                                {...cloudinaryImage(item.images?.[0], "thumbnail", "(min-width: 600px) 110px, 130px")}
+                                loading="lazy"
+                                decoding="async"
                                 alt={item.name}
                                 sx={{
                                     width: { xs: 130, sm: 110 },
@@ -265,7 +268,7 @@ function CartPage() {
                     >
                         <Box
                             component="img"
-                            src={productToRemove?.images?.[0]}
+                            {...cloudinaryImage(productToRemove?.images?.[0], "thumbnail", "120px")}
                             alt={productToRemove?.name}
                             sx={{
                                 width: 120,

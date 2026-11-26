@@ -78,7 +78,7 @@ function ProductDetailsPage() {
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
                         {product.images?.[0] ? (
-                            <ProductImageGallery images={product.images} productName={product.name} />
+                            <ProductImageGallery key={product._id} images={product.images} productName={product.name} />
                         ) : (
                             <Box
                                 sx={{

@@ -1,3 +1,4 @@
+import { cloudinaryImage } from "../utils/cloudinaryImage";
 import { Link, useLocation } from "react-router-dom";
 import {
   Button,
@@ -41,7 +42,10 @@ function ProductCard({ product, extraInfo, topAction }) {
       {product.images?.[0] && (
         <CardMedia
           component="img"
-          image={product.images[0]}
+          {...cloudinaryImage(product.images[0], "card",
+            "(min-width: 1200px) 270px, (min-width: 900px) calc((100vw - 96px) / 3), (min-width: 600px) calc((100vw - 72px) / 2), calc(100vw - 16px)")}
+          loading="lazy"
+          decoding="async"
           alt={product.name}
           sx={{
             width: "100%",
